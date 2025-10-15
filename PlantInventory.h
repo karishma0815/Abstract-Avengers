@@ -33,7 +33,11 @@ public:
      * @brief Creates an iterator for this inventory
      * @return Pointer to a new PlantIterator object
      */
-    Iterator* createIterator() override;
+    Iterator* createPlantIterator(PlantInventory* inventory) override;
+
+    Iterator* createCareIterator(PlantInventory* inventory, const std::string& keyword) override;
+
+    Iterator* createPriceRangeIterator(PlantInventory* inventory, double min, double max) override;
     /**
      * @brief Adds a plant to the inventory
      * @param plant Pointer to the Plant to add

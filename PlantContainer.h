@@ -24,7 +24,17 @@ public:
      * @brief Creates an iterator for this container
      * @return Pointer to a new Iterator object
      */
-    virtual Iterator* createIterator() = 0;
+    virtual Iterator* createPlantIterator(PlantInventory* inventory) = 0;
+    /**
+     * @brief Creates a care iterator for this container
+     * @return Pointer to a new CareIterator object
+     */
+    virtual Iterator* createCareIterator(PlantInventory*, const std::string& keyword) = 0;
+    /**
+     * @brief Creates a price range iterator for this container
+     * @return Pointer to a new PriceRangeIterator object
+     */
+    virtual Iterator* createPriceRangeIterator(PlantInventory*, double min, double max) = 0;
     /**
      * @brief Adds a plant to the container
      * @param plant Pointer to the Plant to add
