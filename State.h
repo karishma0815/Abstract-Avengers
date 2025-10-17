@@ -15,7 +15,8 @@
 class Customer;
 class SalesContext;
 
-class State {
+class State 
+{
 public:
   virtual ~State() {}
 
@@ -39,7 +40,10 @@ public:
   virtual void onCancel();
 
 protected:
-  SalesContext& ctxFunc() const { return *ctx; }  
+  SalesContext& ctxFunc() const 
+  { 
+    return *ctx; 
+  }  
 
 private:
   SalesContext* ctx = nullptr;               
