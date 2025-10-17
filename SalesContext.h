@@ -19,7 +19,6 @@ class SalesContext
     public:
         virtual ~SalesContext() {}
 
-        /** @brief Switch to the next state and call its enter hook. */
         virtual void setState(State& next) = 0;
 
         virtual void notify(const std::string& msg) = 0;
