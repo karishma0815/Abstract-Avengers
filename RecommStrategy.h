@@ -5,6 +5,7 @@
 #ifndef RECOMMSTRATEGY_H
 #define RECOMMSTRATEGY_H
 
+#include<iostream>
 class RecommStrategy {
 public:
     /**

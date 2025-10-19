@@ -31,9 +31,9 @@ void Context::executeRecommStrategy() {
     }
 }
 
-double Context::executePricingStrategy(double basePrice) {
+double Context::executePricingStrategy(int numberOfPlants,double basePrice,std::string coupon) {
     if (pricingStrategy != nullptr) {
-        return pricingStrategy->calculatePrice(basePrice);
+        return pricingStrategy->calculatePrice(numberOfPlants,basePrice,coupon);
     }
     return basePrice;
 }

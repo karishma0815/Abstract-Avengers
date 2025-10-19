@@ -41,7 +41,7 @@ class Context{
      * @param basePrice The base price to calculate from
      * @return The calculated price based on the strategy
      */
-    double executePricingStrategy(double basePrice);
+    double executePricingStrategy(int numberOfPlants,double basePrice,std::string coupon);
    
     private:
     RecommStrategy* recommStrategy;
