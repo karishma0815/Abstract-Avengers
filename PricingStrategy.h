@@ -5,15 +5,18 @@
 #ifndef PRICINGSTRATEGY_H
 #define PRICINGSTRATEGY_H
 
+#include<string>
+#include<iostream>
+
 class PricingStrategy {
 public:
     /**
      * @brief Virtual destructor
      */
-    virtual ~PricingStrategy() {}
+    virtual ~PricingStrategy();
     /**
      * @brief Calculates price based on the implemented strategy
      */
-    virtual double calculatePrice(double basePrice) = 0;
+    virtual double calculatePrice(int numberOfPlants,double basePrice,std::string coupon) = 0;
 };
 #endif
