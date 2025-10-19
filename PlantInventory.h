@@ -17,9 +17,6 @@
  * of plants and create appropriate iterators
  */
 class PlantInventory : public PlantContainer {
-private:
-    std::vector<Plant*> plants;
-    
 public:
     /**
      * @brief Constructs a PlantInventory
@@ -69,6 +66,17 @@ public:
      * @return Const reference to the vector of plants
      */
     const std::vector<Plant*>& getPlants() const;
+
+    //addTOCart function can be added here if needed
+    PlantInventory* getCartInventory() const;
+    
+    void addToCart(Plant* plant) ;
+
+    void removeFromCart(Plant* plant);
+    
+    private:
+    std::vector<Plant*> plants;
+    PlantInventory* cartInventory;///Inventory representing the customer's cart
 };
 
 #endif 

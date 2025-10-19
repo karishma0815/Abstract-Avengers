@@ -67,3 +67,19 @@ Plant* PlantInventory::getPlant(int index) const {
 const std::vector<Plant*>& PlantInventory::getPlants() const {
     return plants;
 }
+
+PlantInventory* PlantInventory::getCartInventory() const {
+    return cartInventory;
+}
+
+void PlantInventory::addToCart(Plant* plant) {
+    if (cartInventory != nullptr && plant != nullptr) {
+        cartInventory->add(plant);
+    }
+}
+
+void PlantInventory::removeFromCart(Plant* plant) {
+    if (cartInventory != nullptr && plant != nullptr) {
+        cartInventory->remove(plant);
+    }
+}

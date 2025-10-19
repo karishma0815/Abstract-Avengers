@@ -5,4 +5,7 @@
  * @brief Implementation of the Command abstract class
  */
 
-Command::~Command() {}
+Command::~Command() {
+    delete plant;
+    delete cartInven;
+}

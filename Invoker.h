@@ -5,8 +5,11 @@
 #ifndef INVOKER_H
 #define INVOKER_H   
 #include "Command.h"
-#include "State.h"
+#include"Plant.h"
+#include"PlantInventory.h"
+#include"CartIterator.h"
 #include <vector>
+#include <iostream>
 /**
  * @class Invoker
  * @brief Invoker that executes commands
@@ -24,7 +27,7 @@ public:
     /**
      * @brief Executes the stored commands
      */
-    void execute(State& state);
+    void execute(Plant* plant, PlantInventory* cartInven);
     /**
      * @brief Sets a new command to be executed
      * @param command Pointer to the new Command
@@ -36,6 +39,7 @@ public:
      * @brief Executes all the commands
      */
     void executeALL();
+
     /**
      * @brief Stores a command for later execution, allows customers to the 'undo' options.
      */
@@ -43,7 +47,7 @@ public:
 
 
 private:        
-    std::vector<Command*> command;///Pointer to the Command to execute
+    std::vector<Command*> command;
 
 };
 #endif

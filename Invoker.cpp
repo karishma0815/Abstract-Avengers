@@ -12,10 +12,9 @@ Invoker::~Invoker() {
     command.clear();
 }
 
-void Invoker::execute(State& state) {
+void Invoker::execute(Plant* plant, PlantInventory* cartInven) {
     if (!command.empty() && command.back() != nullptr) {
-        command.back()->execute();
-        state.handle(); // Assuming State has a handle method to manage state transitions
+        command.back()->execute(plant,cartInven);
     }
 }
 
@@ -34,7 +33,8 @@ void Invoker::clearCommand() {
 void Invoker::executeALL() {
     for (Command* cmd : command) {
         if (cmd!=nullptr) {
-            cmd->execute();
+            std::cout<<"Executing stored command: "<<std::endl;
+            cmd->execute(nullptr,nullptr);
         }
     }
 }

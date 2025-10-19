@@ -5,7 +5,11 @@
 #ifndef COMMAND_H
 #define COMMAND_H  
 
-#include "State.h"
+#include<string>
+#include"PlantInventory.h"
+#include"CartIterator.h"
+
+#include<iostream>
 /**
  * @class Command
  * @brief Abstract interface for executing operations
@@ -14,7 +18,7 @@
  * a request as an object, allowing for parameterization and queuing of requests.
  */
 class Command {
-public:
+    public:
     /**
      * @brief Virtual destructor
      */
@@ -22,6 +26,11 @@ public:
     /**
      * @brief Executes the command
      */
-    virtual void execute(State& state) = 0;
+    virtual void execute(Plant* plant, PlantInventory* cartIterator) = 0;
+
+    protected:
+    Plant* plant;
+    PlantInventory* cartInven;
+
 };
 #endif

@@ -19,7 +19,7 @@ public:
      * @param plant Pointer to the Plant to add to the cart
      * @param cartIterator Pointer to the CartIterator managing the cart
      */
-    AddToCart(Plant* plant, CartIterator* cartIterator);
+    AddToCart();
     /**
      * @brief Destructor
      */
@@ -27,10 +27,7 @@ public:
     /**
      * @brief Executes the add to cart command
      */
-    void execute(State& state) override;
+    void execute(Plant* plant, PlantInventory* cartIterator) override;
 
-private:
-    Plant* plant;               
-    CartIterator* cartIterator; 
 };
 #endif

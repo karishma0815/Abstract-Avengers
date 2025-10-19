@@ -10,14 +10,15 @@
 #include "Plant.h"
 #include "CartIterator.h"
 #include "PlantInventory.h"
+
 class RemoveFromCart : public Command {
-public:
+    public:
     /**
      * @brief Constructs a RemoveFromCart command
      * @param plant Pointer to the Plant to remove from the cart
      * @param cartIterator Pointer to the CartIterator managing the cart
      */
-    RemoveFromCart(Plant* plant, CartIterator* cartIterator);
+    RemoveFromCart();
     /**
      * @brief Destructor
      */
@@ -25,9 +26,8 @@ public:
     /**
      * @brief Executes the remove from cart command
      */
-    void execute(State& state) override;
-private:
-    Plant* plant;///Pointer to the Plant to remove
-    CartIterator* cartIterator;///Pointer to the CartIterator managing the cart, here is when iterator comes into use!!
+    void execute(Plant* plant, PlantInventory* cartIterator) override;
+
+    ///Pointer to the CartIterator managing the cart, here is when iterator comes into use!!
 };
 #endif
