@@ -14,9 +14,9 @@ public:
     FertilizeCommand(Plant* plant, std::string type);
     ~FertilizeCommand();
     
-    void execute() override;
-    void undo() override;
-    bool isCommand() override;
+    void execute() ;
+    void undo() ;
+    bool isCommand() ;
 };
 
 #endif

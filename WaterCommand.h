@@ -13,9 +13,9 @@ public:
     WaterCommand(Plant* plant, int amt);
     ~WaterCommand();
     
-    void execute() override;
-    void undo() override;
-    bool isCommand() override;
+    void execute() ;
+    void undo() ;
+    bool isCommand() ;
 };
 
 #endif

@@ -13,9 +13,9 @@ public:
     SunlightCommand(Plant* plant, int hours);
     ~SunlightCommand();
     
-    void execute() override;
-    void undo() override;
-    bool isCommand() override;
+    void execute();
+    void undo() ;
+    bool isCommand();
 };
 
 #endif
