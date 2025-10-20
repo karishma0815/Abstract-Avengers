@@ -7,7 +7,7 @@
 
 #include "Customer.h"
 
-explicit Customer::Customer(std::string name = "Guest") : name(name) 
+Customer::Customer(std::string name) : name(name) 
 {}
 
 const std::string& Customer::nameFunc() const 

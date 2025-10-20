@@ -16,7 +16,7 @@
 
 class Item;
 
-class ArrangementBuilder : public Item
+class ArrangementBuilder 
 {
     public:
         virtual ~ArrangementBuilder() {}
