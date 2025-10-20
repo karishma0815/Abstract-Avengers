@@ -11,7 +11,7 @@ public:
     /**
      * @brief Virtual destructor
      */
-    virtual ~RecommStrategy() {}
+    virtual ~RecommStrategy();
     /**
      * @brief Recommends plants based on the implemented strategy
      */

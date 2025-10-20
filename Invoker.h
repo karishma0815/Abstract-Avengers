@@ -1,10 +1,10 @@
 /**
  * @file Invoker.h
- * @brief Invoker class for the Command design pattern  
+ * @brief Invoker class for the CustomerCommand design pattern  
  */
 #ifndef INVOKER_H
 #define INVOKER_H   
-#include "Command.h"
+#include "CustomerCommand.h"
 #include"Plant.h"
 #include"PlantInventory.h"
 #include"CartIterator.h"
@@ -13,41 +13,42 @@
 /**
  * @class Invoker
  * @brief Invoker that executes commands
- * The Invoker class is responsible for executing commands. It holds a reference
- * to a Command object and calls its execute method when requested.
+ * The Invoker class is responsible for executing CustomerCommands. It holds a reference
+ * to a CustomerCommand object and calls its execute method when requested.
  */
 
 class Invoker {
 public:
     /**
-     * @brief Constructs an Invoker with the given command
-     * @param command Pointer to the Command to execute
+     * @brief Constructs an Invoker with the given CustomerCommand
+     * @param cmd Pointer to the CustomerCommand to execute
      */
-    Invoker(Command* command);
+    Invoker(CustomerCommand* cmd);
     /**
-     * @brief Executes the stored commands
+     * @brief Executes the stored CustomerCommands
      */
     void execute(Plant* plant, PlantInventory* cartInven);
     /**
-     * @brief Sets a new command to be executed
-     * @param command Pointer to the new Command
+     * @brief Sets a new CustomerCommand to be executed
+     * @param cmd Pointer to the new CustomerCommand
      */
-    void setCommand(Command* command);
+    void setCommand(CustomerCommand* cmd);
 
     void clearCommand();
     /**
-     * @brief Executes all the commands
+     * @brief Executes all the CustomerCommands
      */
     void executeALL();
 
     /**
-     * @brief Stores a command for later execution, allows customers to the 'undo' options.
+     * @brief Stores a cmd for later execution, allows customers to the 'undo' options.
+     * @param cmd Pointer to the CustomerCommand to store
      */
-    void storeCommand(Command* command);
+    void storeCommand(CustomerCommand*cmd);
 
 
 private:        
-    std::vector<Command*> command;
+    std::vector<CustomerCommand*> cmd;
 
 };
 #endif

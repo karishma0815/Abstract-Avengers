@@ -1,27 +1,27 @@
 /**
- * @file Context.h
- * @brief Context class for Strategy design pattern 
+ * @file StratContext.h
+ * @brief StratContext class for Strategy design pattern 
  * Holds a reference to a Strategy object and delegates execution to it
  * This allows dynamic switching of algorithms at runtime. 
  */
-#ifndef CONTEXT_H
-#define CONTEXT_H
+#ifndef STRATCONTEXT_H
+#define STRATCONTEXT_H
 
 #include"RecommStrategy.h"
 #include"PricingStrategy.h"
 #include<string>
 #include<vector>
 
-class Context{
+class StratContext{
 
     public:
     /**
-     * @brief Constructs a Context with given strategies
+     * @brief Constructs a StratContext with given strategies
      * @param recommStrategy Pointer to a RecommStrategy object
      * @param pricingStrategy Pointer to a PricingStrategy object
      */
-    Context(RecommStrategy* recommStrategy, PricingStrategy* pricingStrategy);
-    ~Context();
+    StratContext(RecommStrategy* recommStrategy, PricingStrategy* pricingStrategy);
+    ~StratContext();
     /**
      * @brief Sets a new recommendation strategy
      * @param strategy Pointer to the new RecommStrategy object

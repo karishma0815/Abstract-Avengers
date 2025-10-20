@@ -1,20 +1,20 @@
 /**
  * @file RemoveFromCart.h
- * @brief Concrete Command to remove a plant from the cart
+ * @brief Concrete CustomerCommand to remove a plant from the cart
  */
 #ifndef REMOVEFROMCART_H
 #define REMOVEFROMCART_H
 
-#include "Command.h"
+#include "CustomerCommand.h"
 
 #include "Plant.h"
 #include "CartIterator.h"
 #include "PlantInventory.h"
 
-class RemoveFromCart : public Command {
+class RemoveFromCart : public CustomerCommand {
     public:
     /**
-     * @brief Constructs a RemoveFromCart command
+     * @brief Constructs a RemoveFromCart CustomerCommand
      * @param plant Pointer to the Plant to remove from the cart
      * @param cartIterator Pointer to the CartIterator managing the cart
      */
@@ -24,9 +24,9 @@ class RemoveFromCart : public Command {
      */
     ~RemoveFromCart();
     /**
-     * @brief Executes the remove from cart command
+     * @brief Executes the remove from cart CustomerCommand
      */
-    void execute(Plant* plant, PlantInventory* cartIterator) override;
+    void execute(Plant* plant, PlantInventory* cartInven) override;
 
     ///Pointer to the CartIterator managing the cart, here is when iterator comes into use!!
 };
