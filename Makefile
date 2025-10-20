@@ -108,6 +108,8 @@ CancelledState.o: CancelledState.cpp CancelledState.h State.h SalesOrder.h
 Customer.o: Customer.cpp Customer.h
 	$(CXX) $(CXXFLAGS) -c Customer.cpp
 
+# -- Main File --
+
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
