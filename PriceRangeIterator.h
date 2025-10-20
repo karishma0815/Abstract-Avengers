@@ -64,7 +64,6 @@ public:
 
     private:
     std::vector<Plant*> filteredPlants;
-    int currentIndex;
     double minPrice;
     double maxPrice;
 };

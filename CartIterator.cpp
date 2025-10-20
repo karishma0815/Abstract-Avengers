@@ -1,6 +1,6 @@
 #include"CartIterator.h"
 
-CartIterator::CartIterator(PlantInventory* inventory) : currentIndex(0) {
+CartIterator::CartIterator(PlantInventory* inventory)  {
     if (inventory != nullptr) {
         filteredPlants = inventory->getPlants();
     }
@@ -11,27 +11,27 @@ CartIterator::~CartIterator() {
 }   
 
 void CartIterator::first() {
-    currentIndex = 0;
+    current = 0;
 }
 
 void CartIterator::next() {
     if (!isDone()) {
-        currentIndex++;
+        current++;
     }
 }
 
 bool CartIterator::isDone() const {
-    return currentIndex >= static_cast<int>(filteredPlants.size());
+    return current >= static_cast<int>(filteredPlants.size());
 }
 
 Plant* CartIterator::currentItem() const {
     if (!isDone()) {
-        return filteredPlants[currentIndex];
+        return filteredPlants[current];
     }
     return nullptr;
 }
 
 bool CartIterator::hasNext() const {
-    return currentIndex + 1 < static_cast<int>(filteredPlants.size());
+    return current + 1 < static_cast<int>(filteredPlants.size());
 }
 

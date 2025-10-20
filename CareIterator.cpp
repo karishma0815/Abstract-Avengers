@@ -5,7 +5,7 @@
 #include "CareIterator.h"
 #include <algorithm>
 
-CareIterator::CareIterator(PlantInventory* inventory, const std::string& keyword) : currentIndex(0), careKeyword(keyword) {
+CareIterator::CareIterator(PlantInventory* inventory, const std::string& care) :careKey(care) {
     if (inventory != nullptr) {
         filterByCare(inventory);
     }
@@ -19,7 +19,7 @@ void CareIterator::filterByCare(PlantInventory* inventory) {
     const std::vector<Plant*>& allPlants = inventory->getPlants();
     
     // Convert keyword to lowercase for case-insensitive comparison
-    std::string lowerKeyword = careKeyword;
+    std::string lowerKeyword = careKey;
     std::transform(lowerKeyword.begin(), lowerKeyword.end(), 
                    lowerKeyword.begin(), ::tolower);
     
@@ -41,26 +41,26 @@ void CareIterator::filterByCare(PlantInventory* inventory) {
 }
 
 void CareIterator::first() {
-    currentIndex = 0;
+    current = 0;
 }
 
 void CareIterator::next() {
     if (!isDone()) {
-        currentIndex++;
+        current++;
     }
 }
 
 bool CareIterator::isDone() const {
-    return currentIndex >= static_cast<int>(filteredPlants.size());
+    return current >= static_cast<int>(filteredPlants.size());
 }
 
 Plant* CareIterator::currentItem() const {
     if (!isDone()) {
-        return filteredPlants[currentIndex];
+        return filteredPlants[current];
     }
     return nullptr;
 }
 
 bool CareIterator::hasNext() const {
-    return currentIndex < static_cast<int>(filteredPlants.size()) - 1;
+    return current < static_cast<int>(filteredPlants.size()) - 1;
 }

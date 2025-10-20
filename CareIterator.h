@@ -23,7 +23,7 @@ public:
      * @param inventory Pointer to the PlantInventory to iterate over
      * @param keyword Care keyword to filter by (e.g., "low", "daily watering")
      */
-    CareIterator(PlantInventory* inventory, const std::string& keyword);
+    CareIterator(PlantInventory* inventory, const std::string& care);
     /**
      * @brief Destructor
      */
@@ -62,7 +62,6 @@ public:
     void filterByCare(PlantInventory* inventory);
 
     private:
-    int currentIndex;
-    std::string careKeyword;
+    std::string careKey;
 };
-#endif 
+#endif

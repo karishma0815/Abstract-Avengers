@@ -32,9 +32,15 @@ public:
      */
     Iterator* createPlantIterator(PlantInventory* inventory) override;
 
-    Iterator* createCareIterator(PlantInventory* inventory, const std::string& keyword) override;
+    Iterator* createCareIterator(PlantInventory* inventory, const std::string& care) override;
 
     Iterator* createPriceRangeIterator(PlantInventory* inventory, double min, double max) override;
+
+    /**
+     * @brief Creates a cart iterator for this container
+     * @return Pointer to a new CartIterator object
+     */
+    Iterator* createCartIterator(PlantInventory* inventory) override;
     /**
      * @brief Adds a plant to the inventory
      * @param plant Pointer to the Plant to add

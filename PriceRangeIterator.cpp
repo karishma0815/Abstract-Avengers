@@ -5,7 +5,7 @@
 
 #include "PriceRangeIterator.h"
 
-PriceRangeIterator::PriceRangeIterator(PlantInventory* inventory, double min, double max):currentIndex(0), minPrice(min), maxPrice(max) {
+PriceRangeIterator::PriceRangeIterator(PlantInventory* inventory, double min, double max):minPrice(min), maxPrice(max) {
     if (inventory != NULL) {
         filterByPrice(inventory);
     }
@@ -29,26 +29,26 @@ void PriceRangeIterator::filterByPrice(PlantInventory* inventory) {
 }
 
 void PriceRangeIterator::first() {
-    currentIndex = 0;
+    current = 0;
 }
 
 void PriceRangeIterator::next() {
     if (!isDone()) {
-        currentIndex++;
+        current++;
     }
 }
 
 bool PriceRangeIterator::isDone() const {
-    return currentIndex >= static_cast<int>(filteredPlants.size());
+    return current >= static_cast<int>(filteredPlants.size());
 }
 
 Plant* PriceRangeIterator::currentItem() const {
     if (!isDone()) {
-        return filteredPlants[currentIndex];
+        return filteredPlants[current];
     }
     return NULL;
 }
 
 bool PriceRangeIterator::hasNext() const {
-    return currentIndex < (static_cast<int>(filteredPlants.size()) - 1);
+    return current < (static_cast<int>(filteredPlants.size()) - 1);
 }

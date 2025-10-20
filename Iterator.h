@@ -5,6 +5,7 @@
 #ifndef ITERATOR_H
 #define ITERATOR_H
 #include "Plant.h"
+#include <vector>
 /**
  * @class Iterator
  * @brief Abstract interface for accessing and traversing elements
@@ -47,5 +48,6 @@ public:
      * @brief List of filtered plants for iteration. Used by all concrete iterators
      */
     std::vector<Plant*> filteredPlants;
+    int current;
 };
 #endif 

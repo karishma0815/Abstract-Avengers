@@ -6,6 +6,7 @@
 #include "PlantIterator.h"
 #include "CareIterator.h"
 #include "PriceRangeIterator.h"
+#include "CartIterator.h"
 #include <algorithm>
 
 PlantInventory::PlantInventory() {}
@@ -22,12 +23,16 @@ Iterator* PlantInventory::createPlantIterator(PlantInventory* inventory) {
     return new PlantIterator(this);
 }
 
-Iterator* PlantInventory::createCareIterator(PlantInventory* inventory, const std::string& keyword) {
-    return new CareIterator(this,keyword);
+Iterator* PlantInventory::createCareIterator(PlantInventory* inventory, const std::string& care) {
+    return new CareIterator(this,care);
 }
 
 Iterator* PlantInventory::createPriceRangeIterator(PlantInventory* inventory, double min, double max) {
     return new PriceRangeIterator(this,min,max);
+}
+
+Iterator* PlantInventory::createCartIterator(PlantInventory* inventory) {
+    return new CartIterator(this->cartInventory);
 }
 
 void PlantInventory::add(Plant* plant) {

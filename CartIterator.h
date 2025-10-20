@@ -56,8 +56,5 @@ class CartIterator : public Iterator {
      */
     bool hasNext() const override;
 
-    private:
-    int currentIndex;///Current index in the cart
-
 };
 #endif
