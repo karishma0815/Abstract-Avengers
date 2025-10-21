@@ -10,11 +10,13 @@ private:
     std::string plantID;
     int exposureSunlightHours;
     int lastWaterLevel;
+    std::string careInstruc;
+    int price;
+
 
 public:
-    Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel);
+    Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel,int price=0);
     
-
     std::string getName();
     bool isFertilized();
     std::string getPlantID();
@@ -25,6 +27,14 @@ public:
     void setPlantID(const std::string& id);
     void setExposureSunlightHours(int hours);
     void setLastWaterLevel(int level);
+    double getPrice() const;
+    void setPrice(double price);
+    //this is for careiterator
+    std::string getCareInstructions() const;
+
+    //this is for when staff wants to set care instructions
+    void setCareInstructions(const std::string& instructions);
+
 };
 
 #endif 

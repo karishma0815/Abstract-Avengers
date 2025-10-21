@@ -60,6 +60,7 @@ public:
      * @brief Filters plants by price range
      * @param inventory Pointer to the PlantInventory to filter
      */
+    //Is this function really needed in the iterator design pattern? Yes, 
     void filterByPrice(PlantInventory* inventory);
 
     private:

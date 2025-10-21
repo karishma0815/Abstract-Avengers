@@ -22,7 +22,7 @@ void PriceRangeIterator::filterByPrice(PlantInventory* inventory) {
         if (plant != nullptr) {
             double price = plant->getPrice();
             if (price >= minPrice && price <= maxPrice) {
-                filteredPlants.push_back(plant);
+                filteredPlants.push_back(plant);//add plant to filtered list, so later when iterating we only go through these
             }
         }
     }
