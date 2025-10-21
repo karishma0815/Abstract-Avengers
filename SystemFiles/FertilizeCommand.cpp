@@ -1,28 +1,22 @@
 #include "FertilizeCommand.h"
+#include "Plant.h"
 #include <iostream>
 
-FertilizeCommand::FertilizeCommand(Plant* plant, std::string type) 
-    : plant(plant), fertilizeType(type) {}
+FertilizeCommand::FertilizeCommand(Plant *plant, const std::string &type) : plant(plant), fertilizerType(type){
 
-FertilizeCommand::~FertilizeCommand() {}
-
-void FertilizeCommand::execute() {
-    std::cout << "Fertilizing plant '" << plant->getName() 
-              << "' with " << fertilizeType << " fertilizer" << std::endl;
-    
-    plant->setFertilized(true);
-    
-    std::cout << "Plant has been fertilized with " << fertilizeType << std::endl;
 }
 
-void FertilizeCommand::undo() {
-    std::cout << "Undoing fertilize command for plant '" << plant->getName() << "'" << std::endl;
-   
-    plant->setFertilized(false);
-    
-    std::cout << "Fertilizer removed from plant" << std::endl;
+void FertilizeCommand::execute(){
+    if (plant != nullptr && plant->getIsAlive()) {
+        plant->fertilize(fertilizerType);
+        logAction();
+    }
 }
 
-bool FertilizeCommand::isCommand() {
-    return true;
+std::string FertilizeCommand::getDescription() const{
+    return "Fertilize " + (plant ? plant->getName() : "Unknown plant") + " with " + fertilizerType;
+}
+
+void FertilizeCommand::logAction() const{
+    std::cout<<"[LOG] FertilizeCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown Plant")<<" | Fertilizer: "<<fertilizerType<<std::endl;
 }
