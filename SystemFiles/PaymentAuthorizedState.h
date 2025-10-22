@@ -21,6 +21,9 @@ public:
 
   void onCommit() override;
   void onCancel() override;
+
+private:
+  PaymentAuthorizedState() = default;
 };
 
 #endif
