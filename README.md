@@ -1,6 +1,6 @@
 # COS 214 Project - Plant Nursery Simulator
 
-<img src="Images/Plant Nursery Image.png" alt="Plant Nursery Simulator" width="600" style="max-width: 100%; border-radius: 8px;"
+<img src="Images/Plant%20Nursery%20Image.png" alt="Plant Nursery Simulator" width="600" style="max-width: 100%; border-radius: 8px;"
 
 # Contents
 
