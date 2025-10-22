@@ -91,7 +91,7 @@ Testing Main (Unit Tests): make run_tests
     </tr>
     <tr>
       <td align="center">
-        Karishma Kapoor<br>u23538199<br>
+        Karishma Boodhoo<br>u23538199<br>
         <!--<img src="https://64.media.tumblr.com/e45427d8581bdf7afa9c649d9a711ad7/b73c26f96996b26c-85/s1280x1920/733cd4b5ac71712eb3927ba6d3105e869683005c.png" alt="philip profile" width="200" height="200">-->
       </td>
       <td align="center">
