@@ -1,6 +1,6 @@
 # COS 214 Project - Plant Nursery Simulator
 
-<img src="Images/Plant%20Nursery%20Image.png" alt="Plant Nursery Simulator" width="600" style="max-width: 100%; border-radius: 8px;"
+![Plant Nursery Simulator](Images/Plant_Nursery_Image.png)
 
 # Contents
 
@@ -76,12 +76,12 @@ Testing Main (Unit Tests): make run_tests
     </tr>
     <tr>
       <td align="center">
-        Karishma Kapoor<br>u23538199<br>
-        <!--<img src="https://64.media.tumblr.com/e45427d8581bdf7afa9c649d9a711ad7/b73c26f96996b26c-85/s1280x1920/733cd4b5ac71712eb3927ba6d3105e869683005c.png" alt="philip profile" width="200" height="200">-->
+        Sabira Karie<br>u23591481<br>
+        <!--<img src="https://avatarfiles.alphacoders.com/176/176387.jpg" alt="your pfp" width="200" height="200">-->
       </td>
       <td align="center">
-        The Staff:<br> <!--Role here-->
-        <!--<a href="https://github.com/phillDup">
+        The Customers & The Sales Floor: <br> <!--Role here-->
+        <!--<a href="https://github.com/TiaanBosman101">
             <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
         </a>-->
       </td>
@@ -91,12 +91,12 @@ Testing Main (Unit Tests): make run_tests
     </tr>
     <tr>
       <td align="center">
-        Sabira Karie<br>u23591481<br>
-        <!--<img src="https://avatarfiles.alphacoders.com/176/176387.jpg" alt="your pfp" width="200" height="200">-->
+        Karishma Kapoor<br>u23538199<br>
+        <!--<img src="https://64.media.tumblr.com/e45427d8581bdf7afa9c649d9a711ad7/b73c26f96996b26c-85/s1280x1920/733cd4b5ac71712eb3927ba6d3105e869683005c.png" alt="philip profile" width="200" height="200">-->
       </td>
       <td align="center">
-        The Customers & The Sales Floor: <br> <!--Role here-->
-        <!--<a href="https://github.com/TiaanBosman101">
+        The Staff:<br> <!--Role here-->
+        <!--<a href="https://github.com/phillDup">
             <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
         </a>-->
       </td>
