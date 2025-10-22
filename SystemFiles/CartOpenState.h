@@ -22,6 +22,9 @@ public:
 
   void onCheckout() override;
   void onCancel() override;
+
+private:
+  CartOpenState() = default;
 };
 
 #endif
