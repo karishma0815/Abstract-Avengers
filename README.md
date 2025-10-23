@@ -11,6 +11,10 @@
 
 # Description
 
+The Plant Nursery Simulator is a C++ project that models the operations of a lively springtime nursery — from growing plants in the greenhouse to assisting customers on the sales floor.
+It uses object-oriented design and software design patterns to manage plant care, customer interactions, and staff coordination.
+The goal is to show how structured design brings order and flexibility to a complex, evolving system.
+
 # Documentation
 
 <!--[Report](Documents/City_Development_Report.pdf)
@@ -80,7 +84,8 @@ Testing Main (Unit Tests): make run_tests
         <!--<img src="https://avatarfiles.alphacoders.com/176/176387.jpg" alt="your pfp" width="200" height="200">-->
       </td>
       <td align="center">
-        The Customers & The Sales Floor: <br> <!--Role here-->
+        The Customers & The Sales Floor:
+        <br>Command<br>Iterator<br>Strategy<br>
         <!--<a href="https://github.com/TiaanBosman101">
             <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
         </a>-->
@@ -95,7 +100,8 @@ Testing Main (Unit Tests): make run_tests
         <!--<img src="https://64.media.tumblr.com/e45427d8581bdf7afa9c649d9a711ad7/b73c26f96996b26c-85/s1280x1920/733cd4b5ac71712eb3927ba6d3105e869683005c.png" alt="philip profile" width="200" height="200">-->
       </td>
       <td align="center">
-        The Staff:<br> <!--Role here-->
+        The Staff:
+        <br>Command<br>Chain of Responsibility<br>Mediator<br>Factory Method<br>
         <!--<a href="https://github.com/phillDup">
             <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
         </a>-->
