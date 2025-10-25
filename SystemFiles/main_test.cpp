@@ -25,4 +25,15 @@ public:
         std::cout << "\n=== Running: " << name << " ===" << std::endl;
     }
     
-   
+    void assert(bool condition, const std::string& message) {
+        if (condition) {
+            passedTests++;
+            std::cout << "  ✓ PASS: " << message << std::endl;
+        } else {
+            failedTests++;
+            std::cout << "  ✗ FAIL: " << message << std::endl;
+        }
+    }
+    
+
+}
