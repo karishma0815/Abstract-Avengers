@@ -41,11 +41,12 @@ The goal is to show how structured design brings order and flexibility to a comp
 
 This project can be built using Makefile:
 
-``` <!--update here-->
-Compilation: make (Ensure you are currently in the SystemFiles directory)
-Demo Main: make run 
-Testing Main (Unit Tests): make run_tests
+``` 
+<!--update here-->
 ```
+<!--Compilation: make (Ensure you are currently in the SystemFiles directory)
+Demo Main: make run 
+Testing Main (Unit Tests): make run_tests-->
 
 ### Demo Running
 
@@ -62,82 +63,64 @@ Testing Main (Unit Tests): make run_tests
 # Team
 
 <table>
-    <tr><th>Member</th><th>Roles</th><th>Description</th></tr>
+    <tr><th>Member</th><th>Roles</th><th>Avenger</th></tr>
     <tr>
       <td align="center">
         Taskeen Abdoola<br>u22698681<br>
-        <!--<img src="https://i.redd.it/ur34et8qmft91.jpg" alt="johna profile" width="200" height="200">-->
       </td>
       <td align="center">
         The Customers & The Sales Floor: <br>Builder<br>Prototype<br>Decorator<br>State<br>
-        <!--<a href="https://github.com/johnpeterprogramming">
-            <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
-        </a>-->
       </td>
       <td>
-        <!--Description here-->
+        <img src="Images/Scarlet_Witch.jpg" width="200" height="200" style="border-radius: 8px;">
       </td>
     </tr>
     <tr>
       <td align="center">
         Sabira Karie<br>u23591481<br>
-        <!--<img src="https://avatarfiles.alphacoders.com/176/176387.jpg" alt="your pfp" width="200" height="200">-->
       </td>
       <td align="center">
         The Customers & The Sales Floor:
         <br>Command<br>Iterator<br>Strategy<br>
-        <!--<a href="https://github.com/TiaanBosman101">
-            <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
-        </a>-->
       </td>
       <td>
-        <!--Description here-->
+        <!--Avenger here-->
       </td>
     </tr>
     <tr>
       <td align="center">
         Karishma Boodhoo<br>u23538199<br>
-        <!--<img src="https://64.media.tumblr.com/e45427d8581bdf7afa9c649d9a711ad7/b73c26f96996b26c-85/s1280x1920/733cd4b5ac71712eb3927ba6d3105e869683005c.png" alt="philip profile" width="200" height="200">-->
       </td>
       <td align="center">
         The Staff:
         <br>Command<br>Chain of Responsibility<br>Mediator<br>Factory Method<br>
-        <!--<a href="https://github.com/phillDup">
-            <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
-        </a>-->
       </td>
       <td>
-        <!--Description here-->
+        <!--Avenger here-->
       </td>
     </tr>
     <tr>
       <td align="center">
         Rene Reddy<br>u23558572<br>
-        <!--<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA4oVF9Z91LUDIJJlroakAORBD7zbyKtkRiQ" alt="your pfp" width="200" height="200">-->
       </td>
       <td align="center">
-        Greenhouse/Garden Area:<br> <!--Role here-->
-        <!--<a href="https://github.com/NicohaasHerhaasus">
-            <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
-        </a>-->
+        Greenhouse/Garden Area:
+        <br>State<br>Iterator<br>
       </td>
       <td>
-        <!--Description here-->
+        <img src="Images/Black_Widow.jpg" width="200" height="200" style="border-radius: 8px;">
       </td>
     </tr>
     <tr>
       <td align="center">
         Kiolin Gounden<br>u22647300<br>
-        <!--<img src="https://static.wikia.nocookie.net/4d466e84-4dae-4549-a49e-b4fd9bf29e47/scale-to-width/755" width="200" height="200">-->
       </td>
       <td align="center">
-        Greenhouse/Garden Area:<br> <!--Role here-->
-        <!--<a href="https://github.com/Jack-jack1">
-            <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
-        </a>-->
+        Greenhouse/Garden Area:
+        <br>Factory Method<br>Observer<br>Composite<br>
       </td>
       <td>
-        <!--Description here-->
+        <img src="Images/Batman.jpg" width="200" height="200" style="border-radius: 8px;">
       </td>
     </tr>
 </table>
