@@ -337,3 +337,36 @@ void testCompleteLifecycle(TestRunner& test) {
     
     std::cout << "--- Lifecycle Complete ---\n" << std::endl;
 }
+
+
+int main() {
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PLANT STATE MANAGEMENT SYSTEM - UNIT TESTS" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    
+    TestRunner test;
+    
+    testPlant(test);
+    testSeedlingState(test);
+    testFloweringState(test);
+    testMatureState(test);
+    testReadyForSaleState(test);
+    testSoldState(test);
+    testPlantContext(test);
+    testStateTransitions(test);
+    testCompleteLifecycle(test);
+    
+    
+    test.printSummary();
+    
+    std::cout << "\n\n" << std::string(50, '=') << std::endl;
+    std::cout << "INTERACTIVE DEMO" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    
+    PlantContext demo("Orchid", "Winter", "", 35.00);
+    std::cout << "\nCreated " << demo.getPlantType() << " plant in " 
+              << demo.getSeason() << " season" << std::endl;
+    std::cout << "Current state: " << demo.getCurrentStateName() << std::endl;
+    
+    return 0;
+}
