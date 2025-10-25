@@ -96,7 +96,7 @@ Testing Main (Unit Tests): make run_tests-->
         <br>Command<br>Chain of Responsibility<br>Mediator<br>Factory Method<br>
       </td>
       <td>
-        <img src="Images/Captain_Marvel.jpg" width="200" height="200" style="border-radius: 8px;">
+        <img src="Images/Captain_Marvel.jpg" width="150" height="200" style="border-radius: 8px;">
       </td>
     </tr>
     <tr>
