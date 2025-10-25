@@ -84,7 +84,7 @@ Testing Main (Unit Tests): make run_tests-->
         <br>Command<br>Iterator<br>Strategy<br>
       </td>
       <td>
-        <!--Avenger here-->
+        <img src="Images/baby-groot-guardians.jpg" width="200" height="200" style="border-radius:8px;">
       </td>
     </tr>
     <tr>
