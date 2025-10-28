@@ -11,7 +11,7 @@ SRCS =  Arrangement.cpp\
 		Note.cpp\
 		PlantItem.cpp\
 		PrototypeRegistry.cpp\
-		SalesOrder.cpp\
+		SalesContext.cpp\
 		State.cpp\
 		BrowsingState.cpp\
 		AwaitingStockState.cpp\
