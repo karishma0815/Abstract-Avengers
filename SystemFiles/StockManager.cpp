@@ -44,7 +44,16 @@ void StockManager::addSucculent(SucculentProduct* plant) {
     if (plant != nullptr) {
         succulentStock.push_back(plant);
         int quantity = plant->getCount();
+        //here added value, plantType and update inventory
+
+        double value = plant->getTotalValue();
+        std::string plantType = plant->getPlantType();
+        
+        inventory.updateInventory(plantType, quantity, value);
+
+        //this was already here
         notify(plant->getPlantType(), quantity, "added");
+        
     }
 }
 
@@ -52,9 +61,17 @@ void StockManager::removeSucculent(int index) {
     if (index >= 0 && index < static_cast<int>(succulentStock.size())) {
         SucculentProduct* plant = succulentStock[index];
         int quantity = plant->getCount();
+        //here added value
+        double value = plant->getTotalValue();
+
+        //this was already here
         std::string plantType = plant->getPlantType();
         
         succulentStock.erase(succulentStock.begin() + index);
+
+        //new update inventory removal
+        inventory.removeFromInventory(plantType, quantity, value);
+
         notify(plantType, quantity, "removed");
         delete plant;
     }
@@ -76,6 +93,15 @@ void StockManager::addFlower(FlowerProduct* plant) {
     if (plant != nullptr) {
         flowerStock.push_back(plant);
         int quantity = plant->getCount();
+
+         //here added value, plantType and update inventory
+
+        double value = plant->getTotalValue();
+        std::string plantType = plant->getPlantType();
+        
+        inventory.updateInventory(plantType, quantity, value);
+
+        //this was already here
         notify(plant->getPlantType(), quantity, "added");
     }
 }
@@ -84,9 +110,17 @@ void StockManager::removeFlower(int index) {
     if (index >= 0 && index < static_cast<int>(flowerStock.size())) {
         FlowerProduct* plant = flowerStock[index];
         int quantity = plant->getCount();
+
+        //here added value
+        double value = plant->getTotalValue();
+
         std::string plantType = plant->getPlantType();
         
         flowerStock.erase(flowerStock.begin() + index);
+
+        //new update inventory removal
+        inventory.removeFromInventory(plantType, quantity, value);
+
         notify(plantType, quantity, "removed");
         delete plant;
     }
@@ -108,6 +142,15 @@ void StockManager::addTree(TreeProduct* plant) {
     if (plant != nullptr) {
         treeStock.push_back(plant);
         int quantity = plant->getCount();
+
+         //here added value, plantType and update inventory
+
+        double value = plant->getTotalValue();
+        std::string plantType = plant->getPlantType();
+        
+        inventory.updateInventory(plantType, quantity, value);
+
+        //this was already here
         notify(plant->getPlantType(), quantity, "added");
     }
 }
@@ -116,9 +159,17 @@ void StockManager::removeTree(int index) {
     if (index >= 0 && index < static_cast<int>(treeStock.size())) {
         TreeProduct* plant = treeStock[index];
         int quantity = plant->getCount();
+        
+        //here added value
+        double value = plant->getTotalValue();
+        
         std::string plantType = plant->getPlantType();
         
         treeStock.erase(treeStock.begin() + index);
+        
+        //new update inventory removal
+        inventory.removeFromInventory(plantType, quantity, value);
+
         notify(plantType, quantity, "removed");
         delete plant;
     }
@@ -136,6 +187,10 @@ int StockManager::getTreeStockSize() const {
 }
 
 // General methods
+//display all stock through console by iterating through each stock vector,
+// because its const it cant modify any member variables so it just reads 
+//them and displays all stock items based on their type and details like 
+//name, value and count
 void StockManager::displayAllStock() const {
     std::cout << "\n╔════════════════════════════════════════╗" << std::endl;
     std::cout << "║     NURSERY STOCK OVERVIEW            ║" << std::endl;
@@ -179,6 +234,19 @@ void StockManager::displayAllStock() const {
     std::cout << "Total Value: R" << getTotalStockValue() << std::endl;
     std::cout << "═════════════════════════════════════════\n" << std::endl;
 }
+
+
+//add display inventory summary method here later
+//why? to show inventory breakdown
+//how is this different from display all stock? because this focuses on
+//summarizing counts and values by plant type rather than individual items
+//so why does it give me an error? because it wasnt declared in the header file
+void StockManager::displayInventoryBreakdown() const {
+    inventory.displayInventorySummary();
+}
+
+
+
 
 int StockManager::getTotalStockCount() const {
     int total = 0;
