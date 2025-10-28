@@ -45,7 +45,7 @@ public:
      * @param sunHours Hours of sunlight exposure
      * @param waterLevel Last water level measurement
      */
-    Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel);
+    Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel,int price);
     
     /**
      * @brief Get the name of the plant
