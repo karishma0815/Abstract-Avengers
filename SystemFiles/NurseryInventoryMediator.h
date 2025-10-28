@@ -11,6 +11,7 @@
 #include "InventoryMediator.h"
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 class Staff;
 class Plant;
@@ -24,8 +25,10 @@ class Plant;
 
 class NurseryInventoryMediator : public InventoryMediator{
     private:
-        int greenhouseStock;
-        int salesFloorStock;
+        std::unordered_map<std::string, int> greenhouseStock;
+        std::unordered_map<std::string, int> salesFloorStock;
+        
+        std::string getPlantId(Plant *plant) const;
     public:
         /**
          * @brief this is a constructor that constructs a NurseryInventoryMediator with initial stock levels

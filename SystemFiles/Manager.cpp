@@ -7,7 +7,7 @@ Manager::Manager(const std::string &name, int id, InventoryMediator *med, const 
 }
 
 std::string Manager::getRole() const{
-    return "Manager (" + department + ")"
+    return "Manager (" + department + ")";
 }
 
 void Manager::careForPlants(){
@@ -16,17 +16,17 @@ void Manager::careForPlants(){
 
 void Manager::handleQuery(const CustomerQuery &query){
     if(canHandle(query)){
-        std::cout<<"Manager "<<getName()<<" handling: "<<query.question<<std::endl;
-        if(query.type == CustomerQuery::COMPLAINT){
-            std::cout<<"Resolving customer complaint with authority..."<<std::endl;
-        } else{
-            std::cout<<"Approving special customer request..."<<std::endl;
+        std::cout << "Manager " << getName() << ": ";
+        if(query.type == CustomerQuery::COMPLAINT) {
+            std::cout << "I'll personally ensure this is resolved to your satisfaction." << std::endl;
+        } else if(query.type == CustomerQuery::SPECIAL_REQUEST) {
+            std::cout << "I can authorize that special arrangement for you..." << std::endl;
         }
     } else if(nextHandler != nullptr){
-        std::cout<<"Manager escalating query..."<<std::endl;
+        std::cout << "Manager " << getName() << ": \"This is beyond my authority. Let me check with higher management.\"" << std::endl;
         nextHandler->handleQuery(query);
     } else{
-        std::cout<<"No further escalation possible for: "<<query.question<<std::endl;
+        std::cout << "Manager " << getName() << ": \"I'm unable to escalate this further, but I'll make note of your concern.\"" << std::endl;
     }
 }
 

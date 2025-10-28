@@ -2,7 +2,9 @@
 #include "Manager.h"
 
 Staff *ManagerFactory::createStaff(){
-    return new Manager("Manager Name", 0, nullptr, "operations");
+    static int counterForId = 3000; 
+    static int counterForName = 1;
+    return new Manager("Manager " + std::to_string(counterForName++), counterForId++, nullptr, "operations");
 }
 
 std::string ManagerFactory::getRoleName() const{

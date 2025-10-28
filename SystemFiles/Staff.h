@@ -23,9 +23,9 @@
 class Staff{
     protected:
         std::vector<CareCommand*> taskQueue;
-        InventoryMediator* inventoryCoordinator;
         std::string name;
         int id;
+        InventoryMediator* inventoryCoordinator;
     public:
         /**
          * @brief this is a constructor that constructs a Staff member with basic information

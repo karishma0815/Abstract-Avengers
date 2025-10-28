@@ -31,10 +31,15 @@ private:
     bool fertilized;
     std::string plantID;
     int exposureSunlightHours;
-    int lastWaterLevel;
+
+    //changed to double
+    double lastWaterLevel;
     std::string careInstruc;
     int price;
 
+
+    //added
+    bool isAlive;
 
 public:
 /**
@@ -74,7 +79,9 @@ public:
      * @brief Get the last recorded water level
      * @return Water level value
      */
-    int getLastWaterLevel();
+
+    //changes to double
+    double getLastWaterLevel();
      /**
      * @brief Set the name of the plant
      * @param n New name for the plant
@@ -112,6 +119,14 @@ public:
     //this is for when staff wants to set care instructions
     void setCareInstructions(const std::string& instructions);
 
+
+    //karishma added the functions
+    bool getIsAlive() const;
+    std::string getName() const;
+    void water(double amount);
+    void fertilize(const std::string& fertilizerType);
+    void prune(int intensity);
+    void provideSunlight(int hours, const std::string& intensity);
 };
 
 #endif 
