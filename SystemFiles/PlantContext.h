@@ -37,12 +37,12 @@ public:
 
     /**
      * @brief Construct a new PlantContext object
+     * @param plantInstance Pointer to a concrete Plant object (e.g., Rose, Tulip)
      * @param type Plant type identifier
      * @param season Current season
-     * @param species Plant species name
      * @param price Initial price of the plant
      */
-    PlantContext(std::string type, std::string season, std::string species, double price);
+    PlantContext(Plant* plantInstance, std::string type, std::string season, double price);
 
      /**
      * @brief Destructor that cleans up allocated resources

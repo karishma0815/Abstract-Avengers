@@ -3,12 +3,11 @@
 #include "SeedlingState.h"
 #include <iostream>
 
-PlantContext::PlantContext(std::string type, std::string season, 
-                           std::string, double price)
+PlantContext::PlantContext(Plant* plantInstance, std::string type, 
+                           std::string season, double price)
     : currentState(nullptr), fplantType(type), season(season),
-      fstateAge(0.0), fstatPrice(price) {
+      fstateAge(0.0), fstatPrice(price), plant(plantInstance) {
     
-    plant = new Plant(type, false, "PLANT001", 8, 5);
     currentState = new SeedlingState();
     currentState->setContext(this);
 }
