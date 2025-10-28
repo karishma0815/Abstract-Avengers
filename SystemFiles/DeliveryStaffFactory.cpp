@@ -2,7 +2,9 @@
 #include "DeliveryStaff.h"
 
 Staff *DeliveryStaffFactory::createStaff(){
-    return new DeliveryStaff("Delivery Staff Name", 0, nullptr, "truck");
+    static int idCounter = 4000;  // Different range
+    static int nameCounter = 1;
+    return new DeliveryStaff("Delivery Staff " + std::to_string(nameCounter++), idCounter++, nullptr, "truck");
 }
 
 std::string DeliveryStaffFactory::getRoleName() const{
