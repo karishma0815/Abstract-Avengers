@@ -19,3 +19,7 @@ std::string Tree::getSpecies() const {
 double Tree::getTotalValue() const {
     return price;
 }
+
+std::string Tree::getPlantType() const {
+    return "Tree";
+}

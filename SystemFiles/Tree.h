@@ -13,11 +13,12 @@ private:
     
 public:
     Tree(std::string name, double price, std::string species);
-    ~Tree() override;
+    ~Tree();
     
     int getCount() const override;
     std::string getSpecies() const;
     double getTotalValue() const override;
+    std::string getPlantType() const override;
 };
 
 #endif
