@@ -24,6 +24,7 @@ public:
     /**
      * @brief Constructs a PlantIterator for the given inventory
      * @param inventory Pointer to the PlantInventory to iterate over
+     * @param type Optional plant type filter
      */
     PlantIterator(PlantInventory* inventory,const std::string& type="");
     /**
@@ -61,9 +62,10 @@ public:
     void filterByType(PlantInventory* inventory);
 
     private:
-    std::vector<Plant*> plants;
     int currentIndex;   
     std::string type;//filter for iterating through plants
+    std::vector<Plant*> plants;
+    
 };
 #endif
 

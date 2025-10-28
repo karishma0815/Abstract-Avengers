@@ -45,8 +45,14 @@ void Plant::setLastWaterLevel(int level) {
 }
 
 std::string Plant::getCareInstructions() const {
-    std::string careInstruc2="Water level be maintained at "+std::to_string(lastWaterLevel)+
-    " and sunlight exposure should be around "+std::to_string(exposureSunlightHours)+" hours daily.";
+    // If explicit care instructions were set, return them (preferred).
+    if (!careInstruc.empty()) {
+        return careInstruc;
+    }
+
+    // Otherwise build a default care description from internal fields.
+    std::string careInstruc2 = "Water level be maintained at " + std::to_string(lastWaterLevel) +
+        " and sunlight exposure should be around " + std::to_string(exposureSunlightHours) + " hours daily.";
     if (fertilized) {
         careInstruc2 += " This plant is fertilized.";
     } else {

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -DSUPPORT_TEST_TOGGLES
 TARGET = nursery_system
 #test
 SRCS =  Arrangement.cpp\

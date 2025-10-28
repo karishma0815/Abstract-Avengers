@@ -9,7 +9,10 @@
 #include "CartIterator.h"
 #include <algorithm>
 
-PlantInventory::PlantInventory() {}
+PlantInventory::PlantInventory() {
+    //cartInventory=new PlantInventory();
+    cartInventory=nullptr;
+}
 
 PlantInventory::~PlantInventory() {
     
