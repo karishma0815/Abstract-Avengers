@@ -5,6 +5,7 @@
 #include "SucculentProduct.h"
 #include "FlowerProduct.h"
 #include "TreeProduct.h"
+#include "StockInventory.h"
 #include <vector>
 #include <string>
 
@@ -18,6 +19,7 @@ private:
     std::vector<SucculentProduct*> succulentStock;
     std::vector<FlowerProduct*> flowerStock;
     std::vector<TreeProduct*> treeStock;
+    StockInventory inventory;
     
     /**
      * @brief Notify all observers of stock change
@@ -25,6 +27,10 @@ private:
      * @param quantity Quantity changed
      * @param action "added" or "removed"
      */
+
+
+
+
     void notify(std::string plantType, int quantity, std::string action);
     
 public:
@@ -164,6 +170,15 @@ public:
      * @return Vector of TreeProduct pointers
      */
     std::vector<TreeProduct*> getTreeStock() const;
+
+
+
+    //this new method here
+//void StockManager::displayInventoryBreakdown() const;
+    void displayInventoryBreakdown() const;
 };
+
+
+
 
 #endif
