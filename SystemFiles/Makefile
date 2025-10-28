@@ -31,6 +31,33 @@ SRCS =  Arrangement.cpp\
 		ReadyForSaleState.cpp\
 		SoldState.cpp\
 		PlantContext.cpp\
+		StockManager.cpp \
+       	PlantFactory.cpp \
+       	FlowerFactory.cpp \
+       	SucculentFactory.cpp \
+       	TreeFactory.cpp \
+       	StockObserver.cpp \
+       	StaffNotificationObserver.cpp \
+       	InventoryObserver.cpp \
+       	Flower.cpp \
+       	Succulent.cpp \
+       	Tree.cpp \
+       	FlowerProduct.cpp \
+       	SucculentProduct.cpp \
+       	TreeProduct.cpp \
+       	FlowerGroup.cpp \
+       	SucculentGroup.cpp \
+       	TreeGroup.cpp \
+       	StockInventory.cpp \
+       	Rose.cpp \
+       	Lotus.cpp \
+       	Protea.cpp \
+       	Cacti.cpp \
+       	Jade.cpp \
+       	Orchid.cpp \
+       	Pine.cpp \
+       	Apple.cpp \
+       	Jacaranda.cpp\
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)

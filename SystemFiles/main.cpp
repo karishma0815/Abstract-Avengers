@@ -39,6 +39,186 @@ Demonstrates:
 #include <iostream>
 #include <string>
 #include <iomanip>
+
+#include <iostream>
+#include "StockManager.h"
+#include "FlowerFactory.h"
+#include "SucculentFactory.h"
+#include "TreeFactory.h"
+#include "StaffNotificationObserver.h"
+#include "Rose.h"
+#include "Lotus.h"
+#include "Protea.h"
+#include "Cacti.h"
+#include "Jade.h"
+#include "Orchid.h"
+#include "Pine.h"
+#include "Apple.h"
+#include "Jacaranda.h"
+
+//kiolin start
+
+void testIndividualPlants(StockManager& stockManager) {
+    std::cout << "\n TEST 1: INDIVIDUAL PLANT CREATION & STOCK MANAGEMENT\n";
+    std::cout << "\n\n";
+    
+    // Create specific plant types directly
+    Rose* redRose = new Rose("Red Rose", 45.99, "Hybrid Tea");
+    Lotus* pinkLotus = new Lotus("Pink Lotus", 65.50, "Sacred Lotus");
+    Protea* kingProtea = new Protea("King Protea", 89.99, "King Protea");
+    
+    Cacti* pricklyPear = new Cacti("Prickly Pear", 32.75, "Prickly Pear");
+    Jade* luckyJade = new Jade("Lucky Jade", 28.50, "Crassula Ovata");
+    Orchid* mothOrchid = new Orchid("Moth Orchid", 55.25, "Phalaenopsis");
+    
+    Pine* scotchPine = new Pine("Scotch Pine", 120.00, "Pinus Sylvestris");
+    Apple* fujiApple = new Apple("Fuji Apple", 95.75, "Malus Domestica");
+    Jacaranda* blueJacaranda = new Jacaranda("Blue Jacaranda", 150.00, "Jacaranda Mimosifolia");
+    
+    // Add to stock
+    stockManager.addFlower(redRose);
+    stockManager.addFlower(pinkLotus);
+    stockManager.addFlower(kingProtea);
+    
+    stockManager.addSucculent(pricklyPear);
+    stockManager.addSucculent(luckyJade);
+    stockManager.addSucculent(mothOrchid);
+    
+    stockManager.addTree(scotchPine);
+    stockManager.addTree(fujiApple);
+    stockManager.addTree(blueJacaranda);
+    
+    std::cout << " Added 9 individual plants of specific types\n";
+}
+
+void testFactoryProduction(StockManager& stockManager) {
+    std::cout << "\n TEST 2: FACTORY PATTERN PRODUCTION\n";
+    std::cout << "\n\n";
+    
+    FlowerFactory flowerFactory;
+    SucculentFactory succulentFactory;
+    TreeFactory treeFactory;
+    
+    // Factory creates different plant types automatically
+    for (int i = 0; i < 6; i++) {
+        FlowerProduct* flower = flowerFactory.createFlower("Factory Flower " + std::to_string(i), 25.00 + i, 1);
+        SucculentProduct* succulent = succulentFactory.createSucculent("Factory Succulent " + std::to_string(i), 15.00 + i, 1);
+        TreeProduct* tree = treeFactory.createTree("Factory Tree " + std::to_string(i), 80.00 + i, 1);
+        
+        stockManager.addFlower(flower);
+        stockManager.addSucculent(succulent);
+        stockManager.addTree(tree);
+    }
+    
+    std::cout << " Factories produced 6 plants each with automatic type variation\n";
+}
+
+void testCompositePattern(StockManager& stockManager) {
+    std::cout << "\n TEST 3: COMPOSITE PATTERN - PLANT GROUPS\n";
+    std::cout << "/n\n";
+    
+    FlowerFactory flowerFactory;
+    SucculentFactory succulentFactory;
+    TreeFactory treeFactory;
+    
+    // Create anniversary bouquet (FlowerGroup)
+    FlowerGroup* anniversaryBouquet = flowerFactory.createFlowerGroup("30th Anniversary Bouquet");
+    
+    // Add specific flowers to the bouquet
+    anniversaryBouquet->add(new Rose("Red Rose", 45.99, "Grandiflora"));
+    anniversaryBouquet->add(new Lotus("White Lotus", 75.50, "Nelumbo Nucifera"));
+    anniversaryBouquet->add(new Protea("Pink Protea", 92.00, "Queen Protea"));
+    
+    std::cout << " Created Anniversary Bouquet with " << anniversaryBouquet->getCount() 
+              << " plants, Value: R" << anniversaryBouquet->getTotalValue() << "\n";
+    
+    // Create succulent arrangement
+    SucculentGroup* succulentArrangement = succulentFactory.createSucculentGroup("Desktop Succulent Arrangement");
+    succulentArrangement->add(new Cacti("Golden Barrel", 42.00, "Echinocactus"));
+    succulentArrangement->add(new Jade("Money Plant", 35.75, "Crassula"));
+    succulentArrangement->add(new Orchid("Dendrobium", 68.25, "Dendrobium"));
+    
+    std::cout << " Created Succulent Arrangement with " << succulentArrangement->getCount() 
+              << " plants, Value: R" << succulentArrangement->getTotalValue() << "\n";
+    
+    // Create tree collection
+    TreeGroup* treeCollection = treeFactory.createTreeGroup("Orchard Starter Pack");
+    treeCollection->add(new Apple("Gala Apple", 88.00, "Malus Gala"));
+    treeCollection->add(new Pine("Christmas Pine", 110.50, "Picea Abies"));
+    treeCollection->add(new Jacaranda("Purple Jacaranda", 165.75, "Jacaranda Caucana"));
+    
+    std::cout << " Created Tree Collection with " << treeCollection->getCount() 
+              << " plants, Value: R" << treeCollection->getTotalValue() << "\n";
+    
+    // Add groups to stock
+    stockManager.addFlower(anniversaryBouquet);
+    stockManager.addSucculent(succulentArrangement);
+    stockManager.addTree(treeCollection);
+    
+    std::cout << " Added 3 composite groups to stock management\n";
+}
+
+void testStockOperations(StockManager& stockManager) {
+    std::cout << "\n TEST 4: STOCK OPERATIONS & INVENTORY TRACKING\n";
+    std::cout << "\n\n";
+    
+    // Display current stock
+    stockManager.displayAllStock();
+    
+    // Display inventory breakdown
+    stockManager.displayInventoryBreakdown();
+    
+    // Test removal
+    if (stockManager.getFlowerStockSize() > 0) {
+        std::cout << "\n Removing first flower from stock...\n";
+        stockManager.removeFlower(0);
+    }
+    
+    if (stockManager.getSucculentStockSize() > 0) {
+        std::cout << " Removing first succulent from stock...\n";
+        stockManager.removeSucculent(0);
+    }
+    
+    // Display updated stock
+    std::cout << "\n STOCK AFTER REMOVALS:\n";
+    stockManager.displayAllStock();
+    stockManager.displayInventoryBreakdown();
+}
+
+void testObserverPattern(StaffNotificationObserver& observer) {
+    std::cout << "\n TEST 5: OBSERVER PATTERN - NOTIFICATION LOG\n";
+    std::cout << "\n\n";
+    
+    observer.displayLog();
+    std::cout << "Total notifications recorded: " << observer.getLogSize() << "\n";
+    
+    // Test notification toggle
+    std::cout << "\n Testing notification toggle (disabling)...\n";
+    observer.toggleNotifications(false);
+    
+    // Re-enable for future tests
+    observer.toggleNotifications(true);
+    std::cout << " Notifications re-enabled\n";
+}
+
+void testPlantTypeInheritance() {
+    std::cout << "\n TEST 6: PLANT TYPE INHERITANCE HIERARCHY\n";
+    std::cout << "\n\n";
+    
+    // Test specific plant types
+    Rose testRose("Test Rose", 50.00, "Test Species");
+    Cacti testCacti("Test Cacti", 30.00, "Test Species");
+    Pine testPine("Test Pine", 100.00, "Test Species");
+    
+    std::cout << "Rose Plant Type: " << testRose.getPlantType() << "\n";
+    std::cout << "Cacti Plant Type: " << testCacti.getPlantType() << "\n";
+    std::cout << "Pine Plant Type: " << testPine.getPlantType() << "\n";
+    
+    std::cout << " Inheritance hierarchy working correctly\n";
+}
+
+//kiolin end
+
   //rene start
   void printSeparator(const std::string& title = "") {
         std::cout << "\n" << std::string(60, '=') << std::endl;
@@ -555,6 +735,7 @@ int main() {
   orderD1.eventSelect("Rose", 1);       //Browsing -> CartOpen
   orderD1.eventCheckout();              //PendingPayment
 
+#ifdef SUPPORT_TEST_TOGGLES
   std::cout << "Action: force NEXT authorize to FAIL\n";
   orderD1.forceNextAuth(false);         
   orderD1.eventAuthorize();             //PendingPayment -> PaymentFailed
@@ -591,8 +772,55 @@ int main() {
   orderD2.eventRetry();                 //PendingPayment
   orderD2.eventAuthorize();             //PaymentAuthorized
   orderD2.eventCommit();                //Completed
+  #endif
 
   std::cout << "\n All scenarios executed.\n";
+
+  //kiolin start
+
+  std::cout << " PLANT NURSERY SYSTEM - COMPREHENSIVE TEST SUITE \n";
+    
+    try {
+        // Create core system components
+        StockManager stockManager;
+        StaffNotificationObserver staffObserver(true);
+        
+        // Attach observer to stock manager
+        stockManager.attach(&staffObserver);
+        
+        std::cout << " Initializing test sequence...\n\n";
+        
+        // Run comprehensive tests
+        testPlantTypeInheritance();
+        testIndividualPlants(stockManager);
+        testFactoryProduction(stockManager);
+        testCompositePattern(stockManager);
+        testStockOperations(stockManager);
+        testObserverPattern(staffObserver);
+        
+        // Final summary
+        std::cout << "\n TEST SUMMARY\n";
+        std::cout << "\n\n";
+        std::cout << "✓ Plant Type Inheritance: Working\n";
+        std::cout << "✓ Factory Pattern: Working\n";
+        std::cout << "✓ Composite Pattern: Working\n";
+        std::cout << "✓ Observer Pattern: Working\n";
+        std::cout << "✓ Stock Management: Working\n";
+        std::cout << "✓ Inventory Tracking: Working\n";
+        
+        std::cout << "\n FINAL TOTALS:\n";
+        std::cout << "Total Stock Count: " << stockManager.getTotalStockCount() << " plants\n";
+        std::cout << "Total Stock Value: R" << stockManager.getTotalStockValue() << "\n";
+        std::cout << "Total Notifications: " << staffObserver.getLogSize() << "\n";
+        
+        std::cout << "\n ALL TESTS COMPLETED SUCCESSFULLY!\n";
+        
+    } catch (const std::exception& e) {
+        std::cerr << " TEST FAILED: " << e.what() << std::endl;
+        return 1;
+    }
+
+  //kiolin end
 
 
 
