@@ -58,6 +58,32 @@ SRCS =  Arrangement.cpp\
        	Pine.cpp \
        	Apple.cpp \
        	Jacaranda.cpp\
+		WaterCommand.cpp \
+		FertilizeCommand.cpp \
+		PruneCommand.cpp \
+		Gardener.cpp \
+		Staff.cpp \
+		SunlightCommand.cpp \
+		PlantIssue.cpp \
+		JuniorGardener.cpp \
+		SeniorGardener.cpp \
+		PlantSpecialist.cpp\
+		PlantCareHandler.cpp \
+		InventoryMediator.cpp \
+		NurseryInventoryMediator.cpp \
+		SalesAssistant.cpp \
+		Manager.cpp \
+		DeliveryStaff.cpp \
+		CustomerQueryHandler.cpp \
+		CustomerQuery.cpp \
+		JuniorStaff.cpp \
+		SalesExpert.cpp \
+		PlantExpert.cpp \
+		StaffFactory.cpp \
+		GardenerFactory.cpp \
+		SalesAssistantFactory.cpp \
+		ManagerFactory.cpp \
+		DeliveryStaffFactory.cpp \
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)
