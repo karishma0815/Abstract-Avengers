@@ -8,6 +8,7 @@
 
 #include "PlantContainer.h"
 #include <vector>
+#include <memory>
 
 /**
  * @class PlantInventory
@@ -46,11 +47,16 @@ public:
      * @param plant Pointer to the Plant to add
      */
     void add(Plant* plant) override;
+    // Adds a non-owning reference to a plant (useful for carts)
+    void addNonOwning(Plant* plant);
     /**
      * @brief Removes a plant from the inventory
      * @param plant Pointer to the Plant to remove
      */
     void remove(Plant* plant) override;
+    
+    // Remove a non-owning reference (does not delete the plant)
+    void removeNonOwning(Plant* plant);
     /**
      * @brief Gets the number of plants in the inventory
      * @return The size of the inventory
@@ -68,21 +74,25 @@ public:
      */
     Plant* getPlant(int index) const;
     /**
-     * @brief Gets the internal vector (for iterator access)
-     * @return Const reference to the vector of plants
+     * @brief Gets a snapshot list of raw Plant* pointers for iteration
+     * @return A vector of raw Plant* pointers (owned and non-owned)
      */
-    const std::vector<Plant*>& getPlants() const;
+    std::vector<Plant*> getPlants() const;
 
     //addTOCart function can be added here if needed
-    PlantInventory* getCartInventory() const;
+    PlantInventory* getCartInventory();
     
     void addToCart(Plant* plant) ;
 
     void removeFromCart(Plant* plant);
     
     private:
-    std::vector<Plant*> plants;
+    // Owned plant storage
+    std::vector<std::unique_ptr<Plant>> ownedPlants;
+    // Non-owning references (e.g., shopping cart references)
+    std::vector<Plant*> nonOwnedPlants;
     PlantInventory* cartInventory;///Inventory representing the customer's cart
+    bool isCart;  /// Whether this inventory is a cart (non-owning container)
 };
 
 #endif 

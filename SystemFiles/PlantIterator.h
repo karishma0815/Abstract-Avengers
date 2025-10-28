@@ -62,8 +62,9 @@ public:
     void filterByType(PlantInventory* inventory);
 
     private:
-    int currentIndex;   
     std::string type;//filter for iterating through plants
+    int currentIndex;   
+    
     std::vector<Plant*> plants;
     
 };

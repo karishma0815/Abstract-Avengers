@@ -7,7 +7,7 @@ Manager::Manager(const std::string &name, int id, InventoryMediator *med, const 
 }
 
 std::string Manager::getRole() const{
-    return "Manager (" + department + ")"
+    return "Manager (" + department + ")";
 }
 
 void Manager::careForPlants(){

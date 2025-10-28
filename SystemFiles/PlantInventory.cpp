@@ -9,17 +9,20 @@
 #include "CartIterator.h"
 #include <algorithm>
 
-PlantInventory::PlantInventory() {
-    //cartInventory=new PlantInventory();
-    cartInventory=nullptr;
+PlantInventory::PlantInventory() : cartInventory(nullptr), isCart(false) {
+    // Cart will be created on first use through getCartInventory()
 }
 
 PlantInventory::~PlantInventory() {
+    // ownedPlants will be automatically deleted via unique_ptr
+    ownedPlants.clear();
+    nonOwnedPlants.clear();
     
-    for (Plant* plant : plants) {
-        delete plant;
+    // Only delete cart if this is a main inventory
+    if (!isCart && cartInventory != nullptr) {
+        delete cartInventory;
+        cartInventory = nullptr;
     }
-    plants.clear();
 }
 
 Iterator* PlantInventory::createPlantIterator(PlantInventory* inventory) {
@@ -39,55 +42,81 @@ Iterator* PlantInventory::createCartIterator(PlantInventory* inventory) {
 }
 
 void PlantInventory::add(Plant* plant) {
-    if (plant != NULL) {
-        plants.push_back(plant);
+    if (plant != nullptr) {
+        ownedPlants.emplace_back(plant);
+    }
+}
+
+void PlantInventory::addNonOwning(Plant* plant) {
+    if (plant != nullptr) {
+        nonOwnedPlants.push_back(plant);
     }
 }
 
 void PlantInventory::remove(Plant* plant) {
-    auto it = std::find(plants.begin(), plants.end(), plant);
-    if (it != plants.end()) {
-        delete *it;
-        plants.erase(it);
+    // remove from ownedPlants
+    auto it = std::find_if(ownedPlants.begin(), ownedPlants.end(),
+                           [&](const std::unique_ptr<Plant>& p){ return p.get() == plant; });
+    if (it != ownedPlants.end()) {
+        ownedPlants.erase(it);
+        return;
+    }
+    // if not owned, try non-owned list
+    removeNonOwning(plant);
+}
+
+void PlantInventory::removeNonOwning(Plant* plant) {
+    auto it = std::find(nonOwnedPlants.begin(), nonOwnedPlants.end(), plant);
+    if (it != nonOwnedPlants.end()) {
+        nonOwnedPlants.erase(it);
     }
 }
 
 int PlantInventory::size() const {
-    return plants.size();
+    return static_cast<int>(ownedPlants.size() + nonOwnedPlants.size());
 }
 
 bool PlantInventory::isEmpty() const {
-    return plants.empty();
+    return ownedPlants.empty() && nonOwnedPlants.empty();
 }
 
 Plant* PlantInventory::getPlant(int index) const {
-    if (index >= 0 && index <static_cast<int>(plants.size())) {
-        return plants[index];
-        //what is the point of static cast here?
-        //to avoid warnings about comparing signed and unsigned integers
-        //since size() returns an unsigned type (size_t)
-        //and index is an int (signed)
-        //static_cast<int> converts size() result to int for safe comparison
+    int ownedCount = static_cast<int>(ownedPlants.size());
+    if (index >= 0 && index < ownedCount) {
+        return ownedPlants[index].get();
     }
-    return NULL;
+    int nonOwnedIndex = index - ownedCount;
+    if (nonOwnedIndex >= 0 && nonOwnedIndex < static_cast<int>(nonOwnedPlants.size())) {
+        return nonOwnedPlants[nonOwnedIndex];
+    }
+    return nullptr;
 }
 
-const std::vector<Plant*>& PlantInventory::getPlants() const {
-    return plants;
+std::vector<Plant*> PlantInventory::getPlants() const {
+    std::vector<Plant*> result;
+    result.reserve(ownedPlants.size() + nonOwnedPlants.size());
+    for (const auto& up : ownedPlants) result.push_back(up.get());
+    for (Plant* p : nonOwnedPlants) result.push_back(p);
+    return result;
 }
 
-PlantInventory* PlantInventory::getCartInventory() const {
+PlantInventory* PlantInventory::getCartInventory() {
+    // Lazy initialization of cart
+    if (!isCart && cartInventory == nullptr) {
+        cartInventory = new PlantInventory();
+        cartInventory->isCart = true;
+    }
     return cartInventory;
 }
 
 void PlantInventory::addToCart(Plant* plant) {
     if (cartInventory != nullptr && plant != nullptr) {
-        cartInventory->add(plant);
+        cartInventory->addNonOwning(plant);  // Use non-owning reference for cart
     }
 }
 
 void PlantInventory::removeFromCart(Plant* plant) {
     if (cartInventory != nullptr && plant != nullptr) {
-        cartInventory->remove(plant);
+        cartInventory->removeNonOwning(plant);  // Use non-owning remove for cart
     }
 }
