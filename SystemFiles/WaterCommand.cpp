@@ -1,6 +1,8 @@
 #include "WaterCommand.h"
 #include "Plant.h"
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 WaterCommand::WaterCommand(Plant *plant, double amount) : plant(plant), amount(amount){
 
@@ -14,7 +16,10 @@ void WaterCommand::execute(){
 }
 
 std::string WaterCommand::getDescription() const{
-    return "Water " + (plant ? plant->getName() : "Unknown Plant") + " with " + std::to_string(amount) + "L";
+    std::stringstream stringstream;
+    stringstream<<"Water "<<(plant ? plant->getName() : "Unknown Plant")<<" with "<<std::fixed<<std::setprecision(2)<<amount<<"L";
+    
+    return stringstream.str();
 }
 
 void WaterCommand::logAction() const{
