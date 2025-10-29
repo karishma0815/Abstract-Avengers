@@ -7,21 +7,16 @@
 StratContext::StratContext(RecommStrategy* recommStrategy, PricingStrategy* pricingStrategy):recommStrategy(recommStrategy), pricingStrategy(pricingStrategy) {}
 
 StratContext::~StratContext() {
-    delete recommStrategy;
-    delete pricingStrategy;
+    // Don't delete the strategy pointers - they're owned by unique_ptr
 }   
 
 void StratContext::setRecommStrategy(RecommStrategy* strategy) {
-    if (recommStrategy != nullptr) {
-        delete recommStrategy;
-    }
+    // Just update the pointer without deleting
     recommStrategy = strategy;
 }
 
 void StratContext::setPricingStrategy(PricingStrategy* strategy) {
-    if (pricingStrategy != nullptr) {
-        delete pricingStrategy;
-    }
+    // Just update the pointer without deleting
     pricingStrategy = strategy;
 }
 
