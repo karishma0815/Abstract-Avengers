@@ -14,7 +14,6 @@ SRCS =	Customer.cpp\
 		PlantContainer.cpp\
 		PriceRangeIterator.cpp\
 		PricingStrategy.cpp\
-		Promotional.cpp\
 		RecommStrategy.cpp\
 		RegularPrice.cpp\
 		RemoveFromCart.cpp\

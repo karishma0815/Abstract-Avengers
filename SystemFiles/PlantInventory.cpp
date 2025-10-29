@@ -59,6 +59,10 @@ void PlantInventory::remove(Plant* plant) {
                            [&](const std::unique_ptr<Plant>& p){ return p.get() == plant; });
     if (it != ownedPlants.end()) {
         ownedPlants.erase(it);
+        // If this plant was in a customer's cart, remove the non-owning reference
+        if (cartInventory != nullptr) {
+            cartInventory->removeNonOwning(plant);
+        }
         return;
     }
     // if not owned, try non-owned list
@@ -93,11 +97,17 @@ Plant* PlantInventory::getPlant(int index) const {
 }
 
 std::vector<Plant*> PlantInventory::getPlants() const {
-    std::vector<Plant*> result;
-    result.reserve(ownedPlants.size() + nonOwnedPlants.size());
-    for (const auto& up : ownedPlants) result.push_back(up.get());
-    for (Plant* p : nonOwnedPlants) result.push_back(p);
-    return result;
+    if (isCart) {
+        // If this is a cart, return only non-owned plants
+        return nonOwnedPlants;
+    } else {
+        // If this is main inventory, return both owned and non-owned plants
+        std::vector<Plant*> result;
+        result.reserve(ownedPlants.size() + nonOwnedPlants.size());
+        for (const auto& up : ownedPlants) result.push_back(up.get());
+        for (Plant* p : nonOwnedPlants) result.push_back(p);
+        return result;
+    }
 }
 
 PlantInventory* PlantInventory::getCartInventory() {
@@ -110,13 +120,17 @@ PlantInventory* PlantInventory::getCartInventory() {
 }
 
 void PlantInventory::addToCart(Plant* plant) {
-    if (cartInventory != nullptr && plant != nullptr) {
+    if (!isCart) {  // Only main inventory can add to cart
+        if (cartInventory == nullptr) {
+            cartInventory = new PlantInventory();
+            cartInventory->isCart = true;
+        }
         cartInventory->addNonOwning(plant);  // Use non-owning reference for cart
     }
 }
 
 void PlantInventory::removeFromCart(Plant* plant) {
-    if (cartInventory != nullptr && plant != nullptr) {
+    if (!isCart && cartInventory != nullptr && plant != nullptr) {
         cartInventory->removeNonOwning(plant);  // Use non-owning remove for cart
     }
 }
