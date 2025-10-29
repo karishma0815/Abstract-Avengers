@@ -245,6 +245,10 @@ int main() {
 #include "CartIterator.h"
 #include "PlantIterator.h"
 #include "PriceRangeIterator.h"
+// Command-pattern demo includes
+#include "Invoker.h"
+#include "AddToCart.h"
+#include "RemoveFromCart.h"
 
 void printHeader(const std::string& title) {
     std::cout << "\n=== " << title << " ===" << std::endl;
@@ -341,7 +345,77 @@ void simulateCustomerBrowsing() {
     //delete shoppingCart;      // This will delete cart contents
 }
 
+// A short, story-like scenario that demonstrates the Command pattern
+// using AddToCart and RemoveFromCart via the Invoker.
+void simulateCommandPatternScenario() {
+    printHeader("Command Pattern Scenario: Quick Shopping Story");
+
+    PlantInventory* nursery = new PlantInventory();
+
+    // Create a few plants and stock the nursery
+    Plant* aloe = new Plant("Aloe Vera", false, "C101", 6, 2, 20.0);
+    aloe->setCareInstructions("Easy: sparse watering, bright indirect light");
+    Plant* ivy = new Plant("English Ivy", false, "C102", 4, 3, 18.0);
+    ivy->setCareInstructions("Medium: regular watering, indirect light");
+    Plant* palm = new Plant("Parlor Palm", true, "C103", 5, 4, 40.0);
+    palm->setCareInstructions("Medium: weekly watering, indirect light");
+
+    nursery->add(aloe);
+    nursery->add(ivy);
+    nursery->add(palm);
+
+    // Create commands
+    AddToCart* addCmd = new AddToCart();
+    RemoveFromCart* removeCmd = new RemoveFromCart();
+
+    // Create an invoker (start with no active command)
+    Invoker inv(nullptr);
+
+    std::cout << "Narrator: A customer walks into the nursery..." << std::endl;
+
+    // Customer decides to add Aloe Vera to cart
+    std::cout << "Customer: 'I'll take that Aloe Vera.'" << std::endl;
+    inv.setCommand(addCmd);
+    inv.execute(aloe, nursery);
+
+    // Customer then spots the Parlor Palm and adds it too
+    std::cout << "Customer: 'And the Parlor Palm looks nice, add that too.'" << std::endl;
+    inv.setCommand(addCmd);
+    inv.execute(palm, nursery);
+
+    // Show current cart contents
+    std::cout << "\n-- Cart after additions --" << std::endl;
+    CartIterator cartIt(nursery->getCartInventory());
+    for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
+        Plant* p = cartIt.currentItem();
+        std::cout << " - " << p->getName() << " (R" << p->getPrice() << ")" << std::endl;
+    }
+
+    // Customer changes mind and removes the Aloe Vera
+    std::cout << "\nCustomer: 'Actually, I don't need the Aloe Vera.'" << std::endl;
+    inv.setCommand(removeCmd);
+    inv.execute(aloe, nursery);
+
+    // Final cart review
+    std::cout << "\n-- Final cart --" << std::endl;
+    CartIterator cartIt2(nursery->getCartInventory());
+    double total = 0.0;
+    for (cartIt2.first(); !cartIt2.isDone(); cartIt2.next()) {
+        Plant* p = cartIt2.currentItem();
+        std::cout << " - " << p->getName() << " (R" << p->getPrice() << ")" << std::endl;
+        total += p->getPrice();
+    }
+    std::cout << "Cart total: R" << total << std::endl;
+
+    // cleanup
+    delete addCmd;
+    delete removeCmd;
+    delete nursery; // deletes owned plants
+}
+
 int main() {
     simulateCustomerBrowsing();
-    return 0;
+    simulateCommandPatternScenario();
+ std::cout<<"Testing modifications made in the terminal\n";   
+ return 0;
 }
