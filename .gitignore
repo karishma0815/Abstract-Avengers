@@ -1,0 +1,17 @@
+# Compiled object files
+*.o
+
+# Executables (adjust name to match yours)
+main
+a.out
+*.exe
+
+# Build directories
+build/
+bin/
+
+# Other common C++ artifacts
+*.d
+*.so
+*.a
+*.dylib
