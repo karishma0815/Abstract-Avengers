@@ -1,17 +1,12 @@
-// Jade.h
 #ifndef JADE_H
 #define JADE_H
 #include "Succulent.h"
-#include "Plant.h"
 
 class Jade : public Succulent {
 public:
     Jade(std::string name, double price, std::string species = "Jade Plant");
     virtual ~Jade();
     std::string getPlantType() const override;
-    Plant* getPlant() const;
-private:    
-    Plant* plant;
 };
 
 #endif

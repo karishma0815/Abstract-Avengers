@@ -42,7 +42,8 @@ public:
      * @param season Current season
      * @param price Initial price of the plant
      */
-    PlantContext(Plant* plantInstance, std::string type, std::string season, double price);
+    PlantContext(const std::string& type, const std::string& name, double price, const std::string& species);
+
 
      /**
      * @brief Destructor that cleans up allocated resources

@@ -77,10 +77,6 @@ public:
     virtual int getLastWaterLevel() = 0;
 
     /**
-
-    //changes to double
-    double getLastWaterLevel();
-     /**
      * @brief Set the name of the plant
      * @param n New name for the plant
      */
@@ -109,7 +105,7 @@ public:
      * @param level Water level value to set
      */
     virtual void setLastWaterLevel(int level) = 0;
-    void setLastWaterLevel(int level);
+    //void setLastWaterLevel(int level);
     double getPrice() const;
     void setPrice(double price);
     //this is for careiterator
