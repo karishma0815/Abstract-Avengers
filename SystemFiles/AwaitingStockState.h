@@ -21,6 +21,7 @@ public:
 
   void onReplenished() override;
   void onCancel() override;
+  void onEnter();
 };
 
 #endif

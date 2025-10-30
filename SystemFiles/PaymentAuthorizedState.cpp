@@ -41,3 +41,6 @@ void PaymentAuthorizedState::onCancel()
   ctxFunc().notify("Cancelled after authorization.");
   ctxFunc().setState(CancelledState::instance());
 }
+
+void PaymentAuthorizedState::onEnter()
+{}

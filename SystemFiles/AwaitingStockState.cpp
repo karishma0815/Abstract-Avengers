@@ -32,3 +32,6 @@ void AwaitingStockState::onCancel()
   ctxFunc().notify("Order cancelled while awaiting stock.");
   ctxFunc().setState(CancelledState::instance());
 }
+
+void AwaitingStockState::onEnter()
+{}

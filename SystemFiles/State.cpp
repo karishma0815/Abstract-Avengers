@@ -59,3 +59,5 @@ void State::onCancel()
     ctxFunc().notify(getStateName() + " ignores: cancel"); 
 }
 
+void State::onEnter()
+{}

@@ -25,3 +25,6 @@ void CancelledState::enterState(Customer& customer, SalesContext& ctx)
   ctx.notify("Order cancelled.");
   ctx.clearOrder();
 }
+
+void CancelledState::onEnter()
+{}

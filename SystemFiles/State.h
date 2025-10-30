@@ -39,6 +39,8 @@ public:
   virtual void onRetry();
   virtual void onCancel();
 
+  virtual void onEnter(); //for customer query
+
 protected:
   SalesContext& ctxFunc() const 
   { 
