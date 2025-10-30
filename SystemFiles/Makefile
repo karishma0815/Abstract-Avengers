@@ -2,6 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 -Wall -DSUPPORT_TEST_TOGGLES
 TARGET = nursery_system
 #test
+
 SRCS =  Arrangement.cpp\
 		ConcreteArrangementBuilder.cpp\
 		Director.cpp\
@@ -84,6 +85,28 @@ SRCS =  Arrangement.cpp\
 		SalesAssistantFactory.cpp \
 		ManagerFactory.cpp \
 		DeliveryStaffFactory.cpp \
+		Customer.cpp\
+		AddToCart.cpp\
+		BulkDiscount.cpp\
+		CareIterator.cpp\
+		CartIterator.cpp\
+		CustomerCommand.cpp\
+		DefaultRecomm.cpp\
+		Invoker.cpp\
+		PlantContainer.cpp\
+		PriceRangeIterator.cpp\
+		PricingStrategy.cpp\
+		RecommStrategy.cpp\
+		RegularPrice.cpp\
+		RemoveFromCart.cpp\
+		StratContext.cpp\
+		SunlightRecomm.cpp\
+		WaterRecomm.cpp\
+		Command.cpp\
+		InventorySystem.cpp\
+		Iterator.cpp\
+		PlantInventory.cpp\
+		PlantIterator.cpp\
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)

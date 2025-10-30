@@ -8,7 +8,9 @@ double BulkDiscount::calculatePrice(int numberOfPlants,double basePrice,std::str
     if (numberOfPlants>=5)
     {
         std::cout<<"Bulk discount applied (75'%'off): ";
-        return basePrice*0.75;
+        double totalPrice= basePrice*numberOfPlants;
+        double discount=totalPrice*0.75;
+        return (totalPrice - discount);
     }
     return basePrice;
 }

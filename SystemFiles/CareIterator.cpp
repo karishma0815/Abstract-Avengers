@@ -4,6 +4,7 @@
  */
 #include "CareIterator.h"
 #include <algorithm>
+#include <iostream>
 
 CareIterator::CareIterator(PlantInventory* inventory, const std::string& care) :careKey(care) {
     if (inventory != nullptr) {
@@ -35,6 +36,7 @@ void CareIterator::filterByCare(PlantInventory* inventory) {
             // Check if keyword is found in care instructions
             if (careInstructions.find(lowerKeyword) != std::string::npos) {
                 filteredPlants.push_back(plant);
+                std::cout << "Added plant: " << plant->getName() << " with care instructions: " << plant->getCareInstructions() << std::endl;
             }
         }
     }

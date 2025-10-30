@@ -87,6 +87,32 @@ Demonstrates:
 #include "ManagerFactory.h"
 #include "DeliveryStaffFactory.h"
 
+///Customer_Sales/Iterator+cmd+strategy includes
+#include <vector>
+#include <memory>
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include "Plant.h"
+#include "PlantInventory.h"
+#include "CareIterator.h"
+#include "CartIterator.h"
+#include "PlantIterator.h"
+#include "PriceRangeIterator.h"
+// Command-pattern demo includes
+#include "Invoker.h"
+#include "AddToCart.h"
+#include "RemoveFromCart.h"
+// Strategy-pattern demo includes
+#include "StratContext.h"
+#include "PricingStrategy.h"
+#include "RegularPrice.h"
+#include "BulkDiscount.h"
+#include "RecommStrategy.h"
+#include "DefaultRecomm.h"
+#include "WaterRecomm.h"
+#include "SunlightRecomm.h"
+
 //kiolin start
 
 void testIndividualPlants(StockManager& stockManager) {
@@ -604,9 +630,222 @@ void testPlantTypeInheritance() {
   }
 //rene end
 
-static void printHeader(const std::string& title) {
-  std::cout << "\n===\n" << title << "\n===\n";
+
+//////////////////////////////////Customer_sales_Iterator+Cmd+Strategy(Sabira)\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/
+
+void printHeader(const std::string& title) {
+    std::cout << "\n=== " << title << " ===" << std::endl;
 }
+
+void printPlantDetails(Plant* plant) {
+    std::cout << std::left 
+              << std::setw(15) << plant->getName()
+              << "| Price: R" << std::setw(6) << plant->getPrice()
+              << "| Care: " << plant->getCareInstructions() << std::endl;
+}
+
+// Simulates a customer browsing session using different iterators
+void simulateCustomerBrowsing() {
+    printHeader("Plant Nursery - Customer Browsing Simulation");
+    
+    // Create our concrete aggregate (the plant inventory)
+    PlantInventory* nurseryInventory = new PlantInventory();
+    
+    // Stock the nursery with various plants
+    Plant* rose = new Plant("Rose", false, "P001", 6, 3, 25.0);
+    rose->setCareInstructions("High maintenance: Daily watering, weekly fertilizing");
+    
+    Plant* cactus = new Plant("Cactus", false, "P002", 8, 1, 15.0);
+    cactus->setCareInstructions("Low maintenance: Monthly watering, strong sunlight");
+    
+    Plant* fern = new Plant("Fern", true, "P003", 4, 4, 35.0);
+    fern->setCareInstructions("Medium maintenance: Weekly watering, indirect light");
+    
+    Plant* succulent = new Plant("Succulent", false, "P004", 6, 2, 18.0);
+    succulent->setCareInstructions("Low maintenance: Occasional watering, good drainage");
+    
+    Plant* orchid = new Plant("Orchid", true, "P005", 5, 4, 45.0);
+    orchid->setCareInstructions("High maintenance: Specific humidity and light needs");
+    
+    // Stock the nursery
+    nurseryInventory->add(rose);
+    nurseryInventory->add(cactus);
+    nurseryInventory->add(fern);
+    nurseryInventory->add(succulent);
+    nurseryInventory->add(orchid);
+
+    // Scenario 1: Customer browses all available plants
+    printHeader("Scenario 1: Customer Views All Plants");
+    std::cout << "Customer: 'Let me see what plants you have...'" << std::endl;
+    
+    PlantIterator browsePlants(nurseryInventory);
+    std::cout << "\nShowing all available plants:" << std::endl;
+    for (browsePlants.first(); !browsePlants.isDone(); browsePlants.next()) {
+        printPlantDetails(browsePlants.currentItem());
+    }
+    
+    // Scenario 2: Customer looks for low-maintenance plants
+    printHeader("Scenario 2: Customer Searches for Low-Maintenance Plants");
+    std::cout << "Customer: 'I'm looking for plants that are easy to care for...'" << std::endl;
+    
+    CareIterator easyCarePlants(nurseryInventory, "low");
+    std::cout << "\nShowing low-maintenance plants:" << std::endl;
+    for (easyCarePlants.first(); !easyCarePlants.isDone(); easyCarePlants.next()) {
+        printPlantDetails(easyCarePlants.currentItem());
+    }
+
+    // Scenario 3: Customer has a specific budget
+    printHeader("Scenario 3: Customer Browses by Price Range");
+    std::cout << "Customer: 'What plants do you have between R15 and R25?'" << std::endl;
+    
+    PriceRangeIterator budgetPlants(nurseryInventory, 15.0, 25.0);
+    std::cout << "\nShowing plants in price range R15-R25:" << std::endl;
+    for (budgetPlants.first(); !budgetPlants.isDone(); budgetPlants.next()) {
+        printPlantDetails(budgetPlants.currentItem());
+    }
+
+    // Scenario 4: Customer adds items to cart and reviews
+    //this one is not working so well.
+    printHeader("Scenario 4: Customer Shopping Cart");
+    std::cout << "Customer: 'I'll take the cactus and the succulent...'" << std::endl;
+    
+    // Add items to cart using the main inventory's cart
+    nurseryInventory->addToCart(cactus);    // Add cactus to cart
+    nurseryInventory->addToCart(succulent); // Add succulent to cart
+    
+    CartIterator cartIterator(nurseryInventory->getCartInventory());
+    std::cout << "\nReviewing shopping cart:" << std::endl;
+    double total = 0.0;
+    for (cartIterator.first(); !cartIterator.isDone(); cartIterator.next()) {
+        Plant* plant = cartIterator.currentItem();
+        printPlantDetails(plant);
+        total += plant->getPrice();
+    }
+    std::cout << "\nCart Total: R" << total << std::endl;
+
+    // Cleanup
+    delete nurseryInventory;  // This will delete all plants in inventory
+    //delete shoppingCart;      // This will delete cart contents
+}
+
+// A short, story-like scenario that demonstrates the Command pattern
+// using AddToCart and RemoveFromCart via the Invoker.
+void simulateCommandPatternScenario() {
+    printHeader("Command Pattern Scenario: Quick Shopping Story");
+
+    PlantInventory* nursery = new PlantInventory();
+
+    // Create a few plants and stock the nursery
+    Plant* aloe = new Plant("Aloe Vera", false, "C101", 6, 2, 20.0);
+    aloe->setCareInstructions("Easy: sparse watering, bright indirect light");
+    Plant* ivy = new Plant("English Ivy", false, "C102", 4, 3, 18.0);
+    ivy->setCareInstructions("Medium: regular watering, indirect light");
+    Plant* palm = new Plant("Parlor Palm", true, "C103", 5, 4, 40.0);
+    palm->setCareInstructions("Medium: weekly watering, indirect light");
+
+    nursery->add(aloe);
+    nursery->add(ivy);
+    nursery->add(palm);
+
+    // Create commands
+    AddToCart* addCmd = new AddToCart();
+    RemoveFromCart* removeCmd = new RemoveFromCart();
+
+    // Create an invoker (start with no active command)
+    Invoker inv(nullptr);
+
+    std::cout << "Narrator: A customer walks into the nursery..." << std::endl;
+
+    // Customer decides to add Aloe Vera to cart
+    std::cout << "Customer: 'I'll take that Aloe Vera.'" << std::endl;
+    inv.setCommand(addCmd);
+    inv.execute(aloe, nursery);
+
+    // Customer then spots the Parlor Palm and adds it too
+    std::cout << "Customer: 'And the Parlor Palm looks nice, add that too.'" << std::endl;
+    inv.setCommand(addCmd);
+    inv.execute(palm, nursery);
+
+    // Show current cart contents
+    std::cout << "\n-- Cart after additions --" << std::endl;
+    CartIterator cartIt(nursery->getCartInventory());
+    for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
+        Plant* p = cartIt.currentItem();
+        std::cout << " - " << p->getName() << " (R" << p->getPrice() << ")" << std::endl;
+    }
+
+    // Customer changes mind and removes the Aloe Vera
+    std::cout << "\nCustomer: 'Actually, I don't need the Aloe Vera.'" << std::endl;
+    inv.setCommand(removeCmd);
+    inv.execute(aloe, nursery);
+
+    // Final cart review
+    std::cout << "\n-- Final cart --" << std::endl;
+    CartIterator cartIt2(nursery->getCartInventory());
+    double total = 0.0;
+    for (cartIt2.first(); !cartIt2.isDone(); cartIt2.next()) {
+        Plant* p = cartIt2.currentItem();
+        std::cout << " - " << p->getName() << " (R" << p->getPrice() << ")" << std::endl;
+        total += p->getPrice();
+    }
+    std::cout << "Cart total: R" << total << std::endl;
+
+    // cleanup
+    delete addCmd;
+    delete removeCmd;
+    delete nursery; // deletes owned plants
+}
+
+// Demonstrates both pricing strategies and recommendation strategies
+void simulateStrategyPatternScenario() {
+    printHeader("Strategy Pattern Scenario: Pricing and Recommendations");
+    
+    // Create strategies using unique_ptr for automatic cleanup
+    std::unique_ptr<PricingStrategy> regularPrice(new RegularPrice());
+    std::unique_ptr<PricingStrategy> bulkDiscount(new BulkDiscount());
+    std::unique_ptr<RecommStrategy> defaultRecomm(new DefaultRecomm());
+    std::unique_ptr<RecommStrategy> waterRecomm(new WaterRecomm());
+    std::unique_ptr<RecommStrategy> sunlightRecomm(new SunlightRecomm());
+    
+    std::cout << "Welcome to our plant store! Let me help you with some recommendations and pricing options.\n" << std::endl;
+    
+    // Create strategy context with initial strategies (raw pointers, but owned by unique_ptr)
+    StratContext context(defaultRecomm.get(), regularPrice.get());
+    
+    // Scenario 1: Regular price for single item
+    std::cout << "\nScenario 1: Customer buying a single Rose" << std::endl;
+    std::cout << "Staff: 'For a single Rose, we use our regular pricing.'" << std::endl;
+    double regularPriceResult = context.executePricingStrategy(1, 25.0, "");
+    std::cout << "Regular price for 1 Rose: R" << regularPriceResult << std::endl;
+    
+    // Scenario 2: Bulk discount for multiple items
+    std::cout << "\nScenario 2: Customer buying multiple Roses (bulk)" << std::endl;
+    std::cout << "Staff: 'For bulk purchases, we offer special discounts!'" << std::endl;
+    context.setPricingStrategy(bulkDiscount.get());
+    double bulkPriceResult = context.executePricingStrategy(10, 25.0, "BULK10");
+    std::cout << "Bulk price for 10 Roses: R" << bulkPriceResult << std::endl;
+    
+    // Scenario 3: Get plant recommendations based on different criteria
+    std::cout << "\nScenario 3: Customer seeking plant recommendations" << std::endl;
+    std::cout << "Customer: 'Can you help me choose some plants?'" << std::endl;
+    
+    // Default recommendations
+    std::cout << "\nStaff: 'Here are our general recommendations:'" << std::endl;
+    context.executeRecommStrategy();
+    
+    // Water-based recommendations
+    std::cout << "\nCustomer: 'I'm looking for low-maintenance plants that don't need much water.'" << std::endl;
+    context.setRecommStrategy(waterRecomm.get());
+    context.executeRecommStrategy();
+    
+    // Sunlight-based recommendations
+    std::cout << "\nCustomer: 'What about plants that do well in shade?'" << std::endl;
+    context.setRecommStrategy(sunlightRecomm.get());
+    context.executeRecommStrategy();
+    
+    // No manual cleanup needed - unique_ptr will handle it
+}
+////////////////////////////////////////////Customer_sales_Iterator+cmd+strategy ends here\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/
 
 int main() {
   std::cout << "=== Abstract Avengers: Greenhouse Personalization & Sales ===\n";
@@ -803,12 +1042,12 @@ int main() {
   orderD2.eventRetry();                 //PendingPayment
   orderD2.eventAuthorize();             //PaymentAuthorized
   orderD2.eventCommit();                //Completed
-  #endif
 
-  std::cout << "\n All scenarios executed.\n";
+#endif
+
 
   //kiolin start
-
+    std::cout<<"\n\n\n";
   std::cout << " PLANT NURSERY SYSTEM - COMPREHENSIVE TEST SUITE \n";
     
     try {
@@ -1437,5 +1676,11 @@ int main() {
     delete factorySalesAsst2;
 
   //karishma end
+
+    std::cout<<"\n\n\n";
+  std::cout<<"Testing Customer Browsing\n\n";
+    simulateCustomerBrowsing();
+    simulateCommandPatternScenario();
+    simulateStrategyPatternScenario();
     return 0;
   }
