@@ -1,2 +1,3 @@
-#include "Iterator.h"
+#include"Iterator.h"
 
+Iterator::~Iterator() {}

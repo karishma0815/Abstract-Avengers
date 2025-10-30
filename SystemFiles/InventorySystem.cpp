@@ -12,9 +12,9 @@ InventorySystem::~InventorySystem() {
 
 void InventorySystem::addPlant(Plant* plant, bool ready) {
     if (ready) {
-        plantCollection->addPlant(plant);
+        plantCollection->add(plant);
     } else {
-        growing->addPlant(plant);
+        growing->add(plant);
     }
 }
 
