@@ -9,6 +9,7 @@
 #include "PlantContainer.h"
 #include <vector>
 #include <memory>
+#include<iostream>
 
 /**
  * @class PlantInventory
@@ -85,6 +86,36 @@ public:
     void addToCart(Plant* plant) ;
 
     void removeFromCart(Plant* plant);
+
+   /**
+ * @file DecorationInventory.h
+ * @brief Manages dynamic decoration inventory
+ */
+
+    void addGiftWrap(const std::string& color);
+
+    void addPot(const std::string& color);
+
+    void addNote(const std::string& color);
+    
+    // Remove decoration options
+    void removeGiftWrap(const std::string& color);
+
+    void removePot(const std::string& color);
+
+    void removeNote(const std::string& color);
+    
+    /// @brief Get Giftwrap options(for the customer)
+    /// @return
+    const std::vector<std::string>& getGiftWraps() const; 
+
+    const std::vector<std::string>& getPots() const ;
+
+    const std::vector<std::string>& getNotes() const;
+    
+    /// @brief Display all decorations
+
+    void displayAllOptions() const;
     
     private:
     // Owned plant storage
@@ -93,6 +124,9 @@ public:
     std::vector<Plant*> nonOwnedPlants;
     PlantInventory* cartInventory;///Inventory representing the customer's cart
     bool isCart;  /// Whether this inventory is a cart (non-owning container)
+    std::vector<std::string> giftWraps;
+    std::vector<std::string> pots;
+    std::vector<std::string> notes;
 };
 
 #endif 

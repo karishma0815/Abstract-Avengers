@@ -11,6 +11,9 @@
 
 PlantInventory::PlantInventory() : cartInventory(nullptr), isCart(false) {
     // Cart will be created on first use through getCartInventory()
+    giftWraps = {"Black", "White"};
+    pots = {"Black", "Brown", "White"};
+    notes = {"White", "Pink", "Blue"};
 }
 
 PlantInventory::~PlantInventory() {
@@ -133,4 +136,66 @@ void PlantInventory::removeFromCart(Plant* plant) {
     if (!isCart && cartInventory != nullptr && plant != nullptr) {
         cartInventory->removeNonOwning(plant);  // Use non-owning remove for cart
     }
+}
+
+void PlantInventory::addGiftWrap(const std::string& color) {
+    if (std::find(giftWraps.begin(), giftWraps.end(), color) == giftWraps.end()) {
+        giftWraps.push_back(color);
+    }
+}
+
+void PlantInventory::addPot(const std::string& color) {
+    if (std::find(pots.begin(), pots.end(), color) == pots.end()) {
+        pots.push_back(color);
+    }
+}
+
+void PlantInventory::addNote(const std::string& color) {
+    if (std::find(notes.begin(), notes.end(), color) == notes.end()) {
+        notes.push_back(color);
+    }
+}
+
+void PlantInventory::removeGiftWrap(const std::string& color) {
+    auto it = std::find(giftWraps.begin(), giftWraps.end(), color);
+    if (it != giftWraps.end()) {
+        giftWraps.erase(it);
+    }
+}
+
+void PlantInventory::removePot(const std::string& color) {
+    auto it = std::find(pots.begin(), pots.end(), color);
+    if (it != pots.end()) {
+        pots.erase(it);
+    }
+}
+
+void PlantInventory::removeNote(const std::string& color) {
+    auto it = std::find(notes.begin(), notes.end(), color);
+    if (it != notes.end()) {
+        notes.erase(it);
+    }
+}
+
+void PlantInventory::displayAllOptions() const {
+    std::cout << "\n╔════════════════════════════════════╗\n";
+    std::cout << "║   Available Decoration Options     ║\n";
+    std::cout << "╚════════════════════════════════════╝\n\n";
+    
+    std::cout << "🎁 Gift Wrap Colors:\n";
+    for (size_t i = 0; i < giftWraps.size(); ++i) {
+        std::cout << "   " << (i + 1) << ". " << giftWraps[i] << "\n";
+    }
+    
+    std::cout << "\n🪴 Pot Colors:\n";
+    for (size_t i = 0; i < pots.size(); ++i) {
+        std::cout << "   " << (i + 1) << ". " << pots[i] << "\n";
+    }
+    
+    std::cout << "\n📝 Note Colors:\n";
+    for (size_t i = 0; i < notes.size(); ++i) {
+        std::cout << "   " << (i + 1) << ". " << notes[i] << "\n";
+    }
+    
+    std::cout << "\n════════════════════════════════════\n";
 }

@@ -8,6 +8,7 @@ SRCS =  Arrangement.cpp\
 		Director.cpp\
 		ItemDecorator.cpp\
 		DecorativePot.cpp\
+		Customer.cpp\
 		GiftWrap.cpp\
 		Note.cpp\
 		PlantItem.cpp\
@@ -23,7 +24,6 @@ SRCS =  Arrangement.cpp\
 		PaymentFailedState.cpp\
 		CompletedState.cpp\
 		CancelledState.cpp\
-		Customer.cpp\
 		Plant.cpp\
 		PlantState.cpp\
 		SeedlingState.cpp\
@@ -84,8 +84,7 @@ SRCS =  Arrangement.cpp\
 		GardenerFactory.cpp \
 		SalesAssistantFactory.cpp \
 		ManagerFactory.cpp \
-		DeliveryStaffFactory.cpp \
-		Customer.cpp\
+		DeliveryStaffFactory.cpp\
 		AddToCart.cpp\
 		BulkDiscount.cpp\
 		CareIterator.cpp\
