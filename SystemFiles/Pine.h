@@ -6,8 +6,8 @@
 class Pine : public Tree {
 public:
     Pine(std::string name, double price, std::string species = "Pine");
-    ~Pine();
-    std::string getPlantType() const;
+    virtual ~Pine();
+    std::string getPlantType() const override;
 };
 
 #endif

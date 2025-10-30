@@ -1,4 +1,3 @@
-// Lotus.cpp
 #include "Lotus.h"
 
 Lotus::Lotus(std::string name, double price, std::string species)

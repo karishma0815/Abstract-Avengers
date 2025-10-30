@@ -6,8 +6,9 @@
 class Rose : public Flower {
 public:
     Rose(std::string name, double price, std::string species = "Rose");
-    ~Rose();
+    virtual ~Rose();
     std::string getPlantType() const override;
 };
 
 #endif
+

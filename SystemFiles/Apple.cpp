@@ -1,4 +1,3 @@
-// Apple.cpp
 #include "Apple.h"
 
 Apple::Apple(std::string name, double price, std::string species)
@@ -8,6 +7,6 @@ Apple::Apple(std::string name, double price, std::string species)
 Apple::~Apple() {
 }
 
-std::string Apple::getPlantType() const{
+std::string Apple::getPlantType() const {
     return "Apple Tree";
 }

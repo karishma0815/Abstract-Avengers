@@ -1,47 +1,41 @@
 #ifndef SUCCULENT_H
 #define SUCCULENT_H
 
+#include "Plant.h"
 #include "SucculentProduct.h"
+#include <string>
 
 /**
  * @class Succulent
- * @brief Concrete leaf product for individual succulents
+ * @brief Concrete product for succulents, inherits from Plant
  */
-class Succulent : public SucculentProduct {
-private:
+class Succulent : public Plant,public SucculentProduct {
+protected:
     std::string species;
+    std::string name;
+    double price;
     
 public:
-    /**
-     * @brief Constructor
-     * @param name Name of the succulent
-     * @param price Price of the succulent
-     * @param species Species of the succulent
-     */
     Succulent(std::string name, double price, std::string species);
+    virtual ~Succulent();
     
-    /**
-     * @brief Destructor
-     */
-    ~Succulent() override;
+    // Implement pure virtual functions from Plant
+    std::string getName();
+    bool isFertilized();
+    std::string getPlantID();
+    int getExposureSunlightHours();
+    int getLastWaterLevel();
+    void setName(const std::string& n);
+    void setFertilized(bool fert);
+    void setPlantID(const std::string& id);
+    void setExposureSunlightHours(int hours);
+    void setLastWaterLevel(int level);
     
-    /**
-     * @brief Get count - always 1 for individual plant
-     * @return 1
-     */
-    int getCount() const override;
-    
-    /**
-     * @brief Get the species
-     * @return Species name
-     */
+    // Succulent-specific methods
+    virtual std::string getPlantType() const;
     std::string getSpecies() const;
-    
-    /**
-     * @brief Get total value - same as price for leaf
-     * @return Price of this succulent
-     */
-    double getTotalValue() const override;
+    int getCount() const;
+    double getTotalValue() const;
 };
 
 #endif

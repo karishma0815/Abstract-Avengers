@@ -1,4 +1,3 @@
-// Rose.cpp
 #include "Rose.h"
 
 Rose::Rose(std::string name, double price, std::string species)

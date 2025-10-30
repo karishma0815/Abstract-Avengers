@@ -1,4 +1,3 @@
-// Pine.cpp
 #include "Pine.h"
 
 Pine::Pine(std::string name, double price, std::string species)
@@ -8,6 +7,6 @@ Pine::Pine(std::string name, double price, std::string species)
 Pine::~Pine() {
 }
 
-std::string Pine::getPlantType() const{
+std::string Pine::getPlantType() const {
     return "Pine";
 }

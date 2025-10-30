@@ -1,11 +1,11 @@
 /**
  * @file Plant.h
- * @brief Basic plant entity class containing core plant attributes
+ * @brief Abstract plant entity class defining interface for plant attributes
  * @author Rene Reddy
  * @date 26/09/2025
  * 
- * This file defines the Plant class which represents the basic attributes
- * of a plant including its name, fertilization status, identification,
+ * This file defines the abstract Plant class which represents the interface
+ * for plant attributes including name, fertilization status, identification,
  * sunlight exposure, and water level.
  */
 
@@ -16,15 +16,13 @@
 
 /**
  * @class Plant
- * @brief Represents a plant entity with its basic attributes
+ * @brief Abstract base class representing a plant entity interface
  * 
- * The Plant class encapsulates fundamental plant information such as name,
- * fertilization status, unique identifier, sunlight exposure hours, and
- * last recorded water level. This class provides getters and setters for
- * all plant attributes.
+ * The Plant class defines the interface for fundamental plant information 
+ * such as name, fertilization status, unique identifier, sunlight exposure 
+ * hours, and last recorded water level. All getters and setters are pure 
+ * virtual functions that must be implemented by derived classes.
  */
-
-
 class Plant {
 private:
     std::string name;
@@ -42,75 +40,72 @@ private:
     bool isAlive;
 
 public:
-/**
-     * @brief Construct a new Plant object
-     * @param name Name of the plant
-     * @param fert Fertilization status
-     * @param id Unique plant identifier
-     * @param sunHours Hours of sunlight exposure
-     * @param waterLevel Last water level measurement
+    /**
+     * @brief Virtual destructor
      */
+    virtual ~Plant() = default;
     Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel,int price);
     
     /**
      * @brief Get the name of the plant
      * @return Plant name as string
      */
-    std::string getName();
+    virtual std::string getName() = 0;
 
-     /**
+    /**
      * @brief Check if the plant has been fertilized
      * @return True if fertilized, false otherwise
      */
-    bool isFertilized();
+    virtual bool isFertilized() = 0;
 
     /**
      * @brief Get the unique plant identifier
      * @return Plant ID as string
      */
-    std::string getPlantID();
+    virtual std::string getPlantID() = 0;
+
     /**
      * @brief Get the sunlight exposure hours
      * @return Number of hours of sunlight exposure
      */
-    int getExposureSunlightHours();
+    virtual int getExposureSunlightHours() = 0;
 
     /**
      * @brief Get the last recorded water level
      * @return Water level value
      */
+    virtual int getLastWaterLevel() = 0;
 
-    //changes to double
-    double getLastWaterLevel();
-     /**
+    /**
      * @brief Set the name of the plant
      * @param n New name for the plant
      */
-    void setName(const std::string& n);
+    virtual void setName(const std::string& n) = 0;
 
-     /**
+    /**
      * @brief Set the fertilization status
      * @param fert Fertilization status to set
      */
-    void setFertilized(bool fert);
+    virtual void setFertilized(bool fert) = 0;
 
     /**
      * @brief Set the plant identifier
      * @param id New plant ID
      */
-    void setPlantID(const std::string& id);
+    virtual void setPlantID(const std::string& id) = 0;
 
     /**
      * @brief Set the sunlight exposure hours
      * @param hours Number of sunlight exposure hours
      */
-    void setExposureSunlightHours(int hours);
+    virtual void setExposureSunlightHours(int hours) = 0;
 
-     /**
+    /**
      * @brief Set the water level
      * @param level Water level value to set
      */
-    void setLastWaterLevel(int level);
+    virtual void setLastWaterLevel(int level) = 0;
+    //void setLastWaterLevel(int level);
     double getPrice() const;
     void setPrice(double price);
     //this is for careiterator
@@ -129,4 +124,4 @@ public:
     void provideSunlight(int hours, const std::string& intensity);
 };
 
-#endif 
+#endif

@@ -1,4 +1,3 @@
-// Orchid.cpp
 #include "Orchid.h"
 
 Orchid::Orchid(std::string name, double price, std::string species)

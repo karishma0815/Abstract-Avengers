@@ -1,4 +1,3 @@
-// Protea.cpp
 #include "Protea.h"
 
 Protea::Protea(std::string name, double price, std::string species)

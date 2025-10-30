@@ -1,4 +1,3 @@
-// Cacti.cpp
 #include "Cacti.h"
 
 Cacti::Cacti(std::string name, double price, std::string species)
