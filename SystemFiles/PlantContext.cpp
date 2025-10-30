@@ -8,6 +8,7 @@ PlantContext::PlantContext(Plant* plantInstance, std::string type,
     : currentState(nullptr), fplantType(type), season(season),
       fstateAge(0.0), fstatPrice(price), plant(plantInstance) {
     
+    plant = new Plant(type, false, "PLANT001", 8, 5, 50);
     currentState = new SeedlingState();
     currentState->setContext(this);
 }

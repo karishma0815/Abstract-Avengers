@@ -1,33 +1,27 @@
 #include "WaterCommand.h"
+#include "Plant.h"
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
-WaterCommand::WaterCommand(Plant* plant, int amt) 
-    : plant(plant), amount(amt) {}
+WaterCommand::WaterCommand(Plant *plant, double amount) : plant(plant), amount(amount){
 
-WaterCommand::~WaterCommand() {}
-
-void WaterCommand::execute() {
-    std::cout << "Watering plant '" << plant->getName() 
-              << "' with " << amount << " units of water" << std::endl;
-
-    int previousLevel = plant->getLastWaterLevel();
-    int newLevel = previousLevel + amount;
-    plant->setLastWaterLevel(newLevel);
-    
-    std::cout << "Water level increased from " << previousLevel 
-              << " to " << newLevel << std::endl;
 }
 
-void WaterCommand::undo() {
-    std::cout << "Undoing water command for plant '" << plant->getName() << "'" << std::endl;
-    
-    int newLevel = plant->getLastWaterLevel() - amount;
-    if (newLevel < 0) newLevel = 0;
-    plant->setLastWaterLevel(newLevel);
-    
-    std::cout << "Water level restored to " << newLevel << std::endl;
+void WaterCommand::execute(){
+    if (plant != nullptr && plant->getIsAlive()) {
+        plant->water(amount);
+        logAction();
+    }
 }
 
-bool WaterCommand::isCommand() {
-    return true;
+std::string WaterCommand::getDescription() const{
+    std::stringstream stringstream;
+    stringstream<<"Water "<<(plant ? plant->getName() : "Unknown Plant")<<" with "<<std::fixed<<std::setprecision(2)<<amount<<"L";
+    
+    return stringstream.str();
+}
+
+void WaterCommand::logAction() const{
+    std::cout<<"[LOG] WaterCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown plant")<<" | Amount: "<<amount<<"L"<<std::endl;
 }

@@ -24,11 +24,27 @@
  * virtual functions that must be implemented by derived classes.
  */
 class Plant {
+private:
+    std::string name;
+    bool fertilized;
+    std::string plantID;
+    int exposureSunlightHours;
+
+    //changed to double
+    double lastWaterLevel;
+    std::string careInstruc;
+    int price;
+
+
+    //added
+    bool isAlive;
+
 public:
     /**
      * @brief Virtual destructor
      */
     virtual ~Plant() = default;
+    Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel,int price);
     
     /**
      * @brief Get the name of the plant
@@ -61,6 +77,10 @@ public:
     virtual int getLastWaterLevel() = 0;
 
     /**
+
+    //changes to double
+    double getLastWaterLevel();
+     /**
      * @brief Set the name of the plant
      * @param n New name for the plant
      */
@@ -89,6 +109,23 @@ public:
      * @param level Water level value to set
      */
     virtual void setLastWaterLevel(int level) = 0;
+    void setLastWaterLevel(int level);
+    double getPrice() const;
+    void setPrice(double price);
+    //this is for careiterator
+    std::string getCareInstructions() const;
+
+    //this is for when staff wants to set care instructions
+    void setCareInstructions(const std::string& instructions);
+
+
+    //karishma added the functions
+    bool getIsAlive() const;
+    std::string getName() const;
+    void water(double amount);
+    void fertilize(const std::string& fertilizerType);
+    void prune(int intensity);
+    void provideSunlight(int hours, const std::string& intensity);
 };
 
 #endif

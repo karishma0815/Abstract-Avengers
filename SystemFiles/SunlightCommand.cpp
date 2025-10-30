@@ -1,33 +1,22 @@
 #include "SunlightCommand.h"
+#include "Plant.h"
 #include <iostream>
 
-SunlightCommand::SunlightCommand(Plant* plant, int hours) 
-    : plant(plant), exposureHours(hours) {}
+SunlightCommand::SunlightCommand(Plant *plant, int hours, const std::string &intensity) : plant(plant), hours(hours), intensity(intensity){
 
-SunlightCommand::~SunlightCommand() {}
-
-void SunlightCommand::execute() {
-    std::cout << "Exposing plant '" << plant->getName() 
-              << "' to " << exposureHours << " hours of sunlight" << std::endl;
-
-    int previousExposure = plant->getExposureSunlightHours();
-    int newExposure = previousExposure + exposureHours;
-    plant->setExposureSunlightHours(newExposure);
-    
-    std::cout << "Sunlight exposure increased from " << previousExposure 
-              << " to " << newExposure << " hours" << std::endl;
 }
 
-void SunlightCommand::undo() {
-    std::cout << "Undoing sunlight command for plant '" << plant->getName() << "'" << std::endl;
-    
-    int newExposure = plant->getExposureSunlightHours() - exposureHours;
-    if (newExposure < 0) newExposure = 0;
-    plant->setExposureSunlightHours(newExposure);
-    
-    std::cout << "Sunlight exposure restored to " << newExposure << " hours" << std::endl;
+void SunlightCommand::execute(){
+    if (plant != nullptr && plant->getIsAlive()) {
+        plant->provideSunlight(hours, intensity);
+        logAction();
+    }
 }
 
-bool SunlightCommand::isCommand() {
-    return true;
+std::string SunlightCommand::getDescription() const{
+    return "Provide " + std::to_string(hours) + " hours of " + intensity + " sunlight to " + (plant ? plant->getName() : "Unknown plant");
+}
+
+void SunlightCommand::logAction() const{
+    std::cout<<"[LOG] SunlightCommand executed: "<<getDescription()<<" | Plant: " << (plant ? plant->getName() : "unknown")<<" | Hours: " << hours<<" | Intensity: " << intensity << std::endl;
 }
