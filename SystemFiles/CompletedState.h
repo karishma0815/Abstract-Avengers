@@ -19,6 +19,7 @@ public:
 
   std::string getStateName() const override;
   void enterState(Customer& customer, SalesContext& ctx) override;
+  void onEnter();
 };
 
 #endif 

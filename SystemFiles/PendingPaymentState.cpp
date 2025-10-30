@@ -41,3 +41,6 @@ void PendingPaymentState::onCancel()
   ctxFunc().notify("Order cancelled during payment.");
   ctxFunc().setState(CancelledState::instance());
 }
+
+void PendingPaymentState::onEnter()
+{}

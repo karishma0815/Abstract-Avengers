@@ -9,6 +9,7 @@
 #define SALESASSISTANT_H
 
 #include "Staff.h"
+#include "CustomerQuery.h"
 #include "CustomerQueryHandler.h"
 
 /**

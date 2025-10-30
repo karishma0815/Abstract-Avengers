@@ -25,3 +25,6 @@ void CompletedState::enterState(Customer& customer, SalesContext& ctx)
   ctx.notify("Order complete. Thank you!");
   ctx.clearOrder();
 }
+
+void CompletedState::onEnter()
+{}

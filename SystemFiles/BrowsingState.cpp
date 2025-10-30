@@ -48,3 +48,6 @@ void BrowsingState::onCancel()
   ctxFunc().notify("Browsing cancelled.");
   ctxFunc().setState(CancelledState::instance());
 }
+
+void BrowsingState::onEnter()
+{}
