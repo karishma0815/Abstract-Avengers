@@ -85,7 +85,6 @@ SRCS =  Arrangement.cpp\
 		SalesAssistantFactory.cpp \
 		ManagerFactory.cpp \
 		DeliveryStaffFactory.cpp \
-		Customer.cpp\
 		AddToCart.cpp\
 		BulkDiscount.cpp\
 		CareIterator.cpp\
