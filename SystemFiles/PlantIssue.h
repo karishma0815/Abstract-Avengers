@@ -27,9 +27,6 @@ class PlantIssue{
          * care escalation chain
          */
         enum Severity { LOW, MEDIUM, HIGH, CRITICAL };
-        Severity severity;
-        std::string description;
-        Plant* plant;
         
         /**
          * @brief this is a constructor that constructs a PlantIssue with specified parameters
@@ -40,6 +37,32 @@ class PlantIssue{
          * members based on their expertise and the issue severity
          */
         PlantIssue(Severity severity, const std::string& description, Plant* plant);
+
+        /**
+         * @brief this function gets the severity level of the plant issue
+         * @return the PlantIssue::Severity this is the severity level (LOW, MEDIUM, HIGH, or CRITICAL)
+         * This method returns the urgency level of the plant health problem, which determines which staff member in the chain of responsibility should handle the issue
+         */
+        Severity getSeverity() const { return severity; }
+
+        /**
+         * @brief this function gets the detailed description of the plant issue
+         * @return std::string A descriptive text explaining the symptoms and nature of the problem
+         * This method provides a human-readable description of the plant health issue
+         */
+        std::string getDescription() const { return description; }
+
+        /**
+         * @brief this function gets the plant associated with this issue
+         * @return this is a Plant* pointer to the plant experiencing the health problem
+         * This method returns a pointer to the plant object that is affected by this issue or it returns null if no plant is associated with the problem
+         */
+        Plant* getPlant() const { return plant; }
+
+    private:
+        Severity severity;
+        std::string description;
+        Plant* plant;
 };
 
 #endif

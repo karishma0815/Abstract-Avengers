@@ -1,4 +1,5 @@
 #include "SalesAssistant.h"
+#include "CustomerQuery.h"
 #include <iostream>
 
 SalesAssistant::SalesAssistant(const std::string &name, int id, InventoryMediator *med, double commission) : Staff(name, id, med), commissionRate(commission){

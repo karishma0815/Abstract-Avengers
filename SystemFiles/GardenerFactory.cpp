@@ -2,7 +2,9 @@
 #include "Gardener.h"
 
 Staff *GardenerFactory::createStaff(){
-    return new Gardener("Gardener Name", 0, nullptr, "general");
+    static int counterForId = 1000;
+    static int counterForName = 1;
+    return new Gardener("Gardener " + std::to_string(counterForName++), counterForId++, nullptr, "general");
 }
 
 std::string GardenerFactory::getRoleName() const{

@@ -1,8 +1,91 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -DSUPPORT_TEST_TOGGLES
 TARGET = nursery_system
 #test
-SRCS =	Customer.cpp\
+
+SRCS =  Arrangement.cpp\
+		ConcreteArrangementBuilder.cpp\
+		Director.cpp\
+		ItemDecorator.cpp\
+		DecorativePot.cpp\
+		GiftWrap.cpp\
+		Note.cpp\
+		PlantItem.cpp\
+		PrototypeRegistry.cpp\
+		SalesContext.cpp\
+		State.cpp\
+		BrowsingState.cpp\
+		AwaitingStockState.cpp\
+		CartOpenState.cpp\
+		SeekingAssistanceState.cpp\
+		PendingPaymentState.cpp\
+		PaymentAuthorizedState.cpp\
+		PaymentFailedState.cpp\
+		CompletedState.cpp\
+		CancelledState.cpp\
+		Customer.cpp\
+		Plant.cpp\
+		PlantState.cpp\
+		SeedlingState.cpp\
+		FloweringState.cpp\
+		MatureState.cpp\
+		ReadyForSaleState.cpp\
+		SoldState.cpp\
+		PlantContext.cpp\
+		StockManager.cpp \
+       	PlantFactory.cpp \
+       	FlowerFactory.cpp \
+       	SucculentFactory.cpp \
+       	TreeFactory.cpp \
+       	StockObserver.cpp \
+       	StaffNotificationObserver.cpp \
+       	InventoryObserver.cpp \
+       	Flower.cpp \
+       	Succulent.cpp \
+       	Tree.cpp \
+       	FlowerProduct.cpp \
+       	SucculentProduct.cpp \
+       	TreeProduct.cpp \
+       	FlowerGroup.cpp \
+       	SucculentGroup.cpp \
+       	TreeGroup.cpp \
+       	StockInventory.cpp \
+       	Rose.cpp \
+       	Lotus.cpp \
+       	Protea.cpp \
+       	Cacti.cpp \
+       	Jade.cpp \
+       	Orchid.cpp \
+       	Pine.cpp \
+       	Apple.cpp \
+       	Jacaranda.cpp\
+		WaterCommand.cpp \
+		FertilizeCommand.cpp \
+		PruneCommand.cpp \
+		Gardener.cpp \
+		Staff.cpp \
+		SunlightCommand.cpp \
+		PlantIssue.cpp \
+		JuniorGardener.cpp \
+		SeniorGardener.cpp \
+		PlantSpecialist.cpp\
+		PlantCareHandler.cpp \
+		InventoryMediator.cpp \
+		NurseryInventoryMediator.cpp \
+		SalesAssistant.cpp \
+		Manager.cpp \
+		DeliveryStaff.cpp \
+		CustomerQueryHandler.cpp \
+		CustomerQuery.cpp \
+		JuniorStaff.cpp \
+		SalesExpert.cpp \
+		PlantExpert.cpp \
+		StaffFactory.cpp \
+		GardenerFactory.cpp \
+		SalesAssistantFactory.cpp \
+		ManagerFactory.cpp \
+		DeliveryStaffFactory.cpp \
+		Customer.cpp\
 		AddToCart.cpp\
 		BulkDiscount.cpp\
 		CareIterator.cpp\
@@ -10,7 +93,6 @@ SRCS =	Customer.cpp\
 		CustomerCommand.cpp\
 		DefaultRecomm.cpp\
 		Invoker.cpp\
-		Plant.cpp\
 		PlantContainer.cpp\
 		PriceRangeIterator.cpp\
 		PricingStrategy.cpp\

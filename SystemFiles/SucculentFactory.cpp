@@ -1,4 +1,8 @@
 #include "SucculentFactory.h"
+#include "Succulent.h"
+#include "Cacti.h"
+#include "Jade.h"
+#include "Orchid.h"
 
 SucculentFactory::SucculentFactory() : productionCounter(0) {
 }
@@ -10,18 +14,17 @@ SucculentProduct* SucculentFactory::createSucculent(std::string name, double pri
     productionCounter++;
     // Create succulent with species based on counter for variety
     std::string species;
-    switch (productionCounter % 3) {
+    switch (productionCounter % 4) {
         case 0:
-            species = "Echeveria";
-            break;
+            return new Succulent(name, price, "Echeveria");
         case 1:
-            species = "Jade Plant";
-            break;
+            return new Jade(name + " Jade", price, "Jade Plant");
         case 2:
-            species = "Aloe Vera";
-            break;
+            return new Cacti(name + " Cactus", price, "Prickly Pear");
+        case 3:
+            return new Orchid(name + " Orchid", price, "Moth Orchid");
         default:
-            species = "Generic Succulent";
+            return new Succulent(name, price, "Generic Succulent");
     }
     
     return new Succulent(name, price, species);

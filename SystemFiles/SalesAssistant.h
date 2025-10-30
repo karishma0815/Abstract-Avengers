@@ -38,7 +38,7 @@ class SalesAssistant : public Staff, public CustomerQueryHandler{
         std::string getRole() const;
 
         /**
-         * @brief this function performs plant related duties specific to sales staff
+         * @brief this function performs plant related duties specific to sales staff 
          * the sales assistants handle plant display, arrangement, and basic maintenance for sales floor presentation rather than deep plant care
          */
         void careForPlants();

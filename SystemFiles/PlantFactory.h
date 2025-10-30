@@ -2,20 +2,25 @@
 #define PLANTFACTORY_H
 
 #include <string>
-
-// Forward declarations
-class SucculentProduct;
-class FlowerProduct;
-class TreeProduct;
-class SucculentGroup;
-class FlowerGroup;
-class TreeGroup;
+#include "SucculentProduct.h"
+#include "FlowerProduct.h"
+#include "TreeProduct.h"
+#include "SucculentGroup.h"
+#include "FlowerGroup.h"
+#include "TreeGroup.h"
 
 /**
  * @class PlantFactory
  * @brief Abstract Factory for creating plant products
  */
 class PlantFactory {
+
+protected:
+    /**
+     * @brief Protected production counter to track number of created products
+     */
+    int productionCounter;
+
 public:
     /**
      * @brief Constructor

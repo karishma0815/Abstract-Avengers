@@ -1,4 +1,8 @@
 #include "FlowerFactory.h"
+#include "Flower.h"
+#include "Rose.h"
+#include "Lotus.h"
+#include "Protea.h"
 
 FlowerFactory::FlowerFactory() : productionCounter(0) {
 }
@@ -17,18 +21,17 @@ TreeProduct* FlowerFactory::createTree(std::string name, double price, int stock
 FlowerProduct* FlowerFactory::createFlower(std::string name, double price, int stock) {
     productionCounter++;
     std::string species;
-    switch (productionCounter % 3) {
+    switch (productionCounter % 4) {
         case 0:
-            species = "Rose";
-            break;
+            return new Rose(name + " Rose", price, "Hybrid Tea Rose");
         case 1:
-            species = "Lavender";
-            break;
+            return new Flower(name, price, "Lavender");
         case 2:
-            species = "Marigold";
-            break;
+            return new Lotus(name + " Lotus", price, "Sacred Lotus");
+        case 3:
+            return new Protea(name + " Protea", price, "King Protea");
         default:
-            species = "Generic Flower";
+            return new Flower(name, price, "Generic Flower");
     }
     
     return new Flower(name, price, species);

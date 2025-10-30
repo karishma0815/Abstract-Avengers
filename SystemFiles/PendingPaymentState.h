@@ -21,6 +21,9 @@ public:
 
   void onAuthorize() override;
   void onCancel() override;
+
+private:
+  PendingPaymentState() = default;
 };
 
 #endif
