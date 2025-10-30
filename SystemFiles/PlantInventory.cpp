@@ -177,6 +177,7 @@ void PlantInventory::removeNote(const std::string& color) {
     }
 }
 
+///you'll get free deco once a plant is bought.
 void PlantInventory::displayAllOptions() const {
     std::cout << "\n╔════════════════════════════════════╗\n";
     std::cout << "║   Available Decoration Options     ║\n";
@@ -198,4 +199,16 @@ void PlantInventory::displayAllOptions() const {
     }
     
     std::cout << "\n════════════════════════════════════\n";
+}
+
+const std::vector<std::string>& PlantInventory::getGiftWraps() const{
+    return giftWraps;
+}
+
+const std::vector<std::string>& PlantInventory::getPots() const{
+    return pots;
+}
+
+const std::vector<std::string>& PlantInventory::getNotes() const{
+    return notes;
 }
