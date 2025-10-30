@@ -1,12 +1,10 @@
 /*Abstract Avengers*/
 
-// Customer Sales Implementation with Iterator, Command and Strategy Patterns
-// By: Your Name
-//
-// This implementation demonstrates:
-// 1. Iterator Pattern - For browsing plants by various criteria
-// 2. Command Pattern - For cart operations (add/remove)
-// 3. Strategy Pattern - For pricing and recommendations
+/*
+Demonstrates:
+  Personalization: Builder, Decorator, Prototype
+  Customer Browsing & Checkout: State (incl. assistance, OOS, failure/retry)
+*/
 
 #include <iostream>
 #include <memory>
