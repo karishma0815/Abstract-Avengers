@@ -120,18 +120,13 @@ public:
 
     void displayAllOptions() const;
 
-    //for prototype
-    void registerPrototype(const std::string& key, std::unique_ptr<Plant> proto);
-    std::unique_ptr<Plant> cloneOf(const std::string& key) const;
-    bool hasPrototype(const std::string& key) const;
-    std::size_t prototypeCount() const;
-    std::vector<const Plant*> prototypeSnapshot() const;
-    std::vector<std::string>  prototypeKeys() const;
-    const Item* getPrototypePtr(const std::string& key) const;
-
-    // ----- CONVENIENCE MATERIALIZATION -----
-    bool addCloneToInventory(const std::string& key);
-    bool addCloneToCart(const std::string& key);
+    //prototype
+    // ---- Arrangement PROTOTYPES (Item world) ----
+    void registerArrangementPrototype(const std::string& key, std::unique_ptr<Item> proto);
+    bool hasArrangementPrototype(const std::string& key) const;
+    std::size_t arrangementPrototypeCount() const;
+    const Item* getArrangementPrototype(const std::string& key) const;
+    std::vector<std::string> arrangementPrototypeKeys() const;
 
     // ----- BUILT (DECORATED) ARRANGEMENTS IN CART -----
     void addArrangementToCart(std::unique_ptr<Item> item);
@@ -153,14 +148,7 @@ public:
                                 double potExtra,  const std::string& potColor,
                                 double wrapExtra, const std::string& wrapMessage,
                                 double noteExtra, const std::string& noteText,
-                                Director& director, ArrangementBuilder& builder);
-
-    bool addSinglePlantToCart(const std::string& name,
-                          bool fert,
-                          const std::string& id,
-                          int sunHours,
-                          int waterLevel,
-                          int price);    
+                                Director& director, ArrangementBuilder& builder); 
 
     private:
     // Owned plant storage
@@ -173,7 +161,7 @@ public:
     std::vector<std::string> pots;
     std::vector<std::string> notes;
 
-    std::unordered_map<std::string, std::unique_ptr<Plant>> prototypes;
+    std::unordered_map<std::string, std::unique_ptr<Item>> arrangementProtos_;
     std::vector<std::unique_ptr<Item>> cartArrangements_;
 };
 

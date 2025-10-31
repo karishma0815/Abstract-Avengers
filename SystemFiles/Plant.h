@@ -118,7 +118,6 @@ public:
     //this is for when staff wants to set care instructions
     void setCareInstructions(const std::string& instructions);
 
-
     //karishma added the functions
     bool getIsAlive() const;
     virtual void water(double amount) = 0;
@@ -128,14 +127,8 @@ public:
 
     //taskeen added
     // Item API
-    double priceFunc() const override { return base; }
-    std::string describe() const override { return name; }
-    bool readyForSale() const override { return ready; }
-
-    // Prototype
-    std::unique_ptr<Item> clone() const override {
-    return std::unique_ptr<Item>( new Plant(*this) );
-    }
+    double priceFunc() const;
+    std::string describe() const;
+    bool readyForSale() const;
 };
-
 #endif

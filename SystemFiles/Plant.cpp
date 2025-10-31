@@ -22,3 +22,20 @@ void Plant::setPrice(double price) {
 bool Plant::getIsAlive() const{
     return isAlive;
 }
+
+ //taskeen added
+    // Item API
+    double Plant::priceFunc() const  
+    { 
+        return base; 
+    }
+
+    std::string Plant::describe() const  
+    { 
+        return name; 
+    }
+
+    bool Plant::readyForSale() const  
+    { 
+        return ready; 
+    }
