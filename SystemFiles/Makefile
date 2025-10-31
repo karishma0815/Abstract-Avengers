@@ -136,4 +136,5 @@ clean:
 	rm -f $(OBJS) $(TARGET) *.gcda *.gcno *.gcov coverage.info
 	rm -rf coverage_html
 
-.PHONY: all run clean valgrind coverage
+
+.PHONY: all run clean valgrind coverage test
