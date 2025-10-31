@@ -22,3 +22,7 @@ void TreeProduct::add(TreeProduct* plant) {
 void TreeProduct::remove(TreeProduct* plant) {
     // Default implementation
 }
+
+double TreeProduct::getPrice() const{
+    return price;
+}

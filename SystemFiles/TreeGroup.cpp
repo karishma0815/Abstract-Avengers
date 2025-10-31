@@ -12,7 +12,12 @@ TreeGroup::~TreeGroup() {
     plants.clear();
 }
 
-int TreeGroup::getCount() const {
+std::string TreeGroup::getPlantType() const{
+    return "Tree Group";
+}
+
+int TreeGroup::getCount() const
+{
     int total = 0;
     for (const TreeProduct* plant : plants) {
         total += plant->getCount();

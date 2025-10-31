@@ -10,29 +10,37 @@ TreeFactory::TreeFactory() : productionCounter(0) {
 TreeFactory::~TreeFactory() {
 }
 
-SucculentProduct* TreeFactory::createSucculent(std::string name, double price, int stock) {
+SucculentProduct* TreeFactory::createSucculent(std::string name, double price, std::string species, int stock) {
     return nullptr;
 }
 
-TreeProduct* TreeFactory::createTree(std::string name, double price, int stock) {
+TreeProduct* TreeFactory::createTree(std::string name, double price, std::string species, int stock) {
+    // productionCounter++;
+    // std::string species;
+    //  switch (productionCounter % 4) {
+    //     case 0:
+    //         return new Pine(name + " Pine", price, "Scotch Pine");
+    //     case 1:
+    //         return new Jacaranda(name + " Jacaranda", price, "Blue Jacaranda");
+    //     case 2:
+    //         return new Apple(name + " Apple", price, "Fuji Apple");
+    //     case 3:
+    //         return new Tree(name, price, "Lemon Tree");
+    //     default:
+    //         return new Tree(name, price, "Generic Tree");
+    // }
+    // return new Tree(name, price, species);
+
     productionCounter++;
-    std::string species;
-     switch (productionCounter % 4) {
-        case 0:
-            return new Pine(name + " Pine", price, "Scotch Pine");
-        case 1:
-            return new Jacaranda(name + " Jacaranda", price, "Blue Jacaranda");
-        case 2:
-            return new Apple(name + " Apple", price, "Fuji Apple");
-        case 3:
-            return new Tree(name, price, "Lemon Tree");
-        default:
-            return new Tree(name, price, "Generic Tree");
-    }
+    
+    if (species == "Pine") return new Pine(name, price, species);
+    if (species == "Apple") return new Apple(name, price, species);
+    if (species == "Jacaranda") return new Jacaranda(name, price, species);
+    
     return new Tree(name, price, species);
 }
 
-FlowerProduct* TreeFactory::createFlower(std::string name, double price, int stock) {
+FlowerProduct* TreeFactory::createFlower(std::string name, double price, std::string species, int stock) {
     return nullptr;
 }
 

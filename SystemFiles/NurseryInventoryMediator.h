@@ -25,10 +25,17 @@ class Plant;
 
 class NurseryInventoryMediator : public InventoryMediator{
     private:
-        std::unordered_map<std::string, int> greenhouseStock;
         std::unordered_map<std::string, int> salesFloorStock;
         
+        const std::unordered_map<std::string, int> INITIAL_SALES_FLOOR_STOCK = {
+            {"rose", 50}, {"protea", 30}, {"lotus", 20},
+            {"orchid", 40}, {"jade", 35}, {"cacti", 25},
+            {"apple", 15}, {"pine", 10}, {"jacaranda", 12}
+        };
+        
         std::string getPlantId(Plant *plant) const;
+        
+        void autoRestockIfNeeded(const std::string& plantId);
     public:
         /**
          * @brief this is a constructor that constructs a NurseryInventoryMediator with initial stock levels
@@ -54,7 +61,7 @@ class NurseryInventoryMediator : public InventoryMediator{
          * it modifies the greenhouse and sales floor stock levels while ensuring quantities are not negative. This method encapsulates the core
          * inventory update logic used by various event handlers
          */
-        void updateInventory(Plant* plant, int greenhouseQuantity, int salesFloorQuantity);
+        void updateInventory(Plant* plant, int salesFloorQuantity);
 
         /**
          * @brief this function gets the current greenhouse stock level
@@ -69,6 +76,20 @@ class NurseryInventoryMediator : public InventoryMediator{
          * @return int this is the current sales floor stock quantity
          */
         int getSalesFloorStock(Plant* plant) const;
+
+        /**
+         * @brief Manual restocking from greenhouse to sales floor
+         * @param plant Plant to restock
+         * @param quantity Quantity to move from greenhouse to sales floor
+         */
+        void restockFromGreenhouse(Plant* plant, int quantity);
+        
+        /**
+         * @brief Check if plant can be sold from sales floor
+         * @param plant Plant to check
+         * @return True if sales floor has stock
+         */
+        bool canSellFromSalesFloor(Plant* plant);
 };
 
 #endif

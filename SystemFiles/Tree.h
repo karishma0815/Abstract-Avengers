@@ -1,24 +1,47 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include "Plant.h"
 #include "TreeProduct.h"
+#include <string>
 
 /**
  * @class Tree
- * @brief Concrete leaf product for individual trees
+ * @brief Concrete product for trees, inherits from Plant
  */
-class Tree : public TreeProduct {
-private:
+class Tree : public Plant, public TreeProduct {
+protected:
     std::string species;
+    // std::string name;
+    // double price;
     
 public:
     Tree(std::string name, double price, std::string species);
-    ~Tree();
+    virtual ~Tree();
     
-    int getCount() const override;
+    // Implement pure virtual functions from Plant
+    std::string getName();
+    bool isFertilized();
+    std::string getPlantID();
+    int getExposureSunlightHours();
+    int getLastWaterLevel();
+    void setName(const std::string& n);
+    void setFertilized(bool fert);
+    void setPlantID(const std::string& id);
+    void setExposureSunlightHours(int hours);
+    void setLastWaterLevel(int level);
+    
+    // Tree-specific methods
+    virtual std::string getPlantType() const;
     std::string getSpecies() const;
-    double getTotalValue() const override;
-    std::string getPlantType() const override;
+    int getCount() const;
+    double getTotalValue() const;
+
+    virtual void water(double amount) override;
+    virtual void fertilize(const std::string& fertilizerType) override;
+    virtual void prune(int intensity) override;
+    virtual void provideSunlight(int hours, const std::string& intensity) override;
+    virtual std::string getCareInstructions() const override;
 };
 
 #endif
