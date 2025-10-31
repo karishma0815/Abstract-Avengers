@@ -12,8 +12,8 @@
 class Tree : public Plant, public TreeProduct {
 protected:
     std::string species;
-    std::string name;
-    double price;
+    // std::string name;
+    // double price;
     
 public:
     Tree(std::string name, double price, std::string species);
@@ -36,6 +36,12 @@ public:
     std::string getSpecies() const;
     int getCount() const;
     double getTotalValue() const;
+
+    virtual void water(double amount) override;
+    virtual void fertilize(const std::string& fertilizerType) override;
+    virtual void prune(int intensity) override;
+    virtual void provideSunlight(int hours, const std::string& intensity) override;
+    virtual std::string getCareInstructions() const override;
 };
 
 #endif
