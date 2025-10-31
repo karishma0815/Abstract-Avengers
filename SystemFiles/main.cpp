@@ -112,6 +112,8 @@ Demonstrates:
 #include "DefaultRecomm.h"
 #include "WaterRecomm.h"
 #include "SunlightRecomm.h"
+#include"PricingQueryHandler.h"
+#include"PlantRecommendationHandler.h"
 
 //kiolin start
 
@@ -635,6 +637,46 @@ void testPlantTypeInheritance() {
 
 void printHeader(const std::string& title) {
     std::cout << "\n=== " << title << " ===" << std::endl;
+}
+
+void testIntegratedPatternsScenario() {
+    printHeader("Testing Integrated Patterns: Chain of Responsibility with Strategy");
+
+    // Create the chain of responsibility
+    CustomerQueryHandler* pricingHandler = new PricingQueryHandler();
+    CustomerQueryHandler* recommendationHandler = new PlantRecommendationHandler();
+    CustomerQueryHandler* juniorStaff = new JuniorStaff();
+
+    // Set up the chain
+    pricingHandler->setNext(recommendationHandler);
+    recommendationHandler->setNext(juniorStaff);
+
+    // Create a customer
+    Customer* customer = new Customer("John");
+
+    // Test pricing queries
+    std::cout << "\nTesting Pricing Queries:" << std::endl;
+    CustomerQuery bulkQuery(CustomerQuery::PRICING, "I want to buy 10 roses in bulk", customer);
+    CustomerQuery regularQuery(CustomerQuery::PRICING, "How much is one rose?", customer);
+
+    pricingHandler->handleQuery(bulkQuery);
+    pricingHandler->handleQuery(regularQuery);
+
+    // Test plant recommendations
+    std::cout << "\nTesting Plant Recommendations:" << std::endl;
+    CustomerQuery waterQuery(CustomerQuery::CARE_ADVICE, "Which plants need less water?", customer);
+    CustomerQuery lightQuery(CustomerQuery::CARE_ADVICE, "What plants grow well in sunlight?", customer);
+    CustomerQuery generalQuery(CustomerQuery::CARE_ADVICE, "Can you recommend some plants?", customer);
+
+    pricingHandler->handleQuery(waterQuery);
+    pricingHandler->handleQuery(lightQuery);
+    pricingHandler->handleQuery(generalQuery);
+
+    // Cleanup
+    delete customer;
+    delete pricingHandler;
+    delete recommendationHandler;
+    delete juniorStaff;
 }
 
 void printPlantDetails(Plant* plant) {
@@ -1678,9 +1720,14 @@ int main() {
   //karishma end
 
     std::cout<<"\n\n\n";
-  std::cout<<"Testing Customer Browsing\n\n";
+  std::cout<<"-----------------------Testing Customer Browsing---------------------------\n\n";
     simulateCustomerBrowsing();
     simulateCommandPatternScenario();
     simulateStrategyPatternScenario();
+
+    std::cout<<"--------------------------------Integrated Customer queries-------------------------\n";
+
+    testIntegratedPatternsScenario();
+    std::cout<<std::endl;
     return 0;
   }
