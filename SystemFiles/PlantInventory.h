@@ -10,6 +10,9 @@
 #include <vector>
 #include <memory>
 #include<iostream>
+#include <unordered_map> //for prototype
+#include "Director.h"
+#include "ArrangementBuilder.h"
 
 /**
  * @class PlantInventory
@@ -116,7 +119,49 @@ public:
     /// @brief Display all decorations
 
     void displayAllOptions() const;
-    
+
+    //for prototype
+    void registerPrototype(const std::string& key, std::unique_ptr<Plant> proto);
+    std::unique_ptr<Plant> cloneOf(const std::string& key) const;
+    bool hasPrototype(const std::string& key) const;
+    std::size_t prototypeCount() const;
+    std::vector<const Plant*> prototypeSnapshot() const;
+    std::vector<std::string>  prototypeKeys() const;
+    const Item* getPrototypePtr(const std::string& key) const;
+
+    // ----- CONVENIENCE MATERIALIZATION -----
+    bool addCloneToInventory(const std::string& key);
+    bool addCloneToCart(const std::string& key);
+
+    // ----- BUILT (DECORATED) ARRANGEMENTS IN CART -----
+    void addArrangementToCart(std::unique_ptr<Item> item);
+    std::vector<const Item*> cartArrangementsSnapshot() const;
+
+    // ----- ONE-SHOT BUILD FROM PROTOTYPE & ADD TO CART -----
+    bool buildGiftAndAddToCart(const std::string& key,
+                            double potExtra,  const std::string& potColor,
+                            double wrapExtra, const std::string& wrapMessage,
+                            double noteExtra, const std::string& noteText,
+                            Director& director, ArrangementBuilder& builder);
+
+    bool buildCustomAndAddToCart(const std::string& name,
+                                bool fert,
+                                const std::string& id,
+                                int sunHours,
+                                int waterLevel,
+                                int price,
+                                double potExtra,  const std::string& potColor,
+                                double wrapExtra, const std::string& wrapMessage,
+                                double noteExtra, const std::string& noteText,
+                                Director& director, ArrangementBuilder& builder);
+
+    bool addSinglePlantToCart(const std::string& name,
+                          bool fert,
+                          const std::string& id,
+                          int sunHours,
+                          int waterLevel,
+                          int price);    
+
     private:
     // Owned plant storage
     std::vector<std::unique_ptr<Plant>> ownedPlants;
@@ -127,6 +172,9 @@ public:
     std::vector<std::string> giftWraps;
     std::vector<std::string> pots;
     std::vector<std::string> notes;
+
+    std::unordered_map<std::string, std::unique_ptr<Plant>> prototypes;
+    std::vector<std::unique_ptr<Item>> cartArrangements_;
 };
 
 #endif 
