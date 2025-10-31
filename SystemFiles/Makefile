@@ -1,6 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -DSUPPORT_TEST_TOGGLES
 TARGET = nursery_system
+TEST_TARGET = decoration_test
 #test
 
 SRCS =  NurseryUI.cpp\
@@ -136,4 +137,11 @@ clean:
 	rm -f $(OBJS) $(TARGET) *.gcda *.gcno *.gcov coverage.info
 	rm -rf coverage_html
 
-.PHONY: all run clean valgrind coverage
+# Decoration test target
+$(TEST_TARGET): DecorationTest.cpp $(filter-out main.o, $(OBJS))
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) DecorationTest.cpp $(filter-out main.o, $(OBJS))
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+.PHONY: all run clean valgrind coverage test

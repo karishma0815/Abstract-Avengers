@@ -106,7 +106,7 @@
             }
         }
     }
-
+    
     void NurseryUI::showBrowsingMenu() {
         while (true) {
             clearScreen();
