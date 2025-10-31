@@ -6,39 +6,26 @@
  */
 
 #include "Note.h"
-
+#include <memory>
 #include <utility>
 
-Note::Note(std::unique_ptr<Item> dec, std::string text, double extra)
-  : ItemDecorator(std::move(dec)), text(std::move(text)), extra(extra) 
-  {}
+Note::Note(std::unique_ptr<Item> inner, double extra, std::string text)
+: ItemDecorator(std::move(inner))
+, extra_(extra)
+, note_(std::move(text))
+{}
 
-double Note::price() const 
-{ 
-    return wrapped->price() + extra; 
+double Note::priceFunc() const 
+{
+    return ItemDecorator::priceFunc() + extra_;
 }
 
 std::string Note::describe() const 
 {
-  return wrapped->describe() + " + Note(\"" + text + "\")";
-}
-
-bool Note::readyForSale() const 
-{ 
-    return wrapped->readyForSale(); 
+    return ItemDecorator::describe() + " + Note(\"" + note_ + "\")";
 }
 
 std::unique_ptr<Item> Note::clone() const 
 {
-  return std::unique_ptr<Item>(new Note(wrapped->clone(), text, extra));
-}
-
-const std::string& Note::textFunc() const 
-{ 
-    return text; 
-}
-
-double Note::extraFunc() const 
-{ 
-    return extra; 
+    return std::unique_ptr<Item>( new Note( cloneInner(), extra_, note_ ) );
 }

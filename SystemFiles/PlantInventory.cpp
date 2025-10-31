@@ -7,6 +7,7 @@
 #include "CareIterator.h"
 #include "PriceRangeIterator.h"
 #include "CartIterator.h"
+#include "Plant.h"
 #include <algorithm>
 
 PlantInventory::PlantInventory() : cartInventory(nullptr), isCart(false) {
@@ -180,8 +181,8 @@ void PlantInventory::removeNote(const std::string& color) {
 ///you'll get free deco once a plant is bought.
 void PlantInventory::displayAllOptions() const {
     std::cout << "\n╔════════════════════════════════════╗\n";
-    std::cout << "║   Available Decoration Options     ║\n";
-    std::cout << "╚════════════════════════════════════╝\n\n";
+    std::cout << "  ║   Available Decoration Options     ║\n";
+    std::cout << "  ╚════════════════════════════════════╝\n\n";
     
     std::cout << "🎁 Gift Wrap Colors:\n";
     for (size_t i = 0; i < giftWraps.size(); ++i) {
@@ -211,4 +212,152 @@ const std::vector<std::string>& PlantInventory::getPots() const{
 
 const std::vector<std::string>& PlantInventory::getNotes() const{
     return notes;
+}
+
+//for prototype
+void PlantInventory::registerPrototype(const std::string& key, std::unique_ptr<Plant> proto) 
+{
+    prototypes[key] = std::move(proto);
+}
+
+std::unique_ptr<Plant> PlantInventory::cloneOf(const std::string& key) const 
+{
+    auto it = prototypes.find(key);
+    if (it == prototypes.end() || !it->second) return nullptr;
+    return std::unique_ptr<Plant>(static_cast<Plant*>(it->second->clone().release()));
+}
+
+bool PlantInventory::hasPrototype(const std::string& key) const 
+{
+    return prototypes.find(key) != prototypes.end();
+}
+
+std::size_t PlantInventory::prototypeCount() const 
+{ 
+    return prototypes.size(); 
+}
+
+std::vector<const Plant*> PlantInventory::prototypeSnapshot() const 
+{
+    std::vector<const Plant*> out;
+    out.reserve(prototypes.size());
+    for (const auto& kv : prototypes) out.push_back(kv.second.get());
+    return out;
+}
+
+std::vector<std::string> PlantInventory::prototypeKeys() const 
+{
+    std::vector<std::string> out;
+    out.reserve(prototypes.size());
+    for (const auto& kv : prototypes) out.push_back(kv.first);
+    return out;
+}
+
+const Item* PlantInventory::getPrototypePtr(const std::string& key) const 
+{
+    auto it = prototypes.find(key);
+    if (it == prototypes.end() || !it->second) return nullptr;
+    return it->second.get(); // Plant* as Item*
+}
+
+// ===== helpers =====
+bool PlantInventory::addCloneToInventory(const std::string& key) 
+{
+    auto clone = cloneOf(key);
+    if (!clone) return false;
+    Plant* raw = clone.get();
+    add(raw);              // existing add() takes ownership (unique_ptr)
+    (void)clone.release(); // prevent double delete
+    return true;
+}
+
+bool PlantInventory::addCloneToCart(const std::string& key) 
+{
+    auto clone = cloneOf(key);
+    if (!clone) return false;
+    Plant* raw = clone.get();
+    add(raw);              // store owns lifetime
+    (void)clone.release();
+    addToCart(raw);        // non-owning ref into cart
+    return true;
+}
+
+// ===== Built (decorated) arrangements in CART =====
+void PlantInventory::addArrangementToCart(std::unique_ptr<Item> item) 
+{
+    if (item) cartArrangements_.push_back(std::move(item));
+}
+
+std::vector<const Item*> PlantInventory::cartArrangementsSnapshot() const 
+{
+    std::vector<const Item*> out;
+    out.reserve(cartArrangements_.size());
+    for (const auto& up : cartArrangements_) out.push_back(up.get());
+    return out;
+}
+
+// ===== One-shot build from prototype key & add to cart =====
+bool PlantInventory::buildGiftAndAddToCart(const std::string& key,
+                                           double potExtra,  const std::string& potColor,
+                                           double wrapExtra, const std::string& wrapMessage,
+                                           double noteExtra, const std::string& noteText,
+                                           Director& director, ArrangementBuilder& builder)
+{
+    auto* proto = getPrototypePtr(key);
+    if (!proto) return false;
+
+    director.setBuilder(&builder);
+    auto product = director.buildGiftWithNote(*proto,
+                                              potExtra,  potColor,
+                                              wrapExtra, wrapMessage,
+                                              noteExtra, noteText);
+    if (!product) return false;
+
+    addArrangementToCart(std::move(product));
+    return true;
+}
+
+bool PlantInventory::buildCustomAndAddToCart(const std::string& name,
+                                             bool fert,
+                                             const std::string& id,
+                                             int sunHours,
+                                             int waterLevel,
+                                             int price,
+                                             double potExtra,  const std::string& potColor,
+                                             double wrapExtra, const std::string& wrapMessage,
+                                             double noteExtra, const std::string& noteText,
+                                             Director& director, ArrangementBuilder& builder)
+{
+    // 1) make a temporary base Item (not added to inventory)
+    Plant base(name, fert, id, sunHours, waterLevel, price);
+
+    // 2) build decoration chain
+    director.setBuilder(&builder);
+    std::unique_ptr<Item> gift =
+        director.buildGiftWithNote(base, potExtra, potColor,
+                                         wrapExtra, wrapMessage,
+                                         noteExtra, noteText);
+    if (!gift) return false;
+
+    // 3) store in arranged-items bucket
+    addArrangementToCart(std::move(gift));
+    return true;
+}
+
+bool PlantInventory::addSinglePlantToCart(const std::string& name,
+                                          bool fert,
+                                          const std::string& id,
+                                          int sunHours,
+                                          int waterLevel,
+                                          int price)
+{
+    // own in main inventory
+    std::unique_ptr<Plant> up(new Plant(name, fert, id, sunHours, waterLevel, price));
+    Plant* raw = up.get();
+    add(raw);                 // transfers ownership to ownedPlants
+    (void)up.release();
+
+    // put a non-owning reference into the cart
+    addToCart(raw);
+    return true;
 }

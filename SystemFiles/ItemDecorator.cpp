@@ -7,27 +7,32 @@
 
 #include "ItemDecorator.h"
 
-// Base decorator keeps ownership of the wrapped component.
-// Concrete decorators customize price/describe/clone.
-ItemDecorator::ItemDecorator(std::unique_ptr<Item> inner) : wrapped(std::move(inner)) 
-{}
+ItemDecorator::ItemDecorator(std::unique_ptr<Item> inner)
+: inner_(std::move(inner)) {}
 
-double ItemDecorator::price() const 
-{ 
-    return wrapped->price(); 
+ItemDecorator::~ItemDecorator() = default;
+
+double ItemDecorator::priceFunc() const 
+{
+    return inner_->priceFunc();
 }
 
 std::string ItemDecorator::describe() const 
-{ 
-    return wrapped->describe(); 
+{
+    return inner_->describe();
 }
 
 bool ItemDecorator::readyForSale() const 
-{ 
-    return wrapped->readyForSale(); 
+{
+    return inner_->readyForSale();
 }
 
-const Item& ItemDecorator::wrappedFunc() const 
-{ 
-    return *wrapped;
+Item* ItemDecorator::innerRaw() const 
+{
+    return inner_.get();
+}
+
+std::unique_ptr<Item> ItemDecorator::cloneInner() const 
+{
+    return inner_->clone();
 }
