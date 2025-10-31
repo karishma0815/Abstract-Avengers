@@ -916,7 +916,7 @@ int main() {
                                    /*wrapExtra*/15.0, "Happy Birthday!");
 
   std::cout << "Gift Rose: " << giftRose->describe()
-            << " | Price: R" << giftRose->priceFunc() << "\n";
+            << " | Price: R" << giftRose->price() << "\n";
 
   //b) Single "Lily with Note" — build step-by-step (uses builder directly)
   std::unique_ptr<Item> lilyProto = registry.cloneOf("Lily");
@@ -927,7 +927,7 @@ int main() {
   std::unique_ptr<Item> lilyWithNote = builder.getResult();
 
   std::cout << "Lily w/ Note: " << lilyWithNote->describe()
-            << " | Price: R" << lilyWithNote->priceFunc() << "\n";
+            << " | Price: R" << lilyWithNote->price() << "\n";
 
   //c) Arrangement: two personalised succulents 
   printHeader("c) Build an Arrangement (bundle of decorated items)");
