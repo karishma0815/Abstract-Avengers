@@ -1,7 +1,7 @@
 /*Abstract Avengers*/
 
 /**
- * @file ArrangementBuilder.h
+ * @file ConcreteArrangementBuilder.h
  * @brief Builder interface for constructing a single personalized item
  * @author Taskeen Abdoola
  * @date 2025-10-14
