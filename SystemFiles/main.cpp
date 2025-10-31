@@ -1723,7 +1723,7 @@ int main() {
   std::cout<<"-----------------------Testing Customer Browsing---------------------------\n\n";
     simulateCustomerBrowsing();
     simulateCommandPatternScenario();
-    simulateStrategyPatternScenario();
+    //simulateStrategyPatternScenario();
 
     std::cout<<"--------------------------------Integrated Customer queries-------------------------\n";
 
