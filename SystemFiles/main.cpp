@@ -1,4 +1,5 @@
 /*Abstract Avengers*/
+#include "NurseryUI.h"
 
 /*
 Demonstrates:
@@ -890,7 +891,26 @@ void simulateStrategyPatternScenario() {
 ////////////////////////////////////////////Customer_sales_Iterator+cmd+strategy ends here\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/
 
 int main() {
-  std::cout << "=== Abstract Avengers: Greenhouse Personalization & Sales ===\n";
+    std::cout << "\033[2J\033[1;1H"; // Clear screen
+    std::cout << "=== Abstract Avengers: Plant Nursery System ===\n\n";
+    std::cout<<"---------------------------------------------------------------------\n";
+    std::cout << "Choose a mode:\n";
+    std::cout << "1. Interactive UI Mode\n";
+    std::cout << "2. Demonstration Mode\n\n";
+    std::cout << "Enter your choice: ";
+
+    int mode;
+    std::cin >> mode;
+    std::cin.ignore();
+
+    if (mode == 1) {
+        NurseryUI ui;
+        ui.showMainMenu();
+        return 0;
+    }
+    std::cout<<"------------------------------------------------\n";
+    // Demonstration mode starts here
+    std::cout << "\n=== Starting Demonstration Mode ===\n";
 
   // 1) Prototypes (set once by the nursery at startup)
   printHeader("1) Register plant prototypes (Prototype pattern)");
