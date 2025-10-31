@@ -2,35 +2,24 @@
 
 /**
  * @file ConcreteArrangementBuilder.h
- * @brief COncrete builder for constructing a single personalized item
+ * @brief Builder interface for constructing a single personalized item
  * @author Taskeen Abdoola
  * @date 2025-10-14
  */
 
-#ifndef CONCRETEARRANGEMENTBUILDER_H
-#define CONCRETEARRANGEMENTBUILDER_H
-
-#include "Item.h"
+#pragma once
 #include "ArrangementBuilder.h"
-
 #include <memory>
 
-class Item;
+class ConcreteArrangementBuilder : public ArrangementBuilder {
+public:
+    void reset() override;
+    void buildBasePlant(const Item& proto) override;
+    void buildPot(double extra, const std::string& color) override;
+    void buildWrap(double extra, const std::string& message) override;
+    void buildNote(double extra, const std::string& text) override;
+    std::unique_ptr<Item> getResult() override;
 
-class ConcreteArrangementBuilder : public ArrangementBuilder
-{
-    public:
-        ConcreteArrangementBuilder();
-        void reset() override;
-        void buildBasePlant(const Item& plantProto) override;
-        void buildPot(double extra, const std::string& colour) override;
-        void buildWrap(double extra, const std::string& message) override;
-        void buildNote(double extra, const std::string& text) override;
-        std::unique_ptr<Item> getResult() override;
-        bool hasProduct() const; //state, if no request replenishment?
-
-    private:
-        std::unique_ptr<Item> single;
+private:
+    std::unique_ptr<Item> current_;
 };
-
-#endif

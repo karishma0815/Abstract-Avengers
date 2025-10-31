@@ -116,6 +116,9 @@ Demonstrates:
 #include"PricingQueryHandler.h"
 #include"PlantRecommendationHandler.h"
 
+
+void printSeparator(const std::string& title = "");
+void printPlantInfo(PlantContext* context);
 //kiolin start
 
 void testIndividualPlants(StockManager& stockManager) {
@@ -161,9 +164,9 @@ void testFactoryProduction(StockManager& stockManager) {
     
     // Factory creates different plant types automatically
     for (int i = 0; i < 6; i++) {
-        FlowerProduct* flower = flowerFactory.createFlower("Factory Flower " + std::to_string(i), 25.00 + i, 1);
-        SucculentProduct* succulent = succulentFactory.createSucculent("Factory Succulent " + std::to_string(i), 15.00 + i, 1);
-        TreeProduct* tree = treeFactory.createTree("Factory Tree " + std::to_string(i), 80.00 + i, 1);
+        FlowerProduct* flower = flowerFactory.createFlower("Factory Flower " + std::to_string(i), 25.00 + i, "Rose", 1);
+        SucculentProduct* succulent = succulentFactory.createSucculent("Factory Succulent " + std::to_string(i), 15.00 + i, "Jade", 1);
+        TreeProduct* tree = treeFactory.createTree("Factory Tree " + std::to_string(i), 80.00 + i, "Oak", 1);
         
         stockManager.addFlower(flower);
         stockManager.addSucculent(succulent);
@@ -280,357 +283,206 @@ void testPlantTypeInheritance() {
 //kiolin end
 
   //rene start
-  void printSeparator(const std::string& title = "") {
-        std::cout << "\n" << std::string(60, '=') << std::endl;
-        if (!title.empty()) {
-            std::cout << "  " << title << std::endl;
-            std::cout << std::string(60, '=') << std::endl;
+ void demonstratePlantClass() {
+    printSeparator("PLANT CLASS DEMONSTRATION");
+
+    std::cout << "\nCreating a Succulent plant..." << std::endl;
+    Succulent succulent("Aloe Vera", 50.0, "Succulent");
+
+    std::cout << "\nPlant Information:" << std::endl;
+    std::cout << "  Name: " << succulent.getName() << std::endl;
+    std::cout << "  ID: " << succulent.getPlantID() << std::endl;
+    std::cout << "  Fertilized: " << (succulent.isFertilized() ? "Yes" : "No") << std::endl;
+    std::cout << "  Sunlight Hours: " << succulent.getExposureSunlightHours() << std::endl;
+    std::cout << "  Water Level: " << succulent.getLastWaterLevel() << " (Low - succulents need less water)" << std::endl;
+
+    std::cout << "\nUpdating plant care..." << std::endl;
+    succulent.setFertilized(true);
+    succulent.setExposureSunlightHours(10);
+    succulent.setLastWaterLevel(5);
+
+    std::cout << "After care update:" << std::endl;
+    std::cout << "  Fertilized: " << (succulent.isFertilized() ? "Yes" : "No") << std::endl;
+    std::cout << "  Sunlight Hours: " << succulent.getExposureSunlightHours() << std::endl;
+    std::cout << "  Water Level: " << succulent.getLastWaterLevel() << std::endl;
+}
+
+void demonstrateStateMachine() {
+    printSeparator("STATE MACHINE DEMONSTRATION");
+
+    std::cout << "\nCreating a Flower plant in Spring season..." << std::endl;
+    PlantContext* flower = new PlantContext("Rose", "Spring Rose", 15.50, "Hybrid Tea Rose"); // fixed constructor
+
+    printPlantInfo(flower);
+
+    // Seedling Phase
+    std::cout << "\n>>> SEEDLING PHASE <<<" << std::endl;
+    flower->checkReadiness();
+    flower->ageState(7);
+    printPlantInfo(flower);
+
+    // Flowering Phase
+    std::cout << "\n>>> FLOWERING PHASE <<<" << std::endl;
+    flower->checkReadiness();
+    flower->ageState(14);
+    printPlantInfo(flower);
+
+    // Mature Phase
+    std::cout << "\n>>> MATURE PHASE <<<" << std::endl;
+    flower->checkReadiness();
+    flower->ageState(30);
+    printPlantInfo(flower);
+
+    // Ready for Sale & Sold
+    std::cout << "\n>>> HARVESTING <<<" << std::endl;
+    flower->harvest();
+    printPlantInfo(flower);
+
+    delete flower;
+}
+
+void demonstrateMultiplePlants() {
+    printSeparator("MULTIPLE PLANTS DEMONSTRATION");
+
+    std::cout << "\nCreating multiple plants with different characteristics..." << std::endl;
+
+    PlantContext* flower = new PlantContext("Rose", "Summer Rose", 30.00, "Hybrid Tea Rose");
+    PlantContext* tree = new PlantContext("Apple", "Winter Apple", 45.00, "Granny Smith");
+    PlantContext* succulent = new PlantContext("Succulent", "Spring Aloe", 12.00, "Aloe Vera");
+
+    std::cout << "\n--- Flower ---" << std::endl;
+    printPlantInfo(flower);
+
+    std::cout << "\n--- Tree ---" << std::endl;
+    printPlantInfo(tree);
+
+    std::cout << "\n--- Succulent ---" << std::endl;
+    printPlantInfo(succulent);
+
+    std::cout << "\nAging all plants by 5 days..." << std::endl;
+    flower->ageState(5);
+    tree->ageState(5);
+    succulent->ageState(5);
+
+    std::cout << "\nCurrent ages:" << std::endl;
+    std::cout << "  Flower: " << flower->getAge() << " days" << std::endl;
+    std::cout << "  Tree: " << tree->getAge() << " days" << std::endl;
+    std::cout << "  Succulent: " << succulent->getAge() << " days" << std::endl;
+
+    delete flower;
+    delete tree;
+    delete succulent;
+}
+
+void demonstrateEarlyHarvestAttempt() {
+    printSeparator("EARLY HARVEST ATTEMPT DEMONSTRATION");
+
+    std::cout << "\nCreating a Tree plant..." << std::endl;
+    PlantContext* tree = new PlantContext("Apple", "Summer Apple", 18.50, "Granny Smith");
+
+    printPlantInfo(tree);
+
+    std::cout << "\n>>> Attempting to harvest too early <<<" << std::endl;
+    tree->harvest();
+
+    std::cout << "\nGrowing to flowering stage..." << std::endl;
+    tree->ageState(5);
+
+    std::cout << "\nTrying to harvest during flowering..." << std::endl;
+    tree->harvest();
+
+    delete tree;
+}
+
+
+ void interactiveMenu() {
+    printSeparator("INTERACTIVE PLANT MANAGEMENT MENU");
+
+    PlantContext* myPlant = nullptr;
+
+    while (true) {
+        std::cout << "\nSelect a plant type to create:" << std::endl;
+        std::cout << "1. Flower" << std::endl;
+        std::cout << "2. Tree" << std::endl;
+        std::cout << "3. Succulent" << std::endl;
+        std::cout << "4. Exit" << std::endl;
+        std::cout << "Choice: ";
+        int choice;
+        std::cin >> choice;
+
+        if (choice == 4) break;
+
+        std::string type, name, species;
+        double price;
+
+        switch (choice) {
+            case 1:
+                type = "Flower";
+                std::cout << "Enter name of the flower: ";
+                std::cin >> name;
+                std::cout << "Enter price: ";
+                std::cin >> price;
+                std::cout << "Enter species: ";
+                std::cin >> species;
+                myPlant = new PlantContext(type, name, price, species);
+                break;
+
+            case 2:
+                type = "Tree";
+                std::cout << "Enter name of the tree: ";
+                std::cin >> name;
+                std::cout << "Enter price: ";
+                std::cin >> price;
+                std::cout << "Enter species: ";
+                std::cin >> species;
+                myPlant = new PlantContext(type, name, price, species);
+                break;
+
+            case 3:
+                type = "Succulent";
+                std::cout << "Enter name of the succulent: ";
+                std::cin >> name;
+                std::cout << "Enter price: ";
+                std::cin >> price;
+                std::cout << "Enter species: ";
+                std::cin >> species;
+                myPlant = new PlantContext(type, name, price, species);
+                break;
+
+            default:
+                std::cout << "Invalid choice. Try again." << std::endl;
+                continue;
         }
+
+        std::cout << "\n--- Plant Created ---" << std::endl;
+        printPlantInfo(myPlant);
+
+        std::cout << "\nWould you like to age the plant? (y/n): ";
+        char resp;
+        std::cin >> resp;
+        if (resp == 'y' || resp == 'Y') {
+            int days;
+            std::cout << "Enter number of days to age: ";
+            std::cin >> days;
+            myPlant->ageState(days);
+            std::cout << "Plant aged " << days << " days." << std::endl;
+            printPlantInfo(myPlant);
+        }
+
+        std::cout << "\nWould you like to harvest the plant? (y/n): ";
+        std::cin >> resp;
+        if (resp == 'y' || resp == 'Y') {
+            myPlant->harvest();
+            printPlantInfo(myPlant);
+        }
+
+        delete myPlant;
+        myPlant = nullptr;
     }
 
-  void printPlantInfo(PlantContext* context) {
-      std::cout << "\n--- Plant Information ---" << std::endl;
-      std::cout << "Plant Type: " << context->getPlantType() << std::endl;
-      std::cout << "Plant Name: " << context->getPlantName() << std::endl;
-      std::cout << "Current State: " << context->getCurrentStateName() << std::endl;
-      std::cout << "Age (days): " << context->getAge() << std::endl;
-      std::cout << "Season: " << context->getSeason() << std::endl;
-      std::cout << "Ready for Sale: " << (context->isReadyForSale() ? "Yes" : "No") << std::endl;
-      
-      Plant* plant = context->getPlant();
-      std::cout << "\nPlant Details:" << std::endl;
-      std::cout << "  - Plant ID: " << plant->getPlantID() << std::endl;
-      std::cout << "  - Fertilized: " << (plant->isFertilized() ? "Yes" : "No") << std::endl;
-      std::cout << "  - Sunlight Hours: " << plant->getExposureSunlightHours() << std::endl;
-      std::cout << "  - Water Level: " << plant->getLastWaterLevel() << std::endl;
-      std::cout << std::string(25, '-') << std::endl;
-  }
+    printSeparator("EXITING INTERACTIVE MENU");
+}
 
-  void demonstratePlantClass() {
-      printSeparator("PLANT CLASS DEMONSTRATION");
-      
-      std::cout << "\nCreating a Succulent plant..." << std::endl;
-      Plant succulent("Succulent", false, "SUCC001", 8, 3,50);
-      
-      std::cout << "\nPlant Information:" << std::endl;
-      std::cout << "  Name: " << succulent.getName() << std::endl;
-      std::cout << "  ID: " << succulent.getPlantID() << std::endl;
-      std::cout << "  Fertilized: " << (succulent.isFertilized() ? "Yes" : "No") << std::endl;
-      std::cout << "  Sunlight Hours: " << succulent.getExposureSunlightHours() << std::endl;
-      std::cout << "  Water Level: " << succulent.getLastWaterLevel() << " (Low - succulents need less water)" << std::endl;
-      
-      std::cout << "\nUpdating plant care..." << std::endl;
-      succulent.setFertilized(true);
-      succulent.setExposureSunlightHours(10);
-      succulent.setLastWaterLevel(5);
-      
-      std::cout << "After care update:" << std::endl;
-      std::cout << "  Fertilized: " << (succulent.isFertilized() ? "Yes" : "No") << std::endl;
-      std::cout << "  Sunlight Hours: " << succulent.getExposureSunlightHours() << std::endl;
-      std::cout << "  Water Level: " << succulent.getLastWaterLevel() << std::endl;
-  }
-
-  void demonstrateStateMachine() {
-      printSeparator("STATE MACHINE DEMONSTRATION");
-      
-      std::cout << "\nCreating a Flower plant in Spring season..." << std::endl;
-      PlantContext* flower = new PlantContext("Flower", "Spring", "", 15.50);
-      
-      printPlantInfo(flower);
-      
-      // Seedling State
-      std::cout << "\n>>> SEEDLING PHASE <<<" << std::endl;
-      std::cout << "Checking readiness..." << std::endl;
-      flower->checkReadiness();
-      
-      std::cout << "\nSetting up seedling for growth..." << std::endl;
-      SeedlingState* seedling = dynamic_cast<SeedlingState*>(flower->getState());
-      if (seedling) {
-          seedling->setMinDaysInState(7);
-          seedling->setHasReceivedProperCare(true);
-          std::cout << "Required days in seedling state: " << seedling->getRequiredDaysInState() << std::endl;
-      }
-      
-      std::cout << "\nGrowing for 7 days..." << std::endl;
-      flower->ageState(7);
-      printPlantInfo(flower);
-      
-      // Flowering State
-      std::cout << "\n>>> FLOWERING PHASE <<<" << std::endl;
-      flower->checkReadiness();
-      
-      FloweringState* flowering = dynamic_cast<FloweringState*>(flower->getState());
-      if (flowering) {
-          flowering->setRequestDays(14);
-          flowering->setIsInSeason(true);
-          flowering->setFloweringStrtSeason("Spring");
-          std::cout << "Plant is flowering, in season: " << (flowering->getIsInSeason() ? "Yes" : "No") << std::endl;
-      }
-      
-      std::cout << "\nGrowing for 14 days..." << std::endl;
-      flower->ageState(14);
-      printPlantInfo(flower);
-      
-      // Mature State
-      std::cout << "\n>>> MATURE PHASE <<<" << std::endl;
-      flower->checkReadiness();
-      
-      MatureState* mature = dynamic_cast<MatureState*>(flower->getState());
-      if (mature) {
-          mature->setIsInInSeason(true);
-          mature->setMaturedStateSeason("Spring");
-      }
-      
-      std::cout << "\nGrowing for 30 days to reach prime for sale..." << std::endl;
-      flower->ageState(30);
-      
-      if (mature) {
-          std::cout << "Prime for sale: " << (mature->getIsPrimeForSale() ? "Yes" : "No") << std::endl;
-          std::cout << "Sale readiness: " << mature->evaluateSaleReadiness(30) << std::endl;
-      }
-      
-      printPlantInfo(flower);
-      
-      // Ready for Sale State
-      std::cout << "\n>>> HARVESTING <<<" << std::endl;
-      std::cout << "Attempting to harvest..." << std::endl;
-      flower->harvest();
-      printPlantInfo(flower);
-      
-      ReadyForSaleState* ready = dynamic_cast<ReadyForSaleState*>(flower->getState());
-      if (ready) {
-          ready->setPrice(25.99);
-          ready->setSeason("Spring");
-          std::cout << "\nPreparing for sale..." << std::endl;
-          std::string saleInfo = ready->prepareSaleForSale(25.99, "Spring");
-          std::cout << saleInfo << std::endl;
-          std::cout << "Current price: R" << ready->getPrice() << std::endl;
-      }
-      
-      // Sold State
-      std::cout << "\n>>> SELLING PLANT <<<" << std::endl;
-      std::cout << "Selling the plant..." << std::endl;
-      flower->harvest();
-      printPlantInfo(flower);
-      
-      SoldState* sold = dynamic_cast<SoldState*>(flower->getState());
-      if (sold) {
-          sold->soldSequence(25.99, "2025-10-25", "Spring");
-          std::cout << "\nSale details: " << sold->getData() << std::endl;
-      }
-      
-      delete flower;
-  }
-
-  void demonstrateMultiplePlants() {
-      printSeparator("MULTIPLE PLANTS DEMONSTRATION");
-      
-      std::cout << "\nCreating multiple plants with different characteristics..." << std::endl;
-      
-      PlantContext* flower = new PlantContext("Flower", "Summer", "", 30.00);
-      PlantContext* tree = new PlantContext("Tree", "Winter", "", 45.00);
-      PlantContext* succulent = new PlantContext("Succulent", "Spring", "", 12.00);
-      
-      std::cout << "\n--- Flower ---" << std::endl;
-      std::cout << "Type: " << flower->getPlantType() << ", Season: " << flower->getSeason() 
-                << ", State: " << flower->getCurrentStateName() << std::endl;
-      
-      std::cout << "\n--- Tree ---" << std::endl;
-      std::cout << "Type: " << tree->getPlantType() << ", Season: " << tree->getSeason() 
-                << ", State: " << tree->getCurrentStateName() << std::endl;
-      
-      std::cout << "\n--- Succulent ---" << std::endl;
-      std::cout << "Type: " << succulent->getPlantType() << ", Season: " << succulent->getSeason() 
-                << ", State: " << succulent->getCurrentStateName() << std::endl;
-      
-      std::cout << "\nAging all plants by 5 days..." << std::endl;
-      flower->ageState(5);
-      tree->ageState(5);
-      succulent->ageState(5);
-      
-      std::cout << "\nCurrent ages:" << std::endl;
-      std::cout << "  Flower: " << flower->getAge() << " days" << std::endl;
-      std::cout << "  Tree: " << tree->getAge() << " days" << std::endl;
-      std::cout << "  Succulent: " << succulent->getAge() << " days" << std::endl;
-      
-      delete flower;
-      delete tree;
-      delete succulent;
-  }
-
-  void demonstrateEarlyHarvestAttempt() {
-      printSeparator("EARLY HARVEST ATTEMPT DEMONSTRATION");
-      
-      std::cout << "\nCreating a Tree plant..." << std::endl;
-      PlantContext* tree = new PlantContext("Tree", "Summer", "", 18.50);
-      
-      printPlantInfo(tree);
-      
-      std::cout << "\n>>> Attempting to harvest too early <<<" << std::endl;
-      std::cout << "Trying to harvest a seedling..." << std::endl;
-      tree->harvest();
-      
-      std::cout << "\nGrowing to flowering stage..." << std::endl;
-      SeedlingState* seedling = dynamic_cast<SeedlingState*>(tree->getState());
-      if (seedling) {
-          seedling->setMinDaysInState(5);
-          seedling->setHasReceivedProperCare(true);
-      }
-      tree->ageState(5);
-      
-      std::cout << "\nTrying to harvest during flowering..." << std::endl;
-      tree->harvest();
-      
-      delete tree;
-  }
-
-  void interactiveMenu() {
-      printSeparator("INTERACTIVE PLANT MANAGER");
-      
-      PlantContext* myPlant = nullptr;
-      int choice;
-      
-      do {
-          std::cout << "\n--- Plant Management Menu ---" << std::endl;
-          std::cout << "1. Create a new plant" << std::endl;
-          std::cout << "2. View plant information" << std::endl;
-          std::cout << "3. Age plant (grow)" << std::endl;
-          std::cout << "4. Check readiness" << std::endl;
-          std::cout << "5. Harvest plant" << std::endl;
-          std::cout << "6. Setup state parameters" << std::endl;
-          std::cout << "0. Exit interactive mode" << std::endl;
-          std::cout << "\nEnter choice: ";
-          std::cin >> choice;
-          
-          switch (choice) {
-              case 1: {
-                  if (myPlant != nullptr) {
-                      delete myPlant;
-                  }
-                  
-                  std::string type, season;
-                  double price;
-                  
-                  std::cout << "\nEnter plant type (Flower/Tree/Succulent): ";
-                  std::cin >> type;
-                  std::cout << "Enter season (Spring/Summer/Fall/Winter): ";
-                  std::cin >> season;
-                  std::cout << "Enter price: R";
-                  std::cin >> price;
-                  
-                  myPlant = new PlantContext(type, season, "", price);
-                  std::cout << "\n Plant created successfully!" << std::endl;
-                  break;
-              }
-              
-              case 2:
-                  if (myPlant != nullptr) {
-                      printPlantInfo(myPlant);
-                  } else {
-                      std::cout << "\n No plant created yet!" << std::endl;
-                  }
-                  break;
-              
-              case 3: {
-                  if (myPlant != nullptr) {
-                      int days;
-                      std::cout << "\nEnter number of days to grow: ";
-                      std::cin >> days;
-                      myPlant->ageState(days);
-                      std::cout << " Plant aged by " << days << " days" << std::endl;
-                  } else {
-                      std::cout << "\n No plant created yet!" << std::endl;
-                  }
-                  break;
-              }
-              
-              case 4:
-                  if (myPlant != nullptr) {
-                      std::cout << std::endl;
-                      myPlant->checkReadiness();
-                  } else {
-                      std::cout << "\n No plant created yet!" << std::endl;
-                  }
-                  break;
-              
-              case 5:
-                  if (myPlant != nullptr) {
-                      std::cout << std::endl;
-                      myPlant->harvest();
-                  } else {
-                      std::cout << "\n No plant created yet!" << std::endl;
-                  }
-                  break;
-              
-              case 6:
-                  if (myPlant != nullptr) {
-                      std::string state = myPlant->getCurrentStateName();
-                      std::cout << "\nCurrent state: " << state << std::endl;
-                      
-                      if (state == "Seedling") {
-                          SeedlingState* s = dynamic_cast<SeedlingState*>(myPlant->getState());
-                          if (s) {
-                              int minDays;
-                              char care;
-                              std::cout << "Set minimum days in state: ";
-                              std::cin >> minDays;
-                              std::cout << "Has received proper care? (y/n): ";
-                              std::cin >> care;
-                              s->setMinDaysInState(minDays);
-                              s->setHasReceivedProperCare(care == 'y' || care == 'Y');
-                              std::cout << " Parameters set!" << std::endl;
-                          }
-                      } else if (state == "Flowering") {
-                          FloweringState* f = dynamic_cast<FloweringState*>(myPlant->getState());
-                          if (f) {
-                              int reqDays;
-                              char season;
-                              std::cout << "Set required days: ";
-                              std::cin >> reqDays;
-                              std::cout << "Is in season? (y/n): ";
-                              std::cin >> season;
-                              f->setRequestDays(reqDays);
-                              f->setIsInSeason(season == 'y' || season == 'Y');
-                              std::cout << " Parameters set!" << std::endl;
-                          }
-                      } else if (state == "Mature") {
-                          MatureState* m = dynamic_cast<MatureState*>(myPlant->getState());
-                          if (m) {
-                              char season;
-                              std::cout << "Is in season? (y/n): ";
-                              std::cin >> season;
-                              m->setIsInInSeason(season == 'y' || season == 'Y');
-                              std::cout << " Parameters set!" << std::endl;
-                          }
-                      } else if (state == "Ready for Sale") {
-                          ReadyForSaleState* r = dynamic_cast<ReadyForSaleState*>(myPlant->getState());
-                          if (r) {
-                              double price;
-                              std::cout << "Set sale price: $";
-                              std::cin >> price;
-                              r->setPrice(price);
-                              std::cout << " Price set!" << std::endl;
-                          }
-                      }
-                  } else {
-                      std::cout << "\n No plant created yet!" << std::endl;
-                  }
-                  break;
-              
-              case 0:
-                  std::cout << "\nExiting interactive mode..." << std::endl;
-                  break;
-              
-              default:
-                  std::cout << "\n Invalid choice!" << std::endl;
-          }
-          
-      } while (choice != 0);
-      
-      if (myPlant != nullptr) {
-          delete myPlant;
-      }
-  }
 //rene end
 
 
@@ -695,19 +547,19 @@ void simulateCustomerBrowsing() {
     PlantInventory* nurseryInventory = new PlantInventory();
     
     // Stock the nursery with various plants
-    Plant* rose = new Plant("Rose", false, "P001", 6, 3, 25.0);
+    Plant* rose = new Rose("Rose", 25.0);
     rose->setCareInstructions("High maintenance: Daily watering, weekly fertilizing");
     
-    Plant* cactus = new Plant("Cactus", false, "P002", 8, 1, 15.0);
+    Plant* cactus = new Jade("Cactus", 15.0);
     cactus->setCareInstructions("Low maintenance: Monthly watering, strong sunlight");
     
-    Plant* fern = new Plant("Fern", true, "P003", 4, 4, 35.0);
+    Plant* fern = new Succulent("Fern", 35.0, "Fern");
     fern->setCareInstructions("Medium maintenance: Weekly watering, indirect light");
     
-    Plant* succulent = new Plant("Succulent", false, "P004", 6, 2, 18.0);
+    Plant* succulent = new Succulent("Aloe Vera", 18.0, "Succulent");
     succulent->setCareInstructions("Low maintenance: Occasional watering, good drainage");
     
-    Plant* orchid = new Plant("Orchid", true, "P005", 5, 4, 45.0);
+    Plant* orchid = new Succulent("Orchid", 45.0, "Orchid");
     orchid->setCareInstructions("High maintenance: Specific humidity and light needs");
     
     // Stock the nursery
@@ -779,11 +631,11 @@ void simulateCommandPatternScenario() {
     PlantInventory* nursery = new PlantInventory();
 
     // Create a few plants and stock the nursery
-    Plant* aloe = new Plant("Aloe Vera", false, "C101", 6, 2, 20.0);
+    Plant* aloe = new Succulent("Aloe Vera", 20.0, "Aloe");
     aloe->setCareInstructions("Easy: sparse watering, bright indirect light");
-    Plant* ivy = new Plant("English Ivy", false, "C102", 4, 3, 18.0);
+    Plant* ivy = new Succulent("English Ivy", 18.0, "Ivy");
     ivy->setCareInstructions("Medium: regular watering, indirect light");
-    Plant* palm = new Plant("Parlor Palm", true, "C103", 5, 4, 40.0);
+    Plant* palm = new Succulent("Parlor Palm", 40.0, "Palm");
     palm->setCareInstructions("Medium: weekly watering, indirect light");
 
     nursery->add(aloe);
@@ -843,6 +695,43 @@ void simulateCommandPatternScenario() {
 void simulateStrategyPatternScenario() {
     printHeader("Strategy Pattern Scenario: Pricing and Recommendations");
     
+    // Create the strategies directly in the context, transferring ownership
+    StratContext context(new DefaultRecomm(), new RegularPrice());
+    
+    std::cout << "Welcome to our plant store! Let me help you with some recommendations and pricing options.\n" << std::endl;
+    
+    // Scenario 1: Regular price for single item
+    std::cout << "\nScenario 1: Customer buying a single Rose" << std::endl;
+    std::cout << "Staff: 'For a single Rose, we use our regular pricing.'" << std::endl;
+    double regularPriceResult = context.executePricingStrategy(1, 25.0, "");
+    std::cout << "Regular price for 1 Rose: R" << regularPriceResult << std::endl;
+    
+    // Scenario 2: Bulk discount for multiple items
+    std::cout << "\nScenario 2: Customer buying multiple Roses (bulk)" << std::endl;
+    std::cout << "Staff: 'For bulk purchases, we offer special discounts!'" << std::endl;
+    context.setPricingStrategy(new BulkDiscount());
+    double bulkPriceResult = context.executePricingStrategy(10, 25.0, "BULK10");
+    std::cout << "Bulk price for 10 Roses: R" << bulkPriceResult << std::endl;
+    
+    // Scenario 3: Get plant recommendations based on different criteria
+    std::cout << "\nScenario 3: Customer seeking plant recommendations" << std::endl;
+    std::cout << "Customer: 'Can you help me choose some plants?'" << std::endl;
+    
+    // Default recommendations
+    std::cout << "\nStaff: 'Here are our general recommendations:'" << std::endl;
+    context.executeRecommStrategy();
+    
+    // Water-based recommendations
+    std::cout << "\nCustomer: 'I'm looking for low-maintenance plants that don't need much water.'" << std::endl;
+    context.setRecommStrategy(new WaterRecomm());
+    context.executeRecommStrategy();
+    
+    // Sunlight-based recommendations
+    std::cout << "\nCustomer: 'What about plants that do well in shade?'" << std::endl;
+    context.setRecommStrategy(new SunlightRecomm());
+    context.executeRecommStrategy();
+    /*printHeader("Strategy Pattern Scenario: Pricing and Recommendations");
+    
     // Create strategies using unique_ptr for automatic cleanup
     std::unique_ptr<PricingStrategy> regularPrice(new RegularPrice());
     std::unique_ptr<PricingStrategy> bulkDiscount(new BulkDiscount());
@@ -886,7 +775,7 @@ void simulateStrategyPatternScenario() {
     context.setRecommStrategy(sunlightRecomm.get());
     context.executeRecommStrategy();
     
-    // No manual cleanup needed - unique_ptr will handle it
+    */  //No manual cleanup needed - unique_ptr will handle it
 }
 
 void testDecorations() {
@@ -1002,9 +891,9 @@ int main() {
                                    /*wrapExtra*/15.0, "Happy Birthday!");
 
   std::cout << "Gift Rose: " << giftRose->describe()
-            << " | Price: R" << giftRose->price() << "\n";
+            << " | Price: R" << giftRose->priceFunc() << "\n";
 
-  //b) Single "Lily with Note" — build step-by-step (uses builder directly)
+//b) Single "Lily with Note" — build step-by-step (uses builder directly)
   std::unique_ptr<Item> lilyProto = registry.cloneOf("Lily");
   builder.reset();
   builder.buildBasePlant(*lilyProto);
@@ -1013,7 +902,7 @@ int main() {
   std::unique_ptr<Item> lilyWithNote = builder.getResult();
 
   std::cout << "Lily w/ Note: " << lilyWithNote->describe()
-            << " | Price: R" << lilyWithNote->price() << "\n";
+            << " | Price: R" << lilyWithNote->priceFunc() << "\n";
 
   //c) Arrangement: two personalised succulents 
   printHeader("c) Build an Arrangement (bundle of decorated items)");
@@ -1042,7 +931,7 @@ int main() {
             << "  | Items: " << giftSet.count()
             << "  | Ready: " << (giftSet.readyForSale() ? "Yes" : "No")
             << "\n";
-
+        
   //3) Sales flow scenarios (State pattern)
   //a) In-stock happy path: browse → cart → pay → complete
   printHeader("3.a) In-stock purchase success");
@@ -1253,14 +1142,14 @@ int main() {
   std::cout << "COMMAND DESIGN PATTERN (PLANT CARE):" << std::endl;
 
     //creating plants
-    Plant rose("Rose", false, "P001", 6, 50, 0);
-    Plant cactus("Cactus", true, "P002", 8, 20, 0);
-    Plant fern("Fern", false, "P003", 3, 70, 0);
+    Plant* rose = new Rose("Rose", 0);
+    Plant* cactus = new Jade("Cactus", 0);
+    Plant* fern = new Succulent("Fern", 0, "Fern");
 
     std::cout << "Created plants:" << std::endl;
-    std::cout << "- " << rose.getName() << " (ID: " << rose.getPlantID() << ")" << std::endl;
-    std::cout << "- " << cactus.getName() << " (ID: " << cactus.getPlantID() << ")" << std::endl;
-    std::cout << "- " << fern.getName() << " (ID: " << fern.getPlantID() << ")" << std::endl;
+    std::cout << "- " << rose->getName() << " (ID: " << rose->getPlantID() << ")" << std::endl;
+    std::cout << "- " << cactus->getName() << " (ID: " << cactus->getPlantID() << ")" << std::endl;
+    std::cout << "- " << fern->getName() << " (ID: " << fern->getPlantID() << ")" << std::endl;
     std::cout << std::endl;
 
     //creating a gardener
@@ -1270,51 +1159,51 @@ int main() {
     std::cout << std::endl;
 
     //testing the water, fertilize and prune command without queuing
-    WaterCommand waterRose(&rose, 2.5);
+    WaterCommand waterRose(rose, 2.5);
     std::cout << "Command Description: " << waterRose.getDescription() << std::endl;
     waterRose.execute();
     std::cout << std::endl;
 
-    FertilizeCommand fertilizeFern(&fern, "Organic");
+    FertilizeCommand fertilizeFern(fern, "Organic");
     std::cout << "Command Description: " << fertilizeFern.getDescription() << std::endl;
     fertilizeFern.execute();
     std::cout << std::endl;
 
-    PruneCommand pruneCactus(&cactus, 3);
+    PruneCommand pruneCactus(cactus, 3);
     std::cout << "Command Description: " << pruneCactus.getDescription() << std::endl;
     pruneCactus.execute();
     std::cout << std::endl;
 
-    SunlightCommand sunlightRose(&rose, 4, "direct");
+    SunlightCommand sunlightRose(rose, 4, "direct");
     std::cout << "Command Description: " << sunlightRose.getDescription() << std::endl;
     sunlightRose.execute();
     std::cout << std::endl;
 
     //queuing tasks
-    gardener.addTask(new WaterCommand(&rose, 1.5));
-    gardener.addTask(new FertilizeCommand(&cactus, "Cactus Mix"));
-    gardener.addTask(new PruneCommand(&fern, 2));
-    gardener.addTask(new WaterCommand(&fern, 0.8));
-    gardener.addTask(new SunlightCommand(&cactus, 6, "intense"));
-    gardener.addTask(new SunlightCommand(&fern, 2, "filtered")); 
+    gardener.addTask(new WaterCommand(rose, 1.5));
+    gardener.addTask(new FertilizeCommand(cactus, "Cactus Mix"));
+    gardener.addTask(new PruneCommand(fern, 2));
+    gardener.addTask(new WaterCommand(fern, 0.8));
+    gardener.addTask(new SunlightCommand(cactus, 6, "intense"));
+    gardener.addTask(new SunlightCommand(fern, 2, "filtered")); 
 
     gardener.performTasks();
     std::cout << std::endl;
 
     //testing if we can add tasks and clear them immediately without performing them
-    gardener.addTask(new WaterCommand(&rose, 2.0));
-    gardener.addTask(new FertilizeCommand(&rose, "Rose Food"));
+    gardener.addTask(new WaterCommand(rose, 2.0));
+    gardener.addTask(new FertilizeCommand(rose, "Rose Food"));
     
     std::cout << "Tasks added to queue, now clearing..." << std::endl;
     gardener.clearTasks();
     std::cout << std::endl;
 
     //testing a queue with mixed tasks
-    gardener.addTask(new WaterCommand(&rose, 1.0));
-    gardener.addTask(new PruneCommand(&rose, 1));
-    gardener.addTask(new FertilizeCommand(&rose, "All-Purpose"));
-    gardener.addTask(new WaterCommand(&cactus, 0.3));
-    gardener.addTask(new PruneCommand(&fern, 1));
+    gardener.addTask(new WaterCommand(rose, 1.0));
+    gardener.addTask(new PruneCommand(rose, 1));
+    gardener.addTask(new FertilizeCommand(rose, "All-Purpose"));
+    gardener.addTask(new WaterCommand(cactus, 0.3));
+    gardener.addTask(new PruneCommand(fern, 1));
 
     gardener.performTasks();
     std::cout << std::endl;
@@ -1326,7 +1215,7 @@ int main() {
     std::cout << std::endl;
 
     //testing with 0 values
-    WaterCommand waterZero(&rose, 0.0);
+    WaterCommand waterZero(rose, 0.0);
     std::cout << "Testing zero water: " << waterZero.getDescription() << std::endl;
     waterZero.execute();
     std::cout << std::endl;
@@ -1337,15 +1226,15 @@ int main() {
     std::cout << std::endl;
 
     //testinf with 0 hours
-    SunlightCommand sunlightZero(&rose, 0, "direct");
+    SunlightCommand sunlightZero(rose, 0, "direct");
     std::cout << "Testing zero hours: " << sunlightZero.getDescription() << std::endl;
     sunlightZero.execute();
     std::cout << std::endl;
 
     //testing with different intensity levels
-    SunlightCommand sunlightLow(&cactus, 2, "low");
-    SunlightCommand sunlightMedium(&fern, 4, "medium"); 
-    SunlightCommand sunlightHigh(&rose, 8, "high");
+    SunlightCommand sunlightLow(cactus, 2, "low");
+    SunlightCommand sunlightMedium(fern, 4, "medium"); 
+    SunlightCommand sunlightHigh(rose, 8, "high");
     
     std::cout << "Testing different intensities:" << std::endl;
     sunlightLow.execute();
@@ -1358,9 +1247,9 @@ int main() {
 
     std::cout << "CHAIN OF RESPONSIBILITY (PLANT LIFE CYCLES):" << std::endl;
 
-    Plant testRose("Test Rose", false, "T001", 6, 50, 0);
-    Plant testCactus("Test Cactus", true, "T002", 8, 20, 0);
-    Plant testFern("Test Fern", false, "T003", 3, 70, 0);
+    Rose testRose("Test Rose", 0);
+    Jade testCactus("Test Cactus", 0);
+    Succulent testFern("Test Fern", 0, "Fern");
     
     std::cout << "Created test plants for issue handling" << std::endl;
     std::cout << std::endl;
@@ -1436,86 +1325,86 @@ int main() {
     deliveryPerson.careForPlants();
 
     std::cout << "\narge New Shipment Received (Gardener)" << std::endl;
-    inventoryGardener.notify("new shipment", &rose, 500);
-    std::cout << "Greenhouse stock after shipment: " << inventoryMediator.getGreenhouseStock(&rose) << std::endl;
+    inventoryGardener.notify("new shipment", rose, 500);
+    std::cout << "Greenhouse stock after shipment: " << inventoryMediator.getGreenhouseStock(rose) << std::endl;
 
     std::cout << "\nMove Plants to Sales Floor (Gardener)" << std::endl;
-    inventoryGardener.notify("plant moved to sales", &rose, 300);
-    std::cout << "After moving to sales - Greenhouse: " << inventoryMediator.getGreenhouseStock(&rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(&rose) << std::endl;
+    inventoryGardener.notify("plant moved to sales", rose, 300);
+    std::cout << "After moving to sales - Greenhouse: " << inventoryMediator.getGreenhouseStock(rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(rose) << std::endl;
 
     std::cout << "\nPlant Sales to Walk-in Customers (Sales Assistant)" << std::endl;
-    salesPerson.notify("plant sold", &rose, 150);
-    std::cout << "After sales - Greenhouse: " << inventoryMediator.getGreenhouseStock(&rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(&rose) << std::endl;
+    salesPerson.notify("plant sold", rose, 150);
+    std::cout << "After sales - Greenhouse: " << inventoryMediator.getGreenhouseStock(rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(rose) << std::endl;
 
     std::cout << "\nCustomer Delivery (Delivery Staff)" << std::endl;
-    deliveryPerson.notify("customer delivery", &rose, 80);
-    std::cout << "After delivery - Greenhouse: " << inventoryMediator.getGreenhouseStock(&rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(&rose) << std::endl;
+    deliveryPerson.notify("customer delivery", rose, 80);
+    std::cout << "After delivery - Greenhouse: " << inventoryMediator.getGreenhouseStock(rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(rose) << std::endl;
 
     std::cout << "\nCheck Stock Levels (Manager)" << std::endl;
-    manager.notify("check stock", &rose, 0);
+    manager.notify("check stock", rose, 0);
 
     std::cout << "\nReturn Plants to Greenhouse (Sales Assistant)" << std::endl;
-    salesPerson.notify("return to greenhouse", &rose, 20);
-    std::cout << "After return - Greenhouse: " << inventoryMediator.getGreenhouseStock(&rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(&rose) << std::endl;
+    salesPerson.notify("return to greenhouse", rose, 20);
+    std::cout << "After return - Greenhouse: " << inventoryMediator.getGreenhouseStock(rose) << ", Sales Floor: " << inventoryMediator.getSalesFloorStock(rose) << std::endl;
 
     std::cout << "\nLow Stock Alert" << std::endl;
     
-    salesPerson.notify("plant sold", &rose, 60);
-    std::cout << "After additional sales - Sales Floor: " << inventoryMediator.getSalesFloorStock(&rose) << std::endl;
+    salesPerson.notify("plant sold", rose, 60);
+    std::cout << "After additional sales - Sales Floor: " << inventoryMediator.getSalesFloorStock(rose) << std::endl;
 
     std::cout << "\nMultiple Plant Types" << std::endl;
-    inventoryGardener.notify("new shipment", &cactus, 400);
-    inventoryGardener.notify("plant moved to sales", &cactus, 250);
-    salesPerson.notify("plant sold", &cactus, 120);
-    deliveryPerson.notify("customer delivery", &cactus, 80);
-    manager.notify("check stock", &cactus, 0);
+    inventoryGardener.notify("new shipment", cactus, 400);
+    inventoryGardener.notify("plant moved to sales", cactus, 250);
+    salesPerson.notify("plant sold", cactus, 120);
+    deliveryPerson.notify("customer delivery", cactus, 80);
+    manager.notify("check stock", cactus, 0);
 
     std::cout << "\nEdge Cases" << std::endl;
     std::cout << "Over-selling (Negative Stock Prevention)" << std::endl;
-    salesPerson.notify("plant sold", &fern, 100);
-    std::cout << "Fern sales floor stock after oversell attempt: " << inventoryMediator.getSalesFloorStock(&fern) << std::endl;
+    salesPerson.notify("plant sold", fern, 100);
+    std::cout << "Fern sales floor stock after oversell attempt: " << inventoryMediator.getSalesFloorStock(fern) << std::endl;
 
     std::cout << "\nMoving More Than Available" << std::endl;
-    inventoryGardener.notify("plant moved to sales", &rose, 1000);
-    std::cout << "Rose greenhouse stock after over-move attempt: " << inventoryMediator.getGreenhouseStock(&rose) << std::endl;
+    inventoryGardener.notify("plant moved to sales", rose, 1000);
+    std::cout << "Rose greenhouse stock after over-move attempt: " << inventoryMediator.getGreenhouseStock(rose) << std::endl;
 
     std::cout << "\nOver-delivery" << std::endl;
-    deliveryPerson.notify("customer delivery", &rose, 500);
-    std::cout << "Rose sales floor stock after over-delivery attempt: " << inventoryMediator.getSalesFloorStock(&rose) << std::endl;
+    deliveryPerson.notify("customer delivery", rose, 500);
+    std::cout << "Rose sales floor stock after over-delivery attempt: " << inventoryMediator.getSalesFloorStock(rose) << std::endl;
 
     std::cout << "\nNull Plant" << std::endl;
     inventoryGardener.notify("new shipment", nullptr, 50);
 
     std::cout << "\nUnknown Event Type" << std::endl;
-    inventoryGardener.notify("unknown event", &rose, 50);
+    inventoryGardener.notify("unknown event", rose, 50);
 
     std::cout << "\nStaff Without Mediator" << std::endl;
     Gardener loneGardener("Lone Gardener", 205, nullptr, "General Plants");
-    loneGardener.notify("new shipment", &fern, 100);
+    loneGardener.notify("new shipment", fern, 100);
 
     std::cout << "\nComplex Inventory Scenario" << std::endl;
     std::cout << "Simulating a complete business day:" << std::endl;
 
-    inventoryGardener.notify("new shipment", &fern, 600);
-    inventoryGardener.notify("plant moved to sales", &fern, 400);
+    inventoryGardener.notify("new shipment", fern, 600);
+    inventoryGardener.notify("plant moved to sales", fern, 400);
 
-    salesPerson.notify("plant sold", &fern, 150);
-    deliveryPerson.notify("customer delivery", &fern, 100);
-    salesPerson.notify("plant sold", &fern, 80);
-    deliveryPerson.notify("customer delivery", &fern, 60);
+    salesPerson.notify("plant sold", fern, 150);
+    deliveryPerson.notify("customer delivery", fern, 100);
+    salesPerson.notify("plant sold", fern, 80);
+    deliveryPerson.notify("customer delivery", fern, 60);
 
-    manager.notify("check stock", &fern, 0);
-    salesPerson.notify("return to greenhouse", &fern, 30); // Returns from customers
+    manager.notify("check stock", fern, 0);
+    salesPerson.notify("return to greenhouse", fern, 30); // Returns from customers
 
-    manager.notify("check stock", &fern, 0);
+    manager.notify("check stock", fern, 0);
 
     std::cout << "\nGetter Methods Verification" << std::endl;
-    std::cout << "Rose greenhouse stock: " << inventoryMediator.getGreenhouseStock(&rose) << std::endl;
-    std::cout << "Rose sales floor stock: " << inventoryMediator.getSalesFloorStock(&rose) << std::endl;
-    std::cout << "Cactus greenhouse stock: " << inventoryMediator.getGreenhouseStock(&cactus) << std::endl;
-    std::cout << "Cactus sales floor stock: " << inventoryMediator.getSalesFloorStock(&cactus) << std::endl;
-    std::cout << "Fern greenhouse stock: " << inventoryMediator.getGreenhouseStock(&fern) << std::endl;
-    std::cout << "Fern sales floor stock: " << inventoryMediator.getSalesFloorStock(&fern) << std::endl;
+    std::cout << "Rose greenhouse stock: " << inventoryMediator.getGreenhouseStock(rose) << std::endl;
+    std::cout << "Rose sales floor stock: " << inventoryMediator.getSalesFloorStock(rose) << std::endl;
+    std::cout << "Cactus greenhouse stock: " << inventoryMediator.getGreenhouseStock(cactus) << std::endl;
+    std::cout << "Cactus sales floor stock: " << inventoryMediator.getSalesFloorStock(cactus) << std::endl;
+    std::cout << "Fern greenhouse stock: " << inventoryMediator.getGreenhouseStock(fern) << std::endl;
+    std::cout << "Fern sales floor stock: " << inventoryMediator.getSalesFloorStock(fern) << std::endl;
 
     std::cout << "\nReal Customer Delivery Workflow" << std::endl;
     std::cout << "Scenario: Customer orders plants for home delivery" << std::endl;
@@ -1528,43 +1417,43 @@ int main() {
     Manager deliveryManager("Lisa Supervisor", 304, &deliveryMediator, "Delivery Operations");
 
     std::cout << "\nReceiving plants in greenhouse" << std::endl;
-    deliveryGardener.notify("new shipment", &rose, 1000);
-    deliveryManager.notify("check stock", &rose, 0);
+    deliveryGardener.notify("new shipment", rose, 1000);
+    deliveryManager.notify("check stock", rose, 0);
 
     std::cout << "\nCustomer places home delivery order (200 roses)" << std::endl;
     std::cout << "Order processed by sales assistant..." << std::endl;
 
-    deliveryGardener.notify("plant moved to sales", &rose, 200);
-    deliveryManager.notify("check stock", &rose, 0);
+    deliveryGardener.notify("plant moved to sales", rose, 200);
+    deliveryManager.notify("check stock", rose, 0);
 
     std::cout << "\nDelivery staff picks up and delivers order" << std::endl;
     std::cout << "Mike Courier loading 200 roses into refrigerated truck..." << std::endl;
     
-    homeDelivery.notify("customer delivery", &rose, 200);
+    homeDelivery.notify("customer delivery", rose, 200);
 
     std::cout << "\nDelivery completed successfully!" << std::endl;
     std::cout << "200 roses delivered to customer's home address" << std::endl;
     std::cout << "Delivery confirmation sent to nursery" << std::endl;
 
     std::cout << "\nFinal inventory status" << std::endl;
-    deliveryManager.notify("check stock", &rose, 0);
+    deliveryManager.notify("check stock", rose, 0);
 
     std::cout << "\nMultiple Large Home Deliveries" << std::endl;
     std::cout << "Scenario: Multiple customers ordering for home delivery" << std::endl;
 
     std::cout << "\nCustomer 1: Office orders 300 plants for delivery" << std::endl;
-    deliveryGardener.notify("plant moved to sales", &cactus, 300);
-    homeDelivery.notify("customer delivery", &cactus, 300);
+    deliveryGardener.notify("plant moved to sales", cactus, 300);
+    homeDelivery.notify("customer delivery", cactus, 300);
     std::cout << "300 cacti delivered to downtown office building" << std::endl;
 
     std::cout << "\nCustomer 2: Homeowner orders 150 plants" << std::endl;
-    deliveryGardener.notify("plant moved to sales", &fern, 150);
-    homeDelivery.notify("customer delivery", &fern, 150);
+    deliveryGardener.notify("plant moved to sales", fern, 150);
+    homeDelivery.notify("customer delivery", fern, 150);
     std::cout << "150 ferns delivered to residential address" << std::endl;
 
     std::cout << "\nCustomer 3: Wedding planner orders 500 roses" << std::endl;
-    deliveryGardener.notify("plant moved to sales", &rose, 500);
-    homeDelivery.notify("customer delivery", &rose, 500);
+    deliveryGardener.notify("plant moved to sales", rose, 500);
+    homeDelivery.notify("customer delivery", rose, 500);
     std::cout << "500 roses delivered to wedding venue" << std::endl;
 
     std::cout << "\nDelivery Operations Summary:" << std::endl;
@@ -1574,9 +1463,9 @@ int main() {
     std::cout << "- Total plants delivered: 950" << std::endl;
     std::cout << "- Delivery vehicles used: Refrigerated Truck" << std::endl;
 
-    deliveryManager.notify("check stock", &rose, 0);
-    deliveryManager.notify("check stock", &cactus, 0);
-    deliveryManager.notify("check stock", &fern, 0);
+    deliveryManager.notify("check stock", rose, 0);
+    deliveryManager.notify("check stock", cactus, 0);
+    deliveryManager.notify("check stock", fern, 0);
 
     std::cout << "===========================================================================================================" <<std::endl;
     std::cout << "===========================================================================================================" <<std::endl;
@@ -1706,8 +1595,8 @@ int main() {
 
     std::cout << "\nTesting Task Management System" << std::endl;
 
-    Plant testPlant1("Test Plant 1", false, "TP001", 5, 60, 0);
-    Plant testPlant2("Test Plant 2", true, "TP002", 7, 30, 0);
+    Rose testPlant1("Test Plant 1", 0);
+    Jade testPlant2("Test Plant 2", 0);
 
     std::cout << "\nAdding tasks to Factory Gardener:" << std::endl;
     factoryGardener->addTask(new WaterCommand(&testPlant1, 2.0));
@@ -1802,6 +1691,9 @@ int main() {
     delete factoryDelivery;
     delete factoryGardener2;
     delete factorySalesAsst2;
+    delete rose;
+    delete cactus;
+    delete fern;
 
   //karishma end
 
@@ -1809,7 +1701,7 @@ int main() {
   std::cout<<"-----------------------Testing Customer Browsing---------------------------\n\n";
     //simulateCustomerBrowsing();
     //simulateCommandPatternScenario();
-    //simulateStrategyPatternScenario();
+    ////simulateStrategyPatternScenario();
     //testDecorations();
 
 
@@ -1818,4 +1710,12 @@ int main() {
     testIntegratedPatternsScenario();
     std::cout<<std::endl;
     return 0;
+  }
+
+  void printSeparator(const std::string &title)
+  {
+  }
+
+  void printPlantInfo(PlantContext *context)
+  {
   }

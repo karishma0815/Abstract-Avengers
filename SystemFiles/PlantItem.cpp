@@ -6,39 +6,38 @@
  */
 
 #include "PlantItem.h"
+#include <utility>   
+#include <memory>    
 
-#include <utility>
+PlantItem::PlantItem(std::string name, double basePrice, bool ready)
+: name_(std::move(name)), base_(basePrice), ready_(ready) {}
 
-PlantItem::PlantItem(std::string name, double basePrice, bool readyForSale)
-  : name(std::move(name)), basePrice(basePrice), ready(readyForSale) 
-  {}
-
-double PlantItem::price() const 
+double PlantItem::priceFunc() const 
 { 
-    return basePrice; 
+    return base_; 
 }
 
 std::string PlantItem::describe() const 
 { 
-    return "Plant(" + name + ")"; 
+    return name_; 
 }
 
 bool PlantItem::readyForSale() const 
 { 
-    return ready; 
+    return ready_; 
 }
 
 std::unique_ptr<Item> PlantItem::clone() const 
 {
-  return std::unique_ptr<Item>(new PlantItem(*this));
+    return std::unique_ptr<Item>( new PlantItem(*this) );
 }
 
-const std::string& PlantItem::nameFunc() const 
+const std::string& PlantItem::name() const 
 { 
-    return name; 
+    return name_; 
 }
 
-double PlantItem::basePriceFunc() const 
+void PlantItem::setReady(bool r) 
 { 
-    return basePrice; 
+    ready_ = r; 
 }

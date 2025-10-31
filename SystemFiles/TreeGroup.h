@@ -16,6 +16,7 @@ public:
     TreeGroup(std::string groupName);
     ~TreeGroup() override;
     
+    std::string getPlantType() const override;
     int getCount() const override;
     void add(TreeProduct* plant) override;
     void remove(TreeProduct* plant) override;

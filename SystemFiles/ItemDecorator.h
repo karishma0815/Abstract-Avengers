@@ -2,39 +2,31 @@
 
 /**
  * @file ItemDecorator.h
- * @brief Decorator base for personalization layers
+ * @brief Decorator class for decorator pattern
  * @author Taskeen Abdoola
- * @date 2025-10-11
+ * @date 2025-10-14
  */
 
-#ifndef ITEMDECORATOR_H
-#define ITEMDECORATOR_H
-
+#pragma once
 #include "Item.h"
-
 #include <memory>
 
-class Item;
+class ItemDecorator : public Item {
+public:
+    explicit ItemDecorator(std::unique_ptr<Item> inner);
+    ~ItemDecorator() override;
 
-class ItemDecorator : public Item
-{
-    public:
-        double price() const override;
-        std::string describe() const override;
-        bool readyForSale() const override;
+    double priceFunc() const override;
+    std::string describe() const override;
+    bool readyForSale() const override;
 
-        /**
+protected:
+    Item* innerRaw() const;
+    /**
         * @brief Deep clone this decorator and its wrapped chain.
         * @return Newly allocated decorated item copy.
         */
-        virtual std::unique_ptr<Item> clone() const override = 0; //prototype
+    std::unique_ptr<Item> cloneInner() const;
 
-        /** @return Read-only reference to the wrapped item. */
-        const Item& wrappedFunc() const; //accessor
-    
-    protected:
-        std::unique_ptr<Item> wrapped;
-        explicit ItemDecorator(std::unique_ptr<Item> dec);
+    std::unique_ptr<Item> inner_;
 };
-
-#endif

@@ -108,6 +108,7 @@ SRCS =  NurseryUI.cpp\
 		Iterator.cpp\
 		PlantInventory.cpp\
 		PlantIterator.cpp\
+		ArrangementsIterator.cpp\
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)

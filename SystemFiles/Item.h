@@ -20,7 +20,7 @@ public:
   virtual ~Item() {}
 
   /** @brief Final price of this item (including all decorations). */
-  virtual double price() const = 0;
+  virtual double priceFunc() const = 0;
 
   /** @brief Human-readable description for receipts/UI. */
   virtual std::string describe() const = 0;

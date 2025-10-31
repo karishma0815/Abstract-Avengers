@@ -32,19 +32,19 @@ public:
      * @param stock Stock count
      * @return Pointer to new Succulent
      */
-    SucculentProduct* createSucculent(std::string name, double price, int stock) override;
+    SucculentProduct* createSucculent(std::string name, double price, std::string species, int stock) override;
     
     /**
      * @brief Create tree - not supported by SucculentFactory
      * @return nullptr
      */
-    TreeProduct* createTree(std::string name, double price, int stock) override;
+    TreeProduct* createTree(std::string name, double price, std::string species, int stock) override;
     
     /**
      * @brief Create flower - not supported by SucculentFactory
      * @return nullptr
      */
-    FlowerProduct* createFlower(std::string name, double price, int stock) override;
+    FlowerProduct* createFlower(std::string name, double price, std::string species, int stock) override;
     
     /**
      * @brief Create succulent group
