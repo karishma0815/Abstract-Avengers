@@ -1,5 +1,5 @@
 /*Abstract Avengers*/
-#include "NurseryUI.h"
+
 
 /*
 Demonstrates:
@@ -1699,10 +1699,10 @@ int main() {
 
     std::cout<<"\n\n\n";
   std::cout<<"-----------------------Testing Customer Browsing---------------------------\n\n";
-    //simulateCustomerBrowsing();
-    //simulateCommandPatternScenario();
-    ////simulateStrategyPatternScenario();
-    //testDecorations();
+    simulateCustomerBrowsing();
+    simulateCommandPatternScenario();
+    simulateStrategyPatternScenario();
+    testDecorations();
 
 
     std::cout<<"--------------------------------Integrated Customer queries-------------------------\n";
