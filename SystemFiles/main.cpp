@@ -916,9 +916,9 @@ int main() {
                                    /*wrapExtra*/15.0, "Happy Birthday!");
 
   std::cout << "Gift Rose: " << giftRose->describe()
-            << " | Price: R" << giftRose->price() << "\n";
+            << " | Price: R" << giftRose->priceFunc() << "\n";
 
-  //b) Single "Lily with Note" — build step-by-step (uses builder directly)
+//b) Single "Lily with Note" — build step-by-step (uses builder directly)
   std::unique_ptr<Item> lilyProto = registry.cloneOf("Lily");
   builder.reset();
   builder.buildBasePlant(*lilyProto);
@@ -927,7 +927,7 @@ int main() {
   std::unique_ptr<Item> lilyWithNote = builder.getResult();
 
   std::cout << "Lily w/ Note: " << lilyWithNote->describe()
-            << " | Price: R" << lilyWithNote->price() << "\n";
+            << " | Price: R" << lilyWithNote->priceFunc() << "\n";
 
   //c) Arrangement: two personalised succulents 
   printHeader("c) Build an Arrangement (bundle of decorated items)");
@@ -956,7 +956,7 @@ int main() {
             << "  | Items: " << giftSet.count()
             << "  | Ready: " << (giftSet.readyForSale() ? "Yes" : "No")
             << "\n";
-
+        
   //3) Sales flow scenarios (State pattern)
   //a) In-stock happy path: browse → cart → pay → complete
   printHeader("3.a) In-stock purchase success");

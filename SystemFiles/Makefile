@@ -106,6 +106,7 @@ SRCS =  Arrangement.cpp\
 		Iterator.cpp\
 		PlantInventory.cpp\
 		PlantIterator.cpp\
+		ArrangementsIterator.cpp\
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)

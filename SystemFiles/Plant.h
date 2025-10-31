@@ -13,6 +13,8 @@
 #define PLANT_H
 
 #include <string>
+#include <memory>
+#include "Item.h"
 
 /**
  * @class Plant
@@ -25,7 +27,7 @@
  */
 
 
-class Plant {
+class Plant : public Item {
 private:
     std::string name;
     bool fertilized;
@@ -40,6 +42,8 @@ private:
 
     //added
     bool isAlive;
+    double base;
+    bool ready;
 
 public:
 /**
@@ -127,6 +131,17 @@ public:
     void fertilize(const std::string& fertilizerType);
     void prune(int intensity);
     void provideSunlight(int hours, const std::string& intensity);
+
+    //taskeen added
+    // Item API
+    double priceFunc() const override { return base; }
+    std::string describe() const override { return name; }
+    bool readyForSale() const override { return ready; }
+
+    // Prototype
+    std::unique_ptr<Item> clone() const override {
+    return std::unique_ptr<Item>( new Plant(*this) );
+    }
 };
 
 #endif 
