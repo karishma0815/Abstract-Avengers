@@ -842,6 +842,43 @@ void simulateCommandPatternScenario() {
 void simulateStrategyPatternScenario() {
     printHeader("Strategy Pattern Scenario: Pricing and Recommendations");
     
+    // Create the strategies directly in the context, transferring ownership
+    StratContext context(new DefaultRecomm(), new RegularPrice());
+    
+    std::cout << "Welcome to our plant store! Let me help you with some recommendations and pricing options.\n" << std::endl;
+    
+    // Scenario 1: Regular price for single item
+    std::cout << "\nScenario 1: Customer buying a single Rose" << std::endl;
+    std::cout << "Staff: 'For a single Rose, we use our regular pricing.'" << std::endl;
+    double regularPriceResult = context.executePricingStrategy(1, 25.0, "");
+    std::cout << "Regular price for 1 Rose: R" << regularPriceResult << std::endl;
+    
+    // Scenario 2: Bulk discount for multiple items
+    std::cout << "\nScenario 2: Customer buying multiple Roses (bulk)" << std::endl;
+    std::cout << "Staff: 'For bulk purchases, we offer special discounts!'" << std::endl;
+    context.setPricingStrategy(new BulkDiscount());
+    double bulkPriceResult = context.executePricingStrategy(10, 25.0, "BULK10");
+    std::cout << "Bulk price for 10 Roses: R" << bulkPriceResult << std::endl;
+    
+    // Scenario 3: Get plant recommendations based on different criteria
+    std::cout << "\nScenario 3: Customer seeking plant recommendations" << std::endl;
+    std::cout << "Customer: 'Can you help me choose some plants?'" << std::endl;
+    
+    // Default recommendations
+    std::cout << "\nStaff: 'Here are our general recommendations:'" << std::endl;
+    context.executeRecommStrategy();
+    
+    // Water-based recommendations
+    std::cout << "\nCustomer: 'I'm looking for low-maintenance plants that don't need much water.'" << std::endl;
+    context.setRecommStrategy(new WaterRecomm());
+    context.executeRecommStrategy();
+    
+    // Sunlight-based recommendations
+    std::cout << "\nCustomer: 'What about plants that do well in shade?'" << std::endl;
+    context.setRecommStrategy(new SunlightRecomm());
+    context.executeRecommStrategy();
+    /*printHeader("Strategy Pattern Scenario: Pricing and Recommendations");
+    
     // Create strategies using unique_ptr for automatic cleanup
     std::unique_ptr<PricingStrategy> regularPrice(new RegularPrice());
     std::unique_ptr<PricingStrategy> bulkDiscount(new BulkDiscount());
@@ -885,7 +922,7 @@ void simulateStrategyPatternScenario() {
     context.setRecommStrategy(sunlightRecomm.get());
     context.executeRecommStrategy();
     
-    // No manual cleanup needed - unique_ptr will handle it
+    */  //No manual cleanup needed - unique_ptr will handle it
 }
 ////////////////////////////////////////////Customer_sales_Iterator+cmd+strategy ends here\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/
 
