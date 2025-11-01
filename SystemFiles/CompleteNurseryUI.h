@@ -79,6 +79,22 @@
 #include "PlantContext.h"
 #include "PlantState.h"
 
+#include "PrototypeRegistry.h"
+#include "Item.h"
+#include "PlantItem.h"
+#include "Arrangement.h"
+#include "ArrangementBuilder.h"
+#include "ConcreteArrangementBuilder.h"
+#include "Director.h"
+#include "DecorativePot.h"
+#include "GiftWrap.h"
+#include "Note.h"
+
+// Taskeen's Payment State includes
+#include "SalesContext.h"
+#include "BrowsingState.h"
+#include "AwaitingStockState.h"
+
 class CompleteNurseryUI {
 private:
     // Core systems
@@ -101,11 +117,16 @@ private:
     
     // Growing plants
     std::vector<PlantContext*> growingPlants;
+
+    PrototypeRegistry* prototypeRegistry;
+    ConcreteArrangementBuilder* arrangementBuilder;
+    Director* director;
+    SalesContext* salesContext;
     
     // UI helpers
     void clearScreen();
     void pressEnter();
-    int getValidatedInput(int min, int max);
+    //int getValidatedInput(int min, int max);
     void printHeader(const std::string& title);
     void printSubHeader(const std::string& title);
     void printSuccess(const std::string& msg);
@@ -120,34 +141,41 @@ public:
     CompleteNurseryUI();
     ~CompleteNurseryUI();
     
-    // Main menus
+    //Main menus
     void showMainMenu();
     void showCustomerMenu();
     void showStaffMenu();
     void showGreenhouseMenu();
     void showPatternDemoMenu();
     
-    // Customer menus (Sabira's work)
+    //Customer menus(Sabira's work)
     void showBrowsingMenu();
     void showCartMenu();
     void showRecommendationMenu();
     void showPricingMenu();
     void showHelpMenu();
     
-    // Staff menus (Karishma's work)
+    //Staff menus(Karishma's work)
     void showPlantCareMenu();
     void showStaffTasksMenu();
     void showInventoryMediatorMenu();
     void showPlantIssuesMenu();
     
-    // Greenhouse menus (Kiolin + Rene's work)
+    //Greenouse menus(Kiolin + Rene's work from main[but modify it so it fits well with the UI])
     void showStockManagementMenu();
     void showPlantLifecycleMenu();
     void showFactoryProductionMenu();
+
+    //Decoration + Customer Payment(Taskeen's menus)
+    void showPersonalizationMenu();
+    void showPaymentMenu();
+    void personalizeSelectedPlant(Plant* plant);
     
-    // Helper functions
+    //Helper functions
     void displayCart();
     double calculateCartTotal();
+    int getValidatedInput(int min, int max);
+
 };
 
 #endif

@@ -3,7 +3,8 @@ CXXFLAGS = -std=c++11 -Wall -DSUPPORT_TEST_TOGGLES
 TARGET = nursery_system
 #test
 
-SRCS =  Arrangement.cpp\
+SRCS =  CompleteNurseryUI.cpp\
+		Arrangement.cpp\
 		ConcreteArrangementBuilder.cpp\
 		Director.cpp\
 		ItemDecorator.cpp\

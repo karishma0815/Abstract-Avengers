@@ -1,5 +1,6 @@
 #include"CompleteNurseryUI.h"
-
+///Comment out functions that are not yours and they're giving you errors
+//(dont forget to comment it out in the main menu as well!!!)
 CompleteNurseryUI::CompleteNurseryUI() {
     inventory = new PlantInventory();
     currentCustomer = nullptr;
@@ -9,14 +10,31 @@ CompleteNurseryUI::CompleteNurseryUI() {
     
     strategyContext = new StratContext(new DefaultRecomm(), new RegularPrice());
     invoker = new Invoker(nullptr);
+    prototypeRegistry = new PrototypeRegistry();
+    arrangementBuilder = new ConcreteArrangementBuilder();
+    director = new Director();
+    director->setBuilder(arrangementBuilder);
+    salesContext = nullptr; 
     
     // Initialize systems
     initializeNursery();
     setupStaff();
     setupQueryChain();
+
+    //Taskeen---->register plant prototypes(I dont know if this is still necessary,since we'll be using Greenhouse
+    //{i took this form main.cpp so its probably not intergrated properly})
+    prototypeRegistry->registerPrototype("Rose", 
+        std::unique_ptr<Item>(new PlantItem("Rose", 45.99, true)));
+    prototypeRegistry->registerPrototype("Cactus", 
+        std::unique_ptr<Item>(new PlantItem("Cactus", 32.75, true)));
+    prototypeRegistry->registerPrototype("Jade", 
+        std::unique_ptr<Item>(new PlantItem("Jade", 28.50, true)));
+    prototypeRegistry->registerPrototype("Fern", 
+        std::unique_ptr<Item>(new PlantItem("Fern", 35.0, true)));
     
-    // Attach observer to stock manager
+    //Attach observer to stock manager
     stockManager->attach(observer);
+    
 }
 
 CompleteNurseryUI::~CompleteNurseryUI() {
@@ -35,6 +53,11 @@ CompleteNurseryUI::~CompleteNurseryUI() {
     delete juniorGardener;
     delete seniorGardener;
     delete plantSpecialist;
+
+    delete prototypeRegistry;
+    delete arrangementBuilder;
+    delete director;
+    if (salesContext) delete salesContext;
 }
 
 void CompleteNurseryUI::initializeNursery() {
@@ -160,7 +183,7 @@ void CompleteNurseryUI::showMainMenu() {
         clearScreen();
         printHeader("🌿 PLANT NURSERY MANAGEMENT SYSTEM 🌿");
         
-        std::cout << "\n┌─── MAIN MENU ───────────────────────────────────┐\n";
+        std::cout <<"\n┌─── MAIN MENU ───────────────────────────────────┐\n";
         std::cout << "│                                                   │\n";
         std::cout << "│  👤 1. Customer      (Browse & Shop)             │\n";
         std::cout << "│  👨‍🌾 2. Staff Area (Plant Care & Operations)      │\n";
@@ -182,9 +205,22 @@ void CompleteNurseryUI::showMainMenu() {
         
         switch (choice) {
             case 1: showCustomerMenu(); break;
-            case 2: showStaffMenu(); break;
-            case 3: showGreenhouseMenu(); break;
-            case 4: showPatternDemoMenu(); break;
+            case 2: {
+                //showStaffMenu()
+                std::cout<<"StaffMenu still in progress\n";
+                    break;
+                }
+            case 3: 
+            {
+                //showGreenhouseMenu();
+                std::cout<<"GreenhouseMenu still in progress\n";
+                break;}
+
+            case 4: {
+                //showPatternDemoMenu(); 
+                std::cout<<"PatternDemo in progress (not really needed right now it'll come later, this would just make demonstrating our system easier)\n";
+                break;
+            }
             case 5: {
                 clearScreen();
                 printHeader("SYSTEM STATUS");
@@ -199,6 +235,7 @@ void CompleteNurseryUI::showMainMenu() {
                 break;
             }
             case 6:{
+                //showPaymentMenu();
                 std::cout <<"Still in progress!!\n";
                 break;
             }
@@ -640,45 +677,8 @@ void CompleteNurseryUI::showStaffMenu() {
     }
 }
 
-// Plant Care Menu (Karishma's Command Pattern)
 
-// Staff Menu (Karishma's work)
-void CompleteNurseryUI::showStaffMenu() {
-    while (true) {
-        clearScreen();
-        printHeader("👨‍🌾 STAFF OPERATIONS");
-        
-        std::cout << "\n 1. 💧 Plant Care Tasks (Command)\n";
-        std::cout << " 2. 📋 Manage Staff Tasks\n";
-        std::cout << " 3. 📦 Inventory Coordination (Mediator)\n";
-        std::cout << " 4. 🚨 Handle Plant Issues (Chain of Responsibility)\n";
-        std::cout << " 5. 👥 View Staff List\n";
-        std::cout << " 0. Back\n\n";
-        
-        std::cout << " Enter choice: ";
-        int choice = getValidatedInput(0, 5);
-        
-        if (choice == 0) break;
-        
-        switch (choice) {
-            case 1: showPlantCareMenu(); break;
-            case 2: showStaffTasksMenu(); break;
-            case 3: showInventoryMediatorMenu(); break;
-            case 4: showPlantIssuesMenu(); break;
-            case 5: {
-                clearScreen();
-                printSubHeader("NURSERY STAFF");
-                std::cout << "\n";
-                for (size_t i = 0; i < nurseryStaff.size(); i++) {
-                    std::cout << " " << (i + 1) << ". " << nurseryStaff[i]->getName()
-                             << " - " << nurseryStaff[i]->getRole() << "\n";
-                }
-                pressEnter();
-                break;
-            }
-        }
-    }
-}
+
 
 // Plant Care Menu (Karishma's Command Pattern)
 void CompleteNurseryUI::showPlantCareMenu() {
@@ -770,7 +770,7 @@ void CompleteNurseryUI::showPlantCareMenu() {
     pressEnter();
 }
 
-// Staff Tasks Menu
+//Staff Tasks Menu
 void CompleteNurseryUI::showStaffTasksMenu() {
     clearScreen();
     printHeader("📋 STAFF TASK MANAGEMENT");
@@ -842,7 +842,8 @@ void CompleteNurseryUI::showStaffTasksMenu() {
     pressEnter();
 }
 
-// Inventory Mediator Menu (Karishma's Mediator Pattern)
+//Inventory Mediator Menu (Karishma's Mediator Pattern)
+///PlantInventory(SalesFloor inventory for customers)
 void CompleteNurseryUI::showInventoryMediatorMenu() {
     clearScreen();
     printHeader("📦 INVENTORY COORDINATION");
@@ -975,7 +976,7 @@ void CompleteNurseryUI::showPlantIssuesMenu() {
     pressEnter();
 }
 
-// Greenhouse Menu
+// Greenhouse Menu->Comment this out when you're done fixing your part of the gui
 void CompleteNurseryUI::showGreenhouseMenu() {
     while (true) {
         clearScreen();
@@ -1018,7 +1019,7 @@ void CompleteNurseryUI::showGreenhouseMenu() {
     }
 }
 
-// Stock Management Menu (Kiolin's Factory/Composite)
+///Stock Management Menu(Kiolin's Factory/Composite)
 void CompleteNurseryUI::showStockManagementMenu() {
     clearScreen();
     printHeader("📦 STOCK MANAGEMENT");
@@ -1120,6 +1121,7 @@ void CompleteNurseryUI::showStockManagementMenu() {
     }
     pressEnter();
 }
+
 
 // Plant Lifecycle Menu (Rene's State Pattern)
 void CompleteNurseryUI::showPlantLifecycleMenu() {
@@ -1243,4 +1245,313 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
         }
         pressEnter();
     }
+}*/
+
+
+///Taskeens BUilder State and Prototype
+
+// Personalization Menu (Builder + Decorator patterns)
+void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
+    clearScreen();
+    printHeader("🎨 PERSONALIZE YOUR PLANT");
+    
+    std::cout << "\n Selected: " << plant->getName() << " (R" << plant->getPrice() << ")\n";
+    printSubHeader("DECORATION OPTIONS");
+    
+    std::cout << " 1. Add Decorative Pot\n";
+    std::cout << " 2. Add Gift Wrap\n";
+    std::cout << " 3. Add Personal Note\n";
+    std::cout << " 4. Create Custom Arrangement (Builder)\n";
+    std::cout << " 5. View Available Options\n";
+    std::cout << " 0. Done\n\n";
+    
+    while (true) {
+        std::cout << " Enter choice (0 when done): ";
+        int choice = getValidatedInput(0, 5);
+        
+        if (choice == 0) {
+            printSuccess("Personalization complete!");
+            break;
+        }
+        
+        switch (choice) {
+            case 1: {
+                std::cout << "\n Available Pots:\n";
+                const auto& pots = inventory->getPots();
+                for (size_t i = 0; i < pots.size(); i++) {
+                    std::cout << "  " << (i + 1) << ". " << pots[i] << "\n";
+                }
+                
+                std::cout << "\n Select pot (0 to skip): ";
+                int potChoice = getValidatedInput(0, pots.size());
+                
+                if (potChoice > 0) {
+                    std::string color;
+                    std::cout << " Pot color: ";
+                    std::cin.ignore();
+                    std::getline(std::cin, color);
+                    
+                    double potPrice = 25.0;
+                    std::cout << "\n ✓ Added " << color << " decorative pot (+R" << potPrice << ")\n";
+                    // Note: Actual decoration would be applied via Decorator pattern
+                }
+                break;
+            }
+            
+            case 2: {
+                std::cout << "\n Available Gift Wraps:\n";
+                const auto& wraps = inventory->getGiftWraps();
+                for (size_t i = 0; i < wraps.size(); i++) {
+                    std::cout << "  " << (i + 1) << ". " << wraps[i] << "\n";
+                }
+                
+                std::cout << "\n Select wrap (0 to skip): ";
+                int wrapChoice = getValidatedInput(0, wraps.size());
+                
+                if (wrapChoice > 0) {
+                    std::string message;
+                    std::cout << " Gift message: ";
+                    std::cin.ignore();
+                    std::getline(std::cin, message);
+                    
+                    double wrapPrice = 15.0;
+                    std::cout << "\n ✓ Added gift wrap with message (+R" << wrapPrice << ")\n";
+                }
+                break;
+            }
+            
+            case 3: {
+                std::cout << "\n Available Notes:\n";
+                const auto& notes = inventory->getNotes();
+                for (size_t i = 0; i < notes.size(); i++) {
+                    std::cout << "  " << (i + 1) << ". " << notes[i] << "\n";
+                }
+                
+                std::string noteText;
+                std::cout << "\n Your note: ";
+                std::cin.ignore();
+                std::getline(std::cin, noteText);
+                
+                double notePrice = 5.0;
+                std::cout << "\n ✓ Added personal note (+R" << notePrice << ")\n";
+                break;
+            }
+            
+            case 4: {
+                clearScreen();
+                printSubHeader("CUSTOM ARRANGEMENT BUILDER");
+                
+                std::cout << "\n Creating custom arrangement...\n";
+                std::cout << " This demonstrates the Builder pattern!\n\n";
+                
+                // Clone prototype
+                std::unique_ptr<Item> proto = prototypeRegistry->cloneOf(plant->getName());
+                
+                if (proto) {
+                    // Use Director to build a gift arrangement
+                    std::unique_ptr<Item> giftItem = director->buildGift(
+                        *proto, 
+                        25.0,  // pot price
+                        "Custom", // pot color
+                        15.0,  // wrap price
+                        "Special gift!" // message
+                    );
+                    
+                    std::cout << " Arrangement created: " << giftItem->describe() << "\n";
+                    std::cout << " Total price: R" << giftItem->priceFunc() << "\n";
+                    printSuccess("Custom arrangement built!");
+                } else {
+                    printError("Prototype not found for " + plant->getName());
+                }
+                break;
+            }
+            
+            case 5: {
+                clearScreen();
+                printSubHeader("ALL DECORATION OPTIONS");
+                inventory->displayAllOptions();
+                pressEnter();
+                break;
+            }
+        }
+    }
+}
+
+//Payment Menu (State Pattern)
+void CompleteNurseryUI::showPaymentMenu() {
+    clearScreen();
+    printHeader("💳 PAYMENT SYSTEM");
+    
+    if (!currentCustomer) {
+        printError("Please sign in as a customer first!");
+        pressEnter();
+        return;
+    }
+    
+    // Check if cart has items
+    CartIterator cartIt(currentCustomer->getCart());
+    int itemCount = 0;
+    for (cartIt.first(); !cartIt.isDone(); cartIt.next()) itemCount++;
+    
+    if (itemCount == 0) {
+        printError("Your cart is empty! Add items before payment.");
+        pressEnter();
+        return;
+    }
+    
+    double total = calculateCartTotal();
+    
+    std::cout << "\n╔═══ ORDER SUMMARY ═══╗\n";
+    std::cout << " Customer: " << currentCustomer->nameFunc() << "\n";
+    std::cout << " Items: " << itemCount << "\n";
+    std::cout << " Total: R" << total << "\n";
+    std::cout << "╚════════════════════╝\n";
+    
+    printSubHeader("PAYMENT STATE FLOW");
+    std::cout << " This demonstrates the State Pattern!\n\n";
+    
+    // Create sales context (State pattern)
+    BrowsingState initialState;
+    if (salesContext) delete salesContext;
+    salesContext = new SalesContext(initialState, *currentCustomer);
+    
+    // Simulate in-stock scenario
+    std::cout << " 1. Process Payment (Happy Path)\n";
+    std::cout << " 2. Simulate Out-of-Stock Scenario\n";
+    std::cout << " 3. Simulate Payment Failure\n";
+    std::cout << " 0. Cancel\n\n";
+    
+    std::cout << " Enter choice: ";
+    int choice = getValidatedInput(0, 3);
+    
+    switch (choice) {
+        case 1: {
+            // Happy path: Browse → Cart → Payment → Complete
+            std::cout << "\n╔═══ PROCESSING PAYMENT ═══╗\n";
+            
+            // Put stock for items in cart
+            cartIt.first();
+            while (!cartIt.isDone()) {
+                Plant* p = cartIt.currentItem();
+                salesContext->putStock(p->getName(), 10);
+                cartIt.next();
+            }
+            
+            std::cout << " State: Browsing\n";
+            
+            // Select items (Browsing → CartOpen)
+            cartIt.first();
+            if (!cartIt.isDone()) {
+                Plant* firstPlant = cartIt.currentItem();
+                std::cout << " → Selecting " << firstPlant->getName() << "...\n";
+                salesContext->eventSelect(firstPlant->getName(), 1);
+                std::cout << " State changed to: CartOpen\n";
+            }
+            
+            // Proceed to checkout (CartOpen → PendingPayment)
+            std::cout << " → Proceeding to checkout...\n";
+            salesContext->eventCheckout();
+            std::cout << " State changed to: PendingPayment\n";
+            
+            // Authorize payment (PendingPayment → PaymentAuthorized)
+            std::cout << " → Authorizing payment...\n";
+            salesContext->eventAuthorize();
+            std::cout << " State changed to: PaymentAuthorized\n";
+            
+            // Commit/Capture payment (PaymentAuthorized → Completed)
+            std::cout << " → Completing transaction...\n";
+            salesContext->eventCommit();
+            std::cout << " State changed to: Completed\n";
+            
+            printSuccess("Payment processed successfully!");
+            std::cout << "╚═════════════════════════╝\n";
+            
+            // Clear cart after successful payment
+            currentCustomer->getCart()->clear();
+            break;
+        }
+        
+        case 2: {
+            // Out-of-stock path: Browsing → SeekingAssistance → AwaitingStock
+            std::cout << "\n╔═══ OUT-OF-STOCK SCENARIO ═══╗\n";
+            
+            std::cout << " State: Browsing\n";
+            
+            // Try to select out-of-stock item
+            cartIt.first();
+            if (!cartIt.isDone()) {
+                Plant* p = cartIt.currentItem();
+                std::cout << " → Selecting " << p->getName() << " (out of stock)...\n";
+                salesContext->eventSelect(p->getName(), 1);
+                std::cout << " State changed to: SeekingAssistance\n";
+            }
+            
+            // Assistance complete → AwaitingStock
+            std::cout << " → Staff assists customer...\n";
+            salesContext->eventAssistComplete();
+            std::cout << " State changed to: AwaitingStock\n";
+            
+            // Simulate stock replenishment
+            cartIt.first();
+            if (!cartIt.isDone()) {
+                Plant* p = cartIt.currentItem();
+                std::cout << " → Greenhouse replenishes " << p->getName() << "...\n";
+                salesContext->putStock(p->getName(), 5);
+                salesContext->eventReplenished();
+                std::cout << " State changed to: CartOpen\n";
+            }
+            
+            printSuccess("Stock replenished! Can now proceed to payment.");
+            std::cout << "╚═════════════════════════════╝\n";
+            break;
+        }
+        
+        case 3: {
+            // Payment failure path
+            std::cout << "\n╔═══ PAYMENT FAILURE SCENARIO ═══╗\n";
+            
+            // Setup stock
+            cartIt.first();
+            while (!cartIt.isDone()) {
+                salesContext->putStock(cartIt.currentItem()->getName(), 10);
+                cartIt.next();
+            }
+            
+            // Go through to checkout
+            cartIt.first();
+            if (!cartIt.isDone()) {
+                salesContext->eventSelect(cartIt.currentItem()->getName(), 1);
+                salesContext->eventCheckout();
+            }
+            
+            std::cout << " State: PendingPayment\n";
+            std::cout << " → Payment authorization failed!\n";
+            
+            #ifdef SUPPORT_TEST_TOGGLES
+            // If your State implementation supports test toggles
+            salesContext->forceNextAuth(false);
+            salesContext->eventAuthorize();
+            std::cout << " State changed to: PaymentFailed\n";
+            
+            std::cout << " → Customer retries payment...\n";
+            salesContext->forceNextAuth(true);
+            salesContext->eventRetry();
+            salesContext->eventAuthorize();
+            salesContext->eventCommit();
+            printSuccess("Payment succeeded on retry!");
+            #else
+            std::cout << " State: PaymentFailed\n";
+            std::cout << " (Retry functionality requires SUPPORT_TEST_TOGGLES)\n";
+            #endif
+            
+            std::cout << "╚════════════════════════════════╝\n";
+            break;
+        }
+        
+        case 0:
+            std::cout << "\n Payment cancelled.\n";
+            break;
+    }
+    
+    pressEnter();
 }

@@ -10,6 +10,7 @@ Demonstrates:
 #include <iostream>
 #include <memory>
 #include <string>
+#include"CompleteNurseryUI.h"
 
 // Personalization
 #include "PrototypeRegistry.h"
@@ -115,6 +116,23 @@ Demonstrates:
 #include "SunlightRecomm.h"
 #include"PricingQueryHandler.h"
 #include"PlantRecommendationHandler.h"
+
+int getValidatedInput(int min, int max) {
+    int choice;
+    while (true) {
+        if (std::cin >> choice) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            if (choice >= min && choice <= max) {
+                return choice;
+            }
+        } else {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        std::cout << " Invalid! Enter " << min << "-" << max << ": ";
+    }
+}
+
 
 
 void printSeparator(const std::string& title = "");
@@ -804,20 +822,18 @@ int main() {
     std::cout << "Choose a mode:\n";
     std::cout << "1. Interactive UI Mode\n";
     std::cout << "2. Demonstration Mode\n\n";
-    //std::cout << "Enter your choice: ";
+    std::cout << "Enter your choice: ";
 
-    /*int mode;
-    std::cin >> mode;
-    std::cin.ignore();
+    int choice = getValidatedInput(1,2);
 
-    if (mode == 1) {
-        NurseryUI ui;
+    if (choice == 1) {
+        CompleteNurseryUI ui;
         ui.showMainMenu();
         return 0;
     }
-    else if (mode==2){
+    else if (choice==2){
         std::cout<<"Incorrect Input , try again!\n";
-    }*/
+    }
     std::cout<<"------------------------------------------------\n";
     // Demonstration mode starts here
     std::cout << "\n=== Starting Demonstration Mode ===\n";
