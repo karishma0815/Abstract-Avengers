@@ -10,7 +10,7 @@ CompleteNurseryUI::CompleteNurseryUI() {
     
     strategyContext = new StratContext(new DefaultRecomm(), new RegularPrice());
     invoker = new Invoker(nullptr);
-    prototypeRegistry = new PrototypeRegistry();
+   // prototypeRegistry = new PrototypeRegistry();
     arrangementBuilder = new ConcreteArrangementBuilder();
     director = new Director();
     director->setBuilder(arrangementBuilder);
@@ -21,16 +21,18 @@ CompleteNurseryUI::CompleteNurseryUI() {
     setupStaff();
     setupQueryChain();
 
-    //Taskeen---->register plant prototypes(I dont know if this is still necessary,since we'll be using Greenhouse
-    //{i took this form main.cpp so its probably not intergrated properly})
-    prototypeRegistry->registerPrototype("Rose", 
+    //I dont think this is needed anymore
+    //cause i changed the files to make arrangement clones only
+    //not item clones - Taskeen
+
+    /*prototypeRegistry->registerPrototype("Rose", 
         std::unique_ptr<Item>(new PlantItem("Rose", 45.99, true)));
     prototypeRegistry->registerPrototype("Cactus", 
         std::unique_ptr<Item>(new PlantItem("Cactus", 32.75, true)));
     prototypeRegistry->registerPrototype("Jade", 
         std::unique_ptr<Item>(new PlantItem("Jade", 28.50, true)));
     prototypeRegistry->registerPrototype("Fern", 
-        std::unique_ptr<Item>(new PlantItem("Fern", 35.0, true)));
+        std::unique_ptr<Item>(new PlantItem("Fern", 35.0, true)));*/
     
     //Attach observer to stock manager
     stockManager->attach(observer);
@@ -54,7 +56,7 @@ CompleteNurseryUI::~CompleteNurseryUI() {
     delete seniorGardener;
     delete plantSpecialist;
 
-    delete prototypeRegistry;
+    //delete prototypeRegistry;
     delete arrangementBuilder;
     delete director;
     if (salesContext) delete salesContext;
@@ -1301,7 +1303,7 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
 }
 
 
-///Taskeens BUilder State and Prototype
+///Taskeens Builder State and Decorator
 
 // Personalization Menu (Builder + Decorator patterns)
 void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
@@ -1317,6 +1319,15 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
     std::cout << " 4. Create Custom Arrangement (Builder)\n";
     std::cout << " 5. View Available Options\n";
     std::cout << " 0. Done\n\n";
+
+    // Collect choices first; we apply them when user selects option 4
+    bool wantPot  = false, wantWrap = false, wantNote = false;
+    double potPrice = 0.0, wrapPrice = 0.0, notePrice = 0.0;
+    std::string potColor, wrapMessage, noteText;
+
+    auto flushLine = [](){
+        if (std::cin.peek() == '\n') std::cin.get();
+    };
     
     while (true) {
         std::cout << " Enter choice (0 when done): ";
@@ -1328,7 +1339,7 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
         }
         
         switch (choice) {
-            case 1: {
+            case 1: { //Decorative Pot
                 std::cout << "\n Available Pots:\n";
                 const auto& pots = inventory->getPots();
                 for (size_t i = 0; i < pots.size(); i++) {
@@ -1336,22 +1347,27 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
                 }
                 
                 std::cout << "\n Select pot (0 to skip): ";
-                int potChoice = getValidatedInput(0, pots.size());
+                int potChoice = getValidatedInput(0, static_cast<int>(pots.size()));
                 
                 if (potChoice > 0) {
-                    std::string color;
+                    flushLine();
                     std::cout << " Pot color: ";
                     std::cin.ignore();
-                    std::getline(std::cin, color);
+                    std::getline(std::cin, potColor);
                     
                     double potPrice = 25.0;
-                    std::cout << "\n ✓ Added " << color << " decorative pot (+R" << potPrice << ")\n";
-                    // Note: Actual decoration would be applied via Decorator pattern
+                    wantPot = true; //choice changed to true
+                    std::cout << "\n ✓ Added " << potColor << " decorative pot (+R" << potPrice << ")\n";
+                }
+                else
+                {
+                    wantPot = false;
+                    std::cout << " Skipped pot.\n";
                 }
                 break;
             }
             
-            case 2: {
+            case 2: { //Gift Wrap
                 std::cout << "\n Available Gift Wraps:\n";
                 const auto& wraps = inventory->getGiftWraps();
                 for (size_t i = 0; i < wraps.size(); i++) {
@@ -1362,63 +1378,93 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
                 int wrapChoice = getValidatedInput(0, wraps.size());
                 
                 if (wrapChoice > 0) {
-                    std::string message;
+                    flushLine();
                     std::cout << " Gift message: ";
                     std::cin.ignore();
-                    std::getline(std::cin, message);
+                    std::getline(std::cin, wrapMessage);
                     
                     double wrapPrice = 15.0;
+                    wantWrap = true; //choice changed to true
                     std::cout << "\n ✓ Added gift wrap with message (+R" << wrapPrice << ")\n";
+                }
+                else
+                {
+                    wantWrap = false;
+                    std::cout << " Skipped wrap.\n";
                 }
                 break;
             }
             
-            case 3: {
+            case 3: { //Note
                 std::cout << "\n Available Notes:\n";
                 const auto& notes = inventory->getNotes();
                 for (size_t i = 0; i < notes.size(); i++) {
                     std::cout << "  " << (i + 1) << ". " << notes[i] << "\n";
                 }
                 
-                std::string noteText;
+                flushLine();
                 std::cout << "\n Your note: ";
                 std::cin.ignore();
                 std::getline(std::cin, noteText);
                 
                 double notePrice = 5.0;
-                std::cout << "\n ✓ Added personal note (+R" << notePrice << ")\n";
+                wantNote = !noteText.empty();
+                if(wantNote)
+                {
+                    std::cout << "\n ✓ Added personal note (+R" << notePrice << ")\n";
+                }
+                else
+                {
+                    std::cout << " Skipped note.\n";
+                }
                 break;
             }
             
-            case 4: {
+            case 4: { //build
                 clearScreen();
                 printSubHeader("CUSTOM ARRANGEMENT BUILDER");
                 
                 std::cout << "\n Creating custom arrangement...\n";
                 std::cout << " This demonstrates the Builder pattern!\n\n";
                 
-                // Clone prototype
-                std::unique_ptr<Item> proto = prototypeRegistry->cloneOf(plant->getName());
-                
-                if (proto) {
-                    // Use Director to build a gift arrangement
-                    std::unique_ptr<Item> giftItem = director->buildGift(
-                        *proto, 
-                        25.0,  // pot price
-                        "Custom", // pot color
-                        15.0,  // wrap price
-                        "Special gift!" // message
-                    );
-                    
-                    std::cout << " Arrangement created: " << giftItem->describe() << "\n";
-                    std::cout << " Total price: R" << giftItem->priceFunc() << "\n";
-                    printSuccess("Custom arrangement built!");
-                } else {
-                    printError("Prototype not found for " + plant->getName());
+                // 1) Wrap abstract Plant* as an Item (adapter) and hand over OWNERSHIP
+                std::unique_ptr<Item> base(new PlantAsItemAdapter(plant));
+
+                // 2) Drive the builder (owned-base API; no clones anywhere)
+                ConcreteArrangementBuilder builder;
+                builder.reset();
+                builder.buildBasePlant(std::move(base));  
+
+                // These flags/values should be gathered earlier in your UI flow
+                if (wantPot)  builder.buildPot (potPrice,  potColor);
+                if (wantWrap) builder.buildWrap(wrapPrice, wrapMessage);
+                if (wantNote) builder.buildNote(notePrice, noteText);
+
+                // 3) Get the finished decorated Item
+                std::unique_ptr<Item> giftItem = builder.getResult();
+                if (!giftItem) {
+                    printError("Failed to build the arrangement.");
+                    pressEnter();
+                    break;
                 }
+
+                std::cout << " Arrangement created: " << giftItem->describe() << "\n";
+                std::cout << " Total price: R" << giftItem->priceFunc() << "\n";
+
+                std::cout << "\n Add this arrangement to cart? (1 = yes, 0 = no): ";
+                int add = getValidatedInput(0, 1);
+                if (add == 1) {
+                    inventory->addArrangementToCart(std::move(giftItem));
+                    printSuccess("Added to cart!");
+                } 
+                else 
+                {
+                    printSuccess("Arrangement built (not added to cart).");
+                }
+                pressEnter();
                 break;
             }
-            
+
             case 5: {
                 clearScreen();
                 printSubHeader("ALL DECORATION OPTIONS");
@@ -1581,7 +1627,6 @@ void CompleteNurseryUI::showPaymentMenu() {
             std::cout << " → Payment authorization failed!\n";
             
             #ifdef SUPPORT_TEST_TOGGLES
-            // If your State implementation supports test toggles
             salesContext->forceNextAuth(false);
             salesContext->eventAuthorize();
             std::cout << " State changed to: PaymentFailed\n";

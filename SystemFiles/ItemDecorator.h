@@ -22,11 +22,5 @@ public:
 
 protected:
     Item* innerRaw() const;
-    /**
-        * @brief Deep clone this decorator and its wrapped chain.
-        * @return Newly allocated decorated item copy.
-        */
-    std::unique_ptr<Item> cloneInner() const;
-
     std::unique_ptr<Item> inner_;
 };

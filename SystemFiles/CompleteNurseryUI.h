@@ -79,18 +79,19 @@
 #include "PlantContext.h"
 #include "PlantState.h"
 
-#include "PrototypeRegistry.h"
-#include "Item.h"
-#include "PlantItem.h"
+// Builder pattern (Taskeen)
 #include "Arrangement.h"
 #include "ArrangementBuilder.h"
 #include "ConcreteArrangementBuilder.h"
+#include "PlantAsItemAdapter.h"
+
+// Decorator pattern (Taskeen)
 #include "Director.h"
 #include "DecorativePot.h"
 #include "GiftWrap.h"
 #include "Note.h"
 
-// Taskeen's Payment State includes
+// Payment State pattern (Taskeen)
 #include "SalesContext.h"
 #include "BrowsingState.h"
 #include "AwaitingStockState.h"
@@ -118,7 +119,7 @@ private:
     // Growing plants
     std::vector<PlantContext*> growingPlants;
 
-    PrototypeRegistry* prototypeRegistry;
+    //PrototypeRegistry* prototypeRegistry;
     ConcreteArrangementBuilder* arrangementBuilder;
     Director* director;
     SalesContext* salesContext;

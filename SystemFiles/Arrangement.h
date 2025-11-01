@@ -22,8 +22,7 @@ public:
     //Default construct an empty arrangement.
     Arrangement() = default;
 
-    //Deep-copy construct (performs deep clone of all contained Items).
-    Arrangement(const Arrangement& other);
+    Arrangement(const Arrangement& other) = delete;
 
     Arrangement& operator=(const Arrangement& other) = delete;          
     Arrangement(Arrangement&&) noexcept = default;                       
@@ -57,9 +56,6 @@ public:
 
     //True if every component reports readyForSale().
     bool readyForSale() const;
-
-    //Deep clone of the arrangement (clones each contained Item).
-    std::unique_ptr<Arrangement> clone() const;
 
 private:
     std::vector<std::unique_ptr<Item>> components;

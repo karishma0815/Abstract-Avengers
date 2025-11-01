@@ -28,11 +28,6 @@ public:
   /** @brief Whether this item can be sold right now. */
   virtual bool readyForSale() const = 0;
 
-  /**
-   * @brief Prototype: deep copy this item (including any decoration chain).
-   * @return Newly allocated deep copy.
-   */
-  virtual std::unique_ptr<Item> clone() const = 0;
 };
 
 #endif

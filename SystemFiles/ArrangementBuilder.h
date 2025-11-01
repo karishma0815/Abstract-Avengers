@@ -15,14 +15,9 @@
 class ArrangementBuilder {
 public:
     virtual ~ArrangementBuilder() = default;
-
-/** @brief Reset internal state before starting a new build. */
     virtual void reset() = 0;
-    /**
-        * @brief Start from a plant prototype (cloned).
-        * @param plantPrototype Base item to clone.
-        */
-    virtual void buildBasePlant(const Item& proto) = 0; // clone from prototype
+
+    virtual void buildBasePlant(std::unique_ptr<Item> base) = 0;
     /**
         * @brief Optionally add a pot.
         * @param extra Surcharge.
