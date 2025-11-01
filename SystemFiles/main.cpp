@@ -10,6 +10,7 @@ Demonstrates:
 #include <iostream>
 #include <memory>
 #include <string>
+#include"CompleteNurseryUI.h"
 
 // Personalization
 #include "PrototypeRegistry.h"
@@ -115,6 +116,23 @@ Demonstrates:
 #include "SunlightRecomm.h"
 #include"PricingQueryHandler.h"
 #include"PlantRecommendationHandler.h"
+
+int getValidatedInput(int min, int max) {
+    int choice;
+    while (true) {
+        if (std::cin >> choice) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            if (choice >= min && choice <= max) {
+                return choice;
+            }
+        } else {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        std::cout << " Invalid! Enter " << min << "-" << max << ": ";
+    }
+}
+
 
 
 void printSeparator(const std::string& title = "");
@@ -730,52 +748,7 @@ void simulateStrategyPatternScenario() {
     std::cout << "\nCustomer: 'What about plants that do well in shade?'" << std::endl;
     context.setRecommStrategy(new SunlightRecomm());
     context.executeRecommStrategy();
-    /*printHeader("Strategy Pattern Scenario: Pricing and Recommendations");
-    
-    // Create strategies using unique_ptr for automatic cleanup
-    std::unique_ptr<PricingStrategy> regularPrice(new RegularPrice());
-    std::unique_ptr<PricingStrategy> bulkDiscount(new BulkDiscount());
-    std::unique_ptr<RecommStrategy> defaultRecomm(new DefaultRecomm());
-    std::unique_ptr<RecommStrategy> waterRecomm(new WaterRecomm());
-    std::unique_ptr<RecommStrategy> sunlightRecomm(new SunlightRecomm());
-    
-    std::cout << "Welcome to our plant store! Let me help you with some recommendations and pricing options.\n" << std::endl;
-    
-    // Create strategy context with initial strategies (raw pointers, but owned by unique_ptr)
-    StratContext context(defaultRecomm.get(), regularPrice.get());
-    
-    // Scenario 1: Regular price for single item
-    std::cout << "\nScenario 1: Customer buying a single Rose" << std::endl;
-    std::cout << "Staff: 'For a single Rose, we use our regular pricing.'" << std::endl;
-    double regularPriceResult = context.executePricingStrategy(1, 25.0, "");
-    std::cout << "Regular price for 1 Rose: R" << regularPriceResult << std::endl;
-    
-    // Scenario 2: Bulk discount for multiple items
-    std::cout << "\nScenario 2: Customer buying multiple Roses (bulk)" << std::endl;
-    std::cout << "Staff: 'For bulk purchases, we offer special discounts!'" << std::endl;
-    context.setPricingStrategy(bulkDiscount.get());
-    double bulkPriceResult = context.executePricingStrategy(10, 25.0, "BULK10");
-    std::cout << "Bulk price for 10 Roses: R" << bulkPriceResult << std::endl;
-    
-    // Scenario 3: Get plant recommendations based on different criteria
-    std::cout << "\nScenario 3: Customer seeking plant recommendations" << std::endl;
-    std::cout << "Customer: 'Can you help me choose some plants?'" << std::endl;
-    
-    // Default recommendations
-    std::cout << "\nStaff: 'Here are our general recommendations:'" << std::endl;
-    context.executeRecommStrategy();
-    
-    // Water-based recommendations
-    std::cout << "\nCustomer: 'I'm looking for low-maintenance plants that don't need much water.'" << std::endl;
-    context.setRecommStrategy(waterRecomm.get());
-    context.executeRecommStrategy();
-    
-    // Sunlight-based recommendations
-    std::cout << "\nCustomer: 'What about plants that do well in shade?'" << std::endl;
-    context.setRecommStrategy(sunlightRecomm.get());
-    context.executeRecommStrategy();
-    
-    */  //No manual cleanup needed - unique_ptr will handle it
+     //No manual cleanup needed - unique_ptr will handle it
 }
 
 void testDecorations() {
@@ -849,20 +822,18 @@ int main() {
     std::cout << "Choose a mode:\n";
     std::cout << "1. Interactive UI Mode\n";
     std::cout << "2. Demonstration Mode\n\n";
-    //std::cout << "Enter your choice: ";
+    std::cout << "Enter your choice: ";
 
-    /*int mode;
-    std::cin >> mode;
-    std::cin.ignore();
+    int choice = getValidatedInput(1,2);
 
-    if (mode == 1) {
-        NurseryUI ui;
+    if (choice == 1) {
+        CompleteNurseryUI ui;
         ui.showMainMenu();
         return 0;
     }
-    else if (mode==2){
+    else if (choice==2){
         std::cout<<"Incorrect Input , try again!\n";
-    }*/
+    }
     std::cout<<"------------------------------------------------\n";
     // Demonstration mode starts here
     std::cout << "\n=== Starting Demonstration Mode ===\n";
@@ -1699,10 +1670,10 @@ int main() {
 
     std::cout<<"\n\n\n";
   std::cout<<"-----------------------Testing Customer Browsing---------------------------\n\n";
-    //simulateCustomerBrowsing();
-    //simulateCommandPatternScenario();
-    ////simulateStrategyPatternScenario();
-    //testDecorations();
+    simulateCustomerBrowsing();
+    simulateCommandPatternScenario();
+    simulateStrategyPatternScenario();
+    testDecorations();
 
 
     std::cout<<"--------------------------------Integrated Customer queries-------------------------\n";
