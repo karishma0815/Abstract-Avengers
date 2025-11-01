@@ -680,7 +680,7 @@ void CompleteNurseryUI::showStaffMenu() {
 
 
 
-// Plant Care Menu (Karishma's Command Pattern)
+// // Plant Care Menu (Karishma's Command Pattern)
 void CompleteNurseryUI::showPlantCareMenu() {
     clearScreen();
     printHeader("💧 PLANT CARE TASKS");
@@ -770,7 +770,7 @@ void CompleteNurseryUI::showPlantCareMenu() {
     pressEnter();
 }
 
-//Staff Tasks Menu
+// //Staff Tasks Menu
 void CompleteNurseryUI::showStaffTasksMenu() {
     clearScreen();
     printHeader("📋 STAFF TASK MANAGEMENT");
@@ -918,7 +918,7 @@ void CompleteNurseryUI::showInventoryMediatorMenu() {
     pressEnter();
 }
 
-// Plant Issues Menu (Karishma's Chain of Responsibility)
+// // Plant Issues Menu (Karishma's Chain of Responsibility)
 void CompleteNurseryUI::showPlantIssuesMenu() {
     clearScreen();
     printHeader("🚨 PLANT ISSUE HANDLING");
@@ -1019,7 +1019,7 @@ void CompleteNurseryUI::showGreenhouseMenu() {
     }
 }
 
-///Stock Management Menu(Kiolin's Factory/Composite)
+// ///Stock Management Menu(Kiolin's Factory/Composite)
 void CompleteNurseryUI::showStockManagementMenu() {
     clearScreen();
     printHeader("📦 STOCK MANAGEMENT");
@@ -1185,7 +1185,7 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
         if (!growingPlants.empty()) {
             std::cout << "\n Growing Plants:\n";
             for (size_t i = 0; i < growingPlants.size(); i++) {
-                std::cout << " " << (i + 1) << ". " << growingPlants[i]->getName()
+                std::cout << " " << (i + 1) << ". " << growingPlants[i]->getPlant()->getName()
                          << " | Age: " << growingPlants[i]->getAge() << " days"
                          << " | " << growingPlants[i]->getCurrentStateName() << "\n";
             }
@@ -1286,10 +1286,10 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
                 
                 PlantContext* p = growingPlants[sel - 1];
                 std::cout << "\n╔══ PLANT DETAILS ══╗\n";
-                std::cout << " Name: " << p->getName() << "\n";
-                std::cout << " Type: " << p->getType() << "\n";
-                std::cout << " Species: " << p->getSpecies() << "\n";
-                std::cout << " Price: R" << p->getPrice() << "\n";
+                std::cout << " Name: " << p->getPlant()->getName() << "\n";
+                std::cout << " Type: " << p->getPlantType() << "\n";
+                std::cout << " Species: " << p->getPlant()->getPlantType() << "\n";
+                std::cout << " Price: R" << p->getPlant()->getPrice() << "\n";
                 std::cout << " Age: " << p->getAge() << " days\n";
                 std::cout << " State: " << p->getCurrentStateName() << "\n";
                 std::cout << "╚═══════════════════╝\n";
@@ -1298,7 +1298,7 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
         }
         pressEnter();
     }
-}*/
+}
 
 
 ///Taskeens BUilder State and Prototype
