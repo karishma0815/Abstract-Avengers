@@ -5,6 +5,8 @@
 #include <string>
 #include <limits>
 #include "Plant.h"
+#include"Rose.h"
+#include"Cacti.h"
 #include "PlantInventory.h"
 #include "PlantIterator.h"
 #include "PriceRangeIterator.h"
@@ -41,7 +43,8 @@ private:
 public:
     NurseryUI();
     ~NurseryUI();
-
+    
+    int getValidatedInput(int min, int max);
     void showMainMenu();
     void showBrowsingMenu();
     void showCartMenu();
