@@ -1059,6 +1059,7 @@ void CompleteNurseryUI::showStockManagementMenu() {
             } else if (type == 2) {
                 stockManager->addSucculent(new Cacti(name, price, species));
             } else {
+                //Pine has three params
                 stockManager->addTree(new Pine(name, price, species));
             }
             
@@ -1519,8 +1520,8 @@ void CompleteNurseryUI::showPaymentMenu() {
             printSuccess("Payment processed successfully!");
             std::cout << "╚═════════════════════════╝\n";
             
-            // Clear cart after successful payment
-            currentCustomer->getCart()->clear();
+            //Clear cart after successful payment
+            //currentCustomer->getCart()->clear();
             break;
         }
         

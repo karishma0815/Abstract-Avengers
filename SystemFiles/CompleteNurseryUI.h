@@ -95,6 +95,10 @@
 #include "BrowsingState.h"
 #include "AwaitingStockState.h"
 
+#include"Pine.h"
+#include"Lotus.h"
+#include"Apple.h"
+
 class CompleteNurseryUI {
 private:
     // Core systems
