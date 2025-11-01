@@ -1122,6 +1122,59 @@ void CompleteNurseryUI::showStockManagementMenu() {
     pressEnter();
 }
 
+void CompleteNurseryUI::showFactoryProductionMenu() {
+    clearScreen();
+    printHeader("🏭 FACTORY PRODUCTION");
+    
+    std::cout << "\n Demonstrating Factory Pattern...\n\n";
+    std::cout << " How many of each type to produce? ";
+    int count = getValidatedInput(1, 10);
+    
+    FlowerFactory flowerFactory;
+    SucculentFactory succulentFactory;
+    TreeFactory treeFactory;
+    
+    std::cout << "\n Creating plants using factories...\n";
+    
+    for (int i = 0; i < count; i++) {
+        FlowerProduct* flower = flowerFactory.createFlower(
+            "Factory Flower " + std::to_string(i), 
+            25.0 + i, 
+            "Rose", 
+            1
+        );
+        
+        SucculentProduct* succulent = succulentFactory.createSucculent(
+            "Factory Succulent " + std::to_string(i), 
+            15.0 + i, 
+            "Jade", 
+            1
+        );
+        
+        TreeProduct* tree = treeFactory.createTree(
+            "Factory Tree " + std::to_string(i), 
+            80.0 + i, 
+            "Oak", 
+            1
+        );
+        
+        stockManager->addFlower(flower);
+        stockManager->addSucculent(succulent);
+        stockManager->addTree(tree);
+    }
+    
+    printSuccess("Produced " + std::to_string(count) + " of each plant type!");
+    std::cout << " Total items added to stock: " << (count * 3) << "\n";
+    std::cout << "\n Stock breakdown:\n";
+    std::cout << " • Flowers: " << stockManager->getFlowerStockSize() << "\n";
+    std::cout << " • Succulents: " << stockManager->getSucculentStockSize() << "\n";
+    std::cout << " • Trees: " << stockManager->getTreeStockSize() << "\n";
+    
+    pressEnter();
+}
+
+
+
 
 // Plant Lifecycle Menu (Rene's State Pattern)
 void CompleteNurseryUI::showPlantLifecycleMenu() {
