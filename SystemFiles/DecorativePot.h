@@ -4,33 +4,24 @@
  * @file DecorativePot.h
  * @brief ConcreteDecorator adding a decorative pot
  * @author Taskeen Abdoola
- * @date 2025-10-12
+ * @date 2025-10-14
  */
 
-#ifndef DECORATIVEPOT_H
-#define DECORATIVEPOT_H
-
+#pragma once
 #include "ItemDecorator.h"
-
 #include <string>
+#include <memory>
 
-class DecorativePot : public ItemDecorator
-{
-    public:
-        DecorativePot(std::unique_ptr<Item> dec, std::string color, double extra);
+class DecorativePot : public ItemDecorator {
+public:
+    DecorativePot(std::unique_ptr<Item> inner, double extra, std::string color);
 
-        double price() const override;
-        std::string describe() const override;
-        bool readyForSale() const override;
+    double priceFunc() const override;
+    std::string describe() const override;
+    bool readyForSale() const override { return ItemDecorator::readyForSale(); }
+    std::unique_ptr<Item> clone() const override;
 
-        std::unique_ptr<Item> clone() const override; //prototype
-    
-        const std::string& colorFunc() const;
-        double extraFunc() const;
-
-    private:
-        std::string color;
-        double extra;
+private:
+    double      extra_;
+    std::string color_;
 };
-
-#endif

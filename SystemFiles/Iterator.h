@@ -15,10 +15,14 @@
  */
 class Iterator {
 public:
+        /**
+         * @brief Default constructor initializes iterator state
+         */
+        Iterator();
     /**
      * @brief Virtual destructor
      */
-    virtual ~Iterator() {}
+    virtual ~Iterator();
     /**
      * @brief Positions the iterator to the first element
      */

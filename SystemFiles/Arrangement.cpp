@@ -47,7 +47,7 @@ double Arrangement::totalPrice() const
     double sum = 0.0;
     for (const auto& it : components) 
     {
-        sum += it->price();
+        sum += it->priceFunc();
     }
     return sum;
 }

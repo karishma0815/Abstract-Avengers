@@ -8,6 +8,11 @@
 
 #include "PlantContainer.h"
 #include <vector>
+#include <memory>
+#include<iostream>
+#include <unordered_map> //for prototype
+#include "Director.h"
+#include "ArrangementBuilder.h"
 
 /**
  * @class PlantInventory
@@ -46,11 +51,16 @@ public:
      * @param plant Pointer to the Plant to add
      */
     void add(Plant* plant) override;
+    // Adds a non-owning reference to a plant (useful for carts)
+    void addNonOwning(Plant* plant);
     /**
      * @brief Removes a plant from the inventory
      * @param plant Pointer to the Plant to remove
      */
     void remove(Plant* plant) override;
+    
+    // Remove a non-owning reference (does not delete the plant)
+    void removeNonOwning(Plant* plant);
     /**
      * @brief Gets the number of plants in the inventory
      * @return The size of the inventory
@@ -68,21 +78,91 @@ public:
      */
     Plant* getPlant(int index) const;
     /**
-     * @brief Gets the internal vector (for iterator access)
-     * @return Const reference to the vector of plants
+     * @brief Gets a snapshot list of raw Plant* pointers for iteration
+     * @return A vector of raw Plant* pointers (owned and non-owned)
      */
-    const std::vector<Plant*>& getPlants() const;
+    std::vector<Plant*> getPlants() const;
 
     //addTOCart function can be added here if needed
-    PlantInventory* getCartInventory() const;
+    PlantInventory* getCartInventory();
     
     void addToCart(Plant* plant) ;
 
     void removeFromCart(Plant* plant);
+
+   /**
+ * @file DecorationInventory.h
+ * @brief Manages dynamic decoration inventory
+ */
+
+    void addGiftWrap(const std::string& color);
+
+    void addPot(const std::string& color);
+
+    void addNote(const std::string& color);
     
+    // Remove decoration options
+    void removeGiftWrap(const std::string& color);
+
+    void removePot(const std::string& color);
+
+    void removeNote(const std::string& color);
+    
+    /// @brief Get Giftwrap options(for the customer)
+    /// @return
+    const std::vector<std::string>& getGiftWraps() const; 
+
+    const std::vector<std::string>& getPots() const ;
+
+    const std::vector<std::string>& getNotes() const;
+    
+    /// @brief Display all decorations
+
+    void displayAllOptions() const;
+
+    //prototype
+    // ---- Arrangement PROTOTYPES (Item world) ----
+    void registerArrangementPrototype(const std::string& key, std::unique_ptr<Item> proto);
+    bool hasArrangementPrototype(const std::string& key) const;
+    std::size_t arrangementPrototypeCount() const;
+    const Item* getArrangementPrototype(const std::string& key) const;
+    std::vector<std::string> arrangementPrototypeKeys() const;
+
+    // ----- BUILT (DECORATED) ARRANGEMENTS IN CART -----
+    void addArrangementToCart(std::unique_ptr<Item> item);
+    std::vector<const Item*> cartArrangementsSnapshot() const;
+
+    // ----- ONE-SHOT BUILD FROM PROTOTYPE & ADD TO CART -----
+    bool buildGiftAndAddToCart(const std::string& key,
+                            double potExtra,  const std::string& potColor,
+                            double wrapExtra, const std::string& wrapMessage,
+                            double noteExtra, const std::string& noteText,
+                            Director& director, ArrangementBuilder& builder);
+
+    bool buildCustomAndAddToCart(const std::string& name,
+                                bool fert,
+                                const std::string& id,
+                                int sunHours,
+                                int waterLevel,
+                                int price,
+                                double potExtra,  const std::string& potColor,
+                                double wrapExtra, const std::string& wrapMessage,
+                                double noteExtra, const std::string& noteText,
+                                Director& director, ArrangementBuilder& builder); 
+
     private:
-    std::vector<Plant*> plants;
+    // Owned plant storage
+    std::vector<std::unique_ptr<Plant>> ownedPlants;
+    // Non-owning references (e.g., shopping cart references)
+    std::vector<Plant*> nonOwnedPlants;
     PlantInventory* cartInventory;///Inventory representing the customer's cart
+    bool isCart;  /// Whether this inventory is a cart (non-owning container)
+    std::vector<std::string> giftWraps;
+    std::vector<std::string> pots;
+    std::vector<std::string> notes;
+
+    std::unordered_map<std::string, std::unique_ptr<Item>> arrangementProtos_;
+    std::vector<std::unique_ptr<Item>> cartArrangements_;
 };
 
 #endif 

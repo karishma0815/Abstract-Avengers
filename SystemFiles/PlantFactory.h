@@ -39,7 +39,7 @@ public:
      * @param stock Stock quantity
      * @return Pointer to created SucculentProduct
      */
-    virtual SucculentProduct* createSucculent(std::string name, double price, int stock) = 0;
+    virtual SucculentProduct* createSucculent(std::string name, double price, std::string species, int stock) = 0;
     
     /**
      * @brief Create a tree product
@@ -48,7 +48,7 @@ public:
      * @param stock Stock quantity
      * @return Pointer to created TreeProduct
      */
-    virtual TreeProduct* createTree(std::string name, double price, int stock) = 0;
+    virtual TreeProduct* createTree(std::string name, double price, std::string species, int stock) = 0;
     
     /**
      * @brief Create a flower product
@@ -57,7 +57,7 @@ public:
      * @param stock Stock quantity
      * @return Pointer to created FlowerProduct
      */
-    virtual FlowerProduct* createFlower(std::string name, double price, int stock) = 0;
+    virtual FlowerProduct* createFlower(std::string name, double price, std::string species, int stock) = 0;
     
     /**
      * @brief Create a succulent group

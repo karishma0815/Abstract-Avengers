@@ -13,6 +13,8 @@
 #define PLANT_H
 
 #include <string>
+#include <memory>
+#include "Item.h"
 
 /**
  * @class Plant
@@ -24,7 +26,7 @@
  * virtual functions that must be implemented by derived classes.
  */
 class Plant {
-private:
+protected:
     std::string name;
     bool fertilized;
     std::string plantID;
@@ -33,18 +35,20 @@ private:
     //changed to double
     double lastWaterLevel;
     std::string careInstruc;
-    int price;
+    double price;
 
 
     //added
     bool isAlive;
+    double base;
+    bool ready;
 
 public:
     /**
      * @brief Virtual destructor
      */
     virtual ~Plant() = default;
-    Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel,int price);
+    Plant(std::string name, bool fert, std::string id, int sunHours, int waterLevel,double price);
     
     /**
      * @brief Get the name of the plant
@@ -109,19 +113,22 @@ public:
     double getPrice() const;
     void setPrice(double price);
     //this is for careiterator
-    std::string getCareInstructions() const;
+    virtual std::string getCareInstructions() const = 0;
 
     //this is for when staff wants to set care instructions
     void setCareInstructions(const std::string& instructions);
 
-
     //karishma added the functions
     bool getIsAlive() const;
-    std::string getName() const;
-    void water(double amount);
-    void fertilize(const std::string& fertilizerType);
-    void prune(int intensity);
-    void provideSunlight(int hours, const std::string& intensity);
-};
+    virtual void water(double amount) = 0;
+    virtual void fertilize(const std::string& fertilizerType) = 0;
+    virtual void prune(int intensity) = 0;
+    virtual void provideSunlight(int hours, const std::string& intensity) = 0;
 
+    //taskeen added
+    // Item API
+    double priceFunc() const;
+    std::string describe() const;
+    bool readyForSale() const;
+};
 #endif

@@ -4,30 +4,24 @@
  * @file Note.h
  * @brief ConcreteDecorator adding a small note to the arrangement
  * @author Taskeen Abdoola
- * @date 2025-10-12
+ * @date 2025-10-14
  */
 
-#ifndef NOTE_H
-#define NOTE_H
-
+#pragma once
 #include "ItemDecorator.h"
-
 #include <string>
+#include <memory>
 
-class Note : public ItemDecorator
-{
-    public:
-        Note(std::unique_ptr<Item> dec, std::string text, double extra);
-        double price() const override;
-        std::string describe() const override;
-        bool readyForSale() const override;
-        std::unique_ptr<Item> clone() const override;
-        const std::string& textFunc() const;
-        double extraFunc() const;
-    
-    private:
-        std::string text;
-        double extra;
+class Note : public ItemDecorator {
+public:
+    Note(std::unique_ptr<Item> inner, double extra, std::string note);
+
+    double priceFunc() const override;
+    std::string describe() const override;
+    bool readyForSale() const override { return ItemDecorator::readyForSale(); }
+    std::unique_ptr<Item> clone() const override;
+
+private:
+    double  extra_;
+    std::string note_;
 };
-
-#endif

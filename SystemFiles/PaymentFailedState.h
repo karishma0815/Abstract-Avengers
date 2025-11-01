@@ -20,6 +20,7 @@ public:
 
   void onRetry() override;
   void onCancel() override;
+  void onEnter();
 
 private:
   PaymentFailedState() = default;

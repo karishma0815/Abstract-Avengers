@@ -15,7 +15,7 @@
 #include "Orchid.h"
 #include <iostream>
 
-PlantContext::PlantContext(const std::string& type, const std::string& name, double price, const std::string& species) {
+PlantContext::PlantContext(const std::string& type, const std::string& name, double price, const std::string& species) : fstateAge(0){
     if (type == "Rose") {
         plant = new Rose(name, price, species);
     } else if (type == "Lotus") {

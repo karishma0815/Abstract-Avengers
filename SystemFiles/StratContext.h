@@ -11,6 +11,7 @@
 #include"PricingStrategy.h"
 #include<string>
 #include<vector>
+#include <memory>
 
 class StratContext{
 
@@ -26,11 +27,13 @@ class StratContext{
      * @brief Sets a new recommendation strategy
      * @param strategy Pointer to the new RecommStrategy object
      */
+    // Takes ownership of the passed pointer (will delete previous strategy)
     void setRecommStrategy(RecommStrategy* strategy);
     /**
      * @brief Sets a new pricing strategy
      * @param strategy Pointer to the new PricingStrategy object
      */
+    // Takes ownership of the passed pointer (will delete previous strategy)
     void setPricingStrategy(PricingStrategy* strategy);
     /**
      * @brief Executes the recommendation strategy
@@ -44,8 +47,8 @@ class StratContext{
     double executePricingStrategy(int numberOfPlants,double basePrice,std::string coupon);
    
     private:
-    RecommStrategy* recommStrategy;
-    PricingStrategy* pricingStrategy;
+    std::unique_ptr<RecommStrategy> recommStrategy;
+    std::unique_ptr<PricingStrategy> pricingStrategy;
 
 
 };

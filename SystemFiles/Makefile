@@ -2,11 +2,14 @@ CXX = g++
 CXXFLAGS = -std=c++11 -Wall -DSUPPORT_TEST_TOGGLES
 TARGET = nursery_system
 #test
-SRCS =  Arrangement.cpp\
+
+SRCS =  CompleteNurseryUI.cpp\
+		Arrangement.cpp\
 		ConcreteArrangementBuilder.cpp\
 		Director.cpp\
 		ItemDecorator.cpp\
 		DecorativePot.cpp\
+		Customer.cpp\
 		GiftWrap.cpp\
 		Note.cpp\
 		PlantItem.cpp\
@@ -22,7 +25,6 @@ SRCS =  Arrangement.cpp\
 		PaymentFailedState.cpp\
 		CompletedState.cpp\
 		CancelledState.cpp\
-		Customer.cpp\
 		Plant.cpp\
 		PlantState.cpp\
 		SeedlingState.cpp\
@@ -83,7 +85,29 @@ SRCS =  Arrangement.cpp\
 		GardenerFactory.cpp \
 		SalesAssistantFactory.cpp \
 		ManagerFactory.cpp \
-		DeliveryStaffFactory.cpp \
+		DeliveryStaffFactory.cpp\
+		AddToCart.cpp\
+		BulkDiscount.cpp\
+		CareIterator.cpp\
+		CartIterator.cpp\
+		CustomerCommand.cpp\
+		DefaultRecomm.cpp\
+		Invoker.cpp\
+		PlantContainer.cpp\
+		PriceRangeIterator.cpp\
+		PricingStrategy.cpp\
+		RecommStrategy.cpp\
+		RegularPrice.cpp\
+		RemoveFromCart.cpp\
+		StratContext.cpp\
+		SunlightRecomm.cpp\
+		WaterRecomm.cpp\
+		Command.cpp\
+		InventorySystem.cpp\
+		Iterator.cpp\
+		PlantInventory.cpp\
+		PlantIterator.cpp\
+		ArrangementsIterator.cpp\
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)
@@ -113,4 +137,4 @@ clean:
 	rm -f $(OBJS) $(TARGET) *.gcda *.gcno *.gcov coverage.info
 	rm -rf coverage_html
 
-.PHONY: all run clean valgrind coverage
+.PHONY: all run clean valgrind coverage test

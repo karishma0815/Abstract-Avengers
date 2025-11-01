@@ -18,9 +18,9 @@ public:
     TreeFactory();
     ~TreeFactory() override;
     
-    SucculentProduct* createSucculent(std::string name, double price, int stock) override;
-    TreeProduct* createTree(std::string name, double price, int stock) override;
-    FlowerProduct* createFlower(std::string name, double price, int stock) override;
+    SucculentProduct* createSucculent(std::string name, double price, std::string species, int stock);
+    TreeProduct* createTree(std::string name, double price, std::string species, int stock) override;
+    FlowerProduct* createFlower(std::string name, double price, std::string species, int stock) override;
     SucculentGroup* createSucculentGroup(std::string groupName) override;
     FlowerGroup* createFlowerGroup(std::string groupName) override;
     TreeGroup* createTreeGroup(std::string groupName) override;

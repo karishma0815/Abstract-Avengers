@@ -31,5 +31,5 @@ void SalesExpert::handleQuery(const CustomerQuery &query){
 }
 
 bool SalesExpert::canHandle(const CustomerQuery &query) const{
-    return query.type == CustomerQuery::PRICING || query.type == CustomerQuery::SPECIAL_REQUEST;
+    return query.type == CustomerQuery::PRICING;
 }

@@ -27,6 +27,7 @@ public:
     /**
      * @brief Executes the stored CustomerCommands
      */
+    ~Invoker();
     void execute(Plant* plant, PlantInventory* cartInven);
     /**
      * @brief Sets a new CustomerCommand to be executed

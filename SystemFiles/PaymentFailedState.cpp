@@ -32,3 +32,6 @@ void PaymentFailedState::onCancel()
   ctxFunc().notify("Order cancelled after payment failure.");
   ctxFunc().setState(CancelledState::instance());
 }
+
+void PaymentFailedState::onEnter()
+{}

@@ -1,6 +1,11 @@
 #include"CartIterator.h"
 
-CartIterator::CartIterator(PlantInventory* inventory)  {
+CartIterator::CartIterator(PlantInventory* inventory) : Iterator() {
+    current = 0;  // Initialize the protected member from Iterator base class
+    // If caller passes a cart inventory, use its plants directly.
+    // Do not call getCartInventory() here — that method is for main inventories
+    // and may create/return different state. We only need the passed-in
+    // inventory's plant snapshot.
     if (inventory != nullptr) {
         filteredPlants = inventory->getPlants();
     }

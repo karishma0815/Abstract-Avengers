@@ -21,6 +21,7 @@ class BrowsingState : public State
     void onSelect(const std::string& sku, int qty) override;
     void onAssist() override;
     void onCancel() override;
+    void onEnter();
 };
 
 #endif

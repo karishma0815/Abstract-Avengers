@@ -7,6 +7,8 @@
 
 #include "Plant.h"
 #include "Iterator.h"
+//#include"PlantInventory.h"
+class PlantInventory;
 /**
  * @class PlantContainer
  * @brief Abstract interface for creating Iterator objects
@@ -19,7 +21,7 @@ public:
     /**
      * @brief Virtual destructor
      */
-    virtual ~PlantContainer() {}
+    virtual ~PlantContainer();
     /**
      * @brief Creates an iterator for this container
      * @return Pointer to a new Iterator object

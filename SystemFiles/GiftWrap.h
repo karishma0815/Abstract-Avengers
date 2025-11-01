@@ -2,35 +2,26 @@
 
 /**
  * @file GiftWrap.h
- * @brief ConcreteDecorator adding a gift wrap and optional message
+ * @brief ConcreteDecorator adding a gift wrap
  * @author Taskeen Abdoola
- * @date 2025-10-12
+ * @date 2025-10-14
  */
 
-#ifndef GIFTWRAP_H
-#define GIFTWRAP_H
-
+#pragma once
 #include "ItemDecorator.h"
-
 #include <string>
+#include <memory>
 
-class GiftWrap : public ItemDecorator
-{
-    public:
-        GiftWrap(std::unique_ptr<Item> dec, std::string message, double extra);
-        double price() const override;
-        std::string describe() const override;
-        bool readyForSale() const override;
-        
-        std::unique_ptr<Item> clone() const override; //prototype
-        
-        const std::string& messageFunc() const;
-        double extraFunc() const;
-    
-    private:
-        std::string message;
-        double extra;
-        
+class GiftWrap : public ItemDecorator {
+public:
+    GiftWrap(std::unique_ptr<Item> inner, double extra, std::string message);
+
+    double priceFunc() const override;
+    std::string describe() const override;
+    bool readyForSale() const override { return ItemDecorator::readyForSale(); }
+    std::unique_ptr<Item> clone() const override;
+
+private:
+    double      extra_;
+    std::string message_;
 };
-
-#endif

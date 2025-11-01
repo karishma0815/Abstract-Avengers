@@ -57,7 +57,7 @@ void PlantIterator::filterByType(PlantInventory* inventory) {
     //Filter plants by type
     for (Plant* plant : allPlants) {
         if (plant != NULL) {
-            std::string type = plant->getType();
+            std::string type = plant->getName();
             
             //Convert to lowercase for comparison
             std::transform(type.begin(), type.end(), type.begin(), ::tolower);
