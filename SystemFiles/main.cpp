@@ -13,7 +13,6 @@ Demonstrates:
 #include"CompleteNurseryUI.h"
 
 // Personalization
-#include "PrototypeRegistry.h"
 #include "Item.h"
 #include "PlantItem.h"
 
@@ -838,71 +837,63 @@ int main() {
     // Demonstration mode starts here
     std::cout << "\n=== Starting Demonstration Mode ===\n";
 
-  // 1) Prototypes (set once by the nursery at startup)
-  printHeader("1) Register plant prototypes (Prototype pattern)");
+// 1) “Stock” items (no Prototype pattern anymore)
+printHeader("1) Create sales-floor bases (no Prototype)");
+std::cout << "Registered prototypes: 0 (prototype removed)\n";
 
-  PrototypeRegistry registry;
-  registry.registerPrototype("Rose",      std::unique_ptr<Item>(new PlantItem("Rose",      100.0, true)));
-  registry.registerPrototype("Lily",      std::unique_ptr<Item>(new PlantItem("Lily",       80.0, true)));
-  registry.registerPrototype("Succulent", std::unique_ptr<Item>(new PlantItem("Succulent",  60.0, true)));
+// 2) Personalisation: build a few personalised items and one arrangement
+printHeader("2) Build personalised items (Builder + Decorator)");
 
-  std::cout << "Registered prototypes: " << registry.size() << "\n";
+ConcreteArrangementBuilder builder;
+Director director;
+director.setBuilder(&builder);
 
-  //2) Personalisation: build a few personalised items and one arrangement
-  printHeader("2) Build personalised items (Builder + Decorator)");
+// a) Single "Gift Rose" — Pot + Wrap (Director recipe; no clone)
+builder.reset();
+builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Rose", 100.0, true) ) );
+builder.buildPot (25.0, "Red");
+builder.buildWrap(15.0, "Happy Birthday!");
+std::unique_ptr<Item> giftRose = builder.getResult();
 
-  ConcreteArrangementBuilder builder;
-  Director director;
-  director.setBuilder(&builder);
+std::cout << "Gift Rose: " << giftRose->describe()
+          << " | Price: R" << giftRose->priceFunc() << "\n";
 
-  //a) Single "Gift Rose" — Pot + Wrap (Director recipe)
-  std::unique_ptr<Item> roseProto = registry.cloneOf("Rose");
-  std::unique_ptr<Item> giftRose =
-      director.buildGift(*roseProto, /*potExtra*/25.0, "Red",
-                                   /*wrapExtra*/15.0, "Happy Birthday!");
+// b) Single "Lily with Note" — step-by-step with builder (no clone)
+builder.reset();
+builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Lily", 80.0, true) ) );
+builder.buildPot (20.0, "White");
+builder.buildNote( 5.0, "Get well soon!");
+std::unique_ptr<Item> lilyWithNote = builder.getResult();
 
-  std::cout << "Gift Rose: " << giftRose->describe()
-            << " | Price: R" << giftRose->priceFunc() << "\n";
+std::cout << "Lily w/ Note: " << lilyWithNote->describe()
+          << " | Price: R" << lilyWithNote->priceFunc() << "\n";
 
-//b) Single "Lily with Note" — build step-by-step (uses builder directly)
-  std::unique_ptr<Item> lilyProto = registry.cloneOf("Lily");
-  builder.reset();
-  builder.buildBasePlant(*lilyProto);
-  builder.buildPot(20.0, "White");
-  builder.buildNote(5.0, "Get well soon!");
-  std::unique_ptr<Item> lilyWithNote = builder.getResult();
+// c) Arrangement: two personalised succulents (each built from a fresh base)
+printHeader("c) Build an Arrangement (bundle of decorated items)");
 
-  std::cout << "Lily w/ Note: " << lilyWithNote->describe()
-            << " | Price: R" << lilyWithNote->priceFunc() << "\n";
+// Component 1
+builder.reset();
+builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Succulent", 60.0, true) ) );
+builder.buildPot(10.0, "Teal");
+std::unique_ptr<Item> pottedSucc1 = builder.getResult();
 
-  //c) Arrangement: two personalised succulents 
-  printHeader("c) Build an Arrangement (bundle of decorated items)");
+// Component 2
+builder.reset();
+builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Succulent", 60.0, true) ) );
+builder.buildPot (12.0, "Sand");
+builder.buildWrap( 8.0, "Minimal wrap");
+std::unique_ptr<Item> pottedSucc2 = builder.getResult();
 
-  //Component 1
-  std::unique_ptr<Item> succ1 = registry.cloneOf("Succulent");
-  builder.reset();
-  builder.buildBasePlant(*succ1);
-  builder.buildPot(10.0, "Teal");
-  std::unique_ptr<Item> pottedSucc1 = builder.getResult();
+Arrangement giftSet;
+giftSet.add(std::move(pottedSucc1));
+giftSet.add(std::move(pottedSucc2));
 
-  //Component 2
-  std::unique_ptr<Item> succ2 = registry.cloneOf("Succulent");
-  builder.reset();
-  builder.buildBasePlant(*succ2);
-  builder.buildPot(12.0, "Sand");
-  builder.buildWrap(8.0, "Minimal wrap");  
-  std::unique_ptr<Item> pottedSucc2 = builder.getResult();
+std::cout << "Arrangement description: " << giftSet.describe()
+          << "\nArrangement total: R" << giftSet.totalPrice()
+          << "  | Items: " << giftSet.count()
+          << "  | Ready: " << (giftSet.readyForSale() ? "Yes" : "No")
+          << "\n";
 
-  Arrangement giftSet;
-  giftSet.add(std::move(pottedSucc1));
-  giftSet.add(std::move(pottedSucc2));
-
-  std::cout << "Arrangement description: " << giftSet.describe()
-            << "\nArrangement total: R" << giftSet.totalPrice()
-            << "  | Items: " << giftSet.count()
-            << "  | Ready: " << (giftSet.readyForSale() ? "Yes" : "No")
-            << "\n";
-        
   //3) Sales flow scenarios (State pattern)
   //a) In-stock happy path: browse → cart → pay → complete
   printHeader("3.a) In-stock purchase success");
