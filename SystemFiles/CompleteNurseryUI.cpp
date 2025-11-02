@@ -10,7 +10,6 @@ CompleteNurseryUI::CompleteNurseryUI() {
     
     strategyContext = new StratContext(new DefaultRecomm(), new RegularPrice());
     invoker = new Invoker(nullptr);
-   // prototypeRegistry = new PrototypeRegistry();
     arrangementBuilder = new ConcreteArrangementBuilder();
     director = new Director();
     director->setBuilder(arrangementBuilder);
@@ -42,7 +41,6 @@ CompleteNurseryUI::~CompleteNurseryUI() {
     delete seniorGardener;
     delete plantSpecialist;
 
-    //delete prototypeRegistry;
     delete arrangementBuilder;
     delete director;
     if (salesContext) delete salesContext;
@@ -536,180 +534,230 @@ void CompleteNurseryUI::buildArrangementFlow() {
 
 //fixed cart menu with loop-> it works properly
 void CompleteNurseryUI::showCartMenu() {
+    // ---- small helpers local to this function (C++11-safe) -----------------
+    struct Local {
+        static int countPlants(PlantInventory* cart) {
+            int n = 0;
+            if (!cart) return 0;
+            CartIterator it(cart);
+            for (it.first(); !it.isDone(); it.next()) ++n;
+            return n;
+        }
+        static std::string stateName(SalesContext* sc) {
+            return sc ? sc->current().getStateName() : std::string();
+        }
+        static bool runCheckoutFlow(SalesContext* sc) {
+            // Make sure the machine accepts checkout
+            sc->setState(CartOpenState::instance());
+
+            // CartOpen -> PendingPayment
+            sc->eventCheckout();
+            if (stateName(sc) != "PendingPayment") return false;
+
+            // PendingPayment -> PaymentAuthorized | PaymentFailed
+            sc->eventAuthorize();
+            std::string s = stateName(sc);
+            if (s == "PaymentFailed") return false;
+
+            // PaymentAuthorized -> Completed (or back to Pending on capture fail)
+            if (s == "PaymentAuthorized") sc->eventCommit();
+
+            return stateName(sc) == "Completed";
+        }
+    };
+    // -----------------------------------------------------------------------
+
     while (true) {
         clearScreen();
         printHeader("🛒 SHOPPING CART");
-        
+
         displayCart();
-        
+
         std::cout << "\n 1. Add Plant to Cart\n";
         std::cout << " 2. Remove from Cart\n";
-        std::cout << " 3. Checkout\n";
+        std::cout << " 3. Checkout (State machine)\n";
+        std::cout << " 4. Ask for assistance\n";
         std::cout << " 0. Back\n\n";
-        
+
         std::cout << " Enter choice: ";
-        int choice = getValidatedInput(0, 3);
-        
+        int choice = getValidatedInput(0, 4);
         if (choice == 0) break;
-        
+
         switch (choice) {
-            case 1: {
-    // Submenu: add single plant OR build a custom arrangement
-    clearScreen();
-    printSubHeader("ADD TO CART");
-    std::cout << "\n 1. Add single plant\n";
-    std::cout << " 2. Build custom arrangement\n";
-    std::cout << " 0. Back\n\n";
-    std::cout << " Enter choice: ";
-    int sub = getValidatedInput(0, 2);
+        case 1: {
+            // Submenu: add single plant OR build a custom arrangement
+            clearScreen();
+            printSubHeader("ADD TO CART");
+            std::cout << "\n 1. Add single plant\n";
+            std::cout << " 2. Build custom arrangement\n";
+            std::cout << " 0. Back\n\n";
+            std::cout << " Enter choice: ";
+            int sub = getValidatedInput(0, 2);
 
-    if (sub == 2) {
-        // Build multi-plant arrangement (decorate once)
-        buildArrangementFlow();
-        break; // back to cart menu
-    }
-    if (sub == 0) break;
+            if (sub == 2) {
+                buildArrangementFlow(); // your existing arrangement flow
+                break;                  // back to cart menu
+            }
+            if (sub == 0) break;
 
-    // ---- (existing loop for adding single plants) ----
-    bool keepAdding = true;
-    while (keepAdding) {
-        clearScreen();
-        printSubHeader("SELECT PLANT TO ADD");
+            // ---- single plant add loop ----
+            bool keepAdding = true;
+            while (keepAdding) {
+                clearScreen();
+                printSubHeader("SELECT PLANT TO ADD");
 
-        PlantIterator it(inventory);
-        std::vector<Plant*> plants;
-        int num = 1;
+                PlantIterator it(inventory);
+                std::vector<Plant*> plants;
+                int num = 1;
 
-        std::cout << "\n Available Plants:\n";
-        for (it.first(); !it.isDone(); it.next()) {
-            plants.push_back(it.currentItem());
-            std::cout << " " << num++ << ". " << it.currentItem()->getName()
-                      << " - R" << it.currentItem()->getPrice() << "\n";
+                std::cout << "\n Available Plants:\n";
+                for (it.first(); !it.isDone(); it.next()) {
+                    plants.push_back(it.currentItem());
+                    std::cout << " " << num++ << ". " << it.currentItem()->getName()
+                              << " - R" << it.currentItem()->getPrice() << "\n";
+                }
+
+                if (plants.empty()) {
+                    printError("No plants available!");
+                    pressEnter();
+                    break;
+                }
+
+                std::cout << "\n Select plant (0 to cancel): ";
+                int sel = getValidatedInput(0, static_cast<int>(plants.size()));
+                if (sel == 0) { keepAdding = false; break; }
+
+                Plant* selectedPlant = plants[sel - 1];
+
+                // Optional personalize
+                std::cout << "\n Personalize this plant first? (1 = yes, 0 = no): ";
+                int personalizeChoice = getValidatedInput(0, 1);
+                if (personalizeChoice == 1) {
+                    personalizeSelectedPlant(selectedPlant);
+                }
+
+                // Add to cart via Command (main inventory)
+                PlantInventory* mainInventory = currentCustomer->getInven();
+                CustomerCommand* cmd = new AddToCart();
+                invoker->setCommand(cmd);
+                invoker->execute(selectedPlant, mainInventory);
+                delete cmd;
+
+                printSuccess(selectedPlant->getName() + " added to cart!");
+
+                std::cout << "\n Add another single plant? (1=Yes, 0=No): ";
+                int addMore = getValidatedInput(0, 1);
+                if (addMore == 0) keepAdding = false;
+            }
+            break;
         }
 
-        if (plants.empty()) {
-            printError("No plants available!");
+        case 2: { // Remove from cart
+            PlantInventory* actualCart = currentCustomer->getCart();
+            CartIterator cartIt(actualCart);
+            std::vector<Plant*> cartPlants;
+
+            for (cartIt.first(); !cartIt.isDone(); cartIt.next())
+                cartPlants.push_back(cartIt.currentItem());
+
+            if (cartPlants.empty()) {
+                printError("Cart is empty!");
+                pressEnter();
+                break;
+            }
+
+            std::cout << "\n Select item to remove (0 to cancel): ";
+            int sel = getValidatedInput(0, static_cast<int>(cartPlants.size()));
+            if (sel > 0) {
+                Plant* toRemove = cartPlants[sel - 1];
+                PlantInventory* mainInventory = currentCustomer->getInven();
+
+                CustomerCommand* cmd = new RemoveFromCart();
+                invoker->setCommand(cmd);
+                invoker->execute(toRemove, mainInventory);
+                delete cmd;
+
+                printSuccess("Item removed!");
+            }
             pressEnter();
             break;
         }
 
-        std::cout << "\n Select plant (0 to cancel): ";
-        int sel = getValidatedInput(0, static_cast<int>(plants.size()));
-        if (sel == 0) { keepAdding = false; break; }
+        case 3: { // Checkout (State machine)
+            // Ensure we have a customer and a SalesContext:
+            if (!currentCustomer) currentCustomer = new Customer("Guest");
+            if (!salesContext)
+                salesContext = new SalesContext(BrowsingState::instance(), *currentCustomer);
 
-        Plant* selectedPlant = plants[sel - 1];
+            PlantInventory* actualCart = currentCustomer->getCart();
+            const int plantCount = Local::countPlants(actualCart);
+            const int arrCount   = static_cast<int>(inventory->cartArrangementsSnapshot().size());
+            const int count      = plantCount + arrCount;
 
-        // Ask about personalizing this single plant (still allowed)
-        std::cout << "\n Personalize this plant first? (1 = yes, 0 = no): ";
-        int personalizeChoice = getValidatedInput(0, 1);
-        if (personalizeChoice == 1) {
-            personalizeSelectedPlant(selectedPlant); // your existing single-item flow
-        }
-
-        // Add to cart (using main inventory)
-        PlantInventory* mainInventory = currentCustomer->getInven();
-        CustomerCommand* cmd = new AddToCart();
-        invoker->setCommand(cmd);
-        invoker->execute(selectedPlant, mainInventory);
-        delete cmd;
-
-        printSuccess(selectedPlant->getName() + " added to cart!");
-
-        std::cout << "\n Add another single plant? (1=Yes, 0=No): ";
-        int addMore = getValidatedInput(0, 1);
-        if (addMore == 0) keepAdding = false;
-    }
-    break;
-}
-            
-            case 2: {
-                PlantInventory* actualCart = currentCustomer->getCart();
-                CartIterator cartIt(actualCart);
-                std::vector<Plant*> cartPlants;
-                
-                for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
-                    cartPlants.push_back(cartIt.currentItem());
-                }
-                
-                if (cartPlants.empty()) {
-                    printError("Cart is empty!");
-                    pressEnter();
-                    break;
-                }
-                
-                std::cout << "\n Select item to remove (0 to cancel): ";
-                int sel = getValidatedInput(0, cartPlants.size());
-                
-                if (sel > 0 && sel <= static_cast<int>(cartPlants.size())) {
-                    Plant* toRemove = cartPlants[sel - 1];
-                    
-                    // Use main inventory for removeFromCart
-                    PlantInventory* mainInventory = currentCustomer->getInven();
-                    
-                    CustomerCommand* cmd = new RemoveFromCart();
-                    invoker->setCommand(cmd);
-                    invoker->execute(toRemove, mainInventory);
-                    
-                    printSuccess("Item removed!");
-                    delete cmd;
-                }
+            if (count == 0) {
+                printError("Cart is empty!");
                 pressEnter();
                 break;
             }
-            
-            case 3: {
-                PlantInventory* actualCart = currentCustomer->getCart();
-                CartIterator cartIt(actualCart);
-                int plantCount = 0;
-                for (cartIt.first(); !cartIt.isDone(); cartIt.next()) plantCount++;
 
-                int arrCount = static_cast<int>(inventory->cartArrangementsSnapshot().size());
-                int count = plantCount + arrCount;
-                
-                if (count == 0) {
-                    printError("Cart is empty!");
-                    pressEnter();
-                    break;
-                }
-                
-                double total = calculateCartTotal();
-                
-                std::cout << "\n╔═══ CHECKOUT ═══╗\n";
-                std::cout << " Items: " << count << "\n";
-                std::cout << " Total: R" << total << "\n";
-                std::cout << "╚════════════════╝\n";
-                
-                std::cout << "\n Confirm purchase? (1=Yes, 0=No): ";
-                int confirm = getValidatedInput(0, 1);
-                
-                if (confirm == 1) {
-                    // Clear cart
-                    CartIterator clearIt(actualCart);
-                    std::vector<Plant*> itemsToRemove;
-                    
-                    for (clearIt.first(); !clearIt.isDone(); clearIt.next()) {
-                        itemsToRemove.push_back(clearIt.currentItem());
-                    }
-                    
-                    PlantInventory* mainInventory = currentCustomer->getInven();
-                    for (Plant* item : itemsToRemove) {
-                        CustomerCommand* removeCmd = new RemoveFromCart();
-                        invoker->setCommand(removeCmd);
-                        invoker->execute(item, mainInventory);
-                        delete removeCmd;
-                    }
-                    inventory->clearCartArrangements();
-                    
-                    printSuccess("Purchase complete! Thank you!");
-                } else {
-                    std::cout << "\n Purchase cancelled.\n";
-                }
+            const double total = calculateCartTotal();
+
+            clearScreen();
+            printSubHeader("CHECKOUT");
+            std::cout << " Items: " << count << "\n";
+            std::cout << " Total: R" << total << "\n\n";
+
+            std::cout << " Confirm purchase? (1=Yes, 0=No): ";
+            int confirm = getValidatedInput(0, 1);
+            if (!confirm) {
+                std::cout << "\n Purchase cancelled.\n";
                 pressEnter();
                 break;
             }
+
+            const bool ok = Local::runCheckoutFlow(salesContext);
+
+            if (ok) {
+                // Clear cart items only on success
+                std::vector<Plant*> toRemove;
+                { CartIterator it(actualCart); for (it.first(); !it.isDone(); it.next())
+                        toRemove.push_back(it.currentItem()); }
+
+                PlantInventory* mainInventory = currentCustomer->getInven();
+                for (Plant* p : toRemove) {
+                    CustomerCommand* removeCmd = new RemoveFromCart();
+                    invoker->setCommand(removeCmd);
+                    invoker->execute(p, mainInventory);
+                    delete removeCmd;
+                }
+                inventory->clearCartArrangements();
+
+                printSuccess("Purchase complete! Thank you!");
+            } else {
+                std::cout << "\n Payment was not completed. Your cart is unchanged.\n";
+            }
+
+            pressEnter();
+            break;
+        }
+
+        case 4: {
+            // Ask for assistance from the cart screen:
+            // If CartOpen is active it ignores assist; bounce to SeekingAssistance.
+            if (!currentCustomer) currentCustomer = new Customer("Guest");
+            if (!salesContext)
+                salesContext = new SalesContext(BrowsingState::instance(), *currentCustomer);
+
+            salesContext->setState(SeekingAssistanceState::instance());
+            // Let the state show its welcome/message
+            salesContext->eventAssistComplete(); // or call a small query flow if you have one
+            pressEnter();
+            break;
+        }
         }
     }
 }
+
 
 void CompleteNurseryUI::displayCart() {
     CartIterator cartIt(currentCustomer->getCart());
@@ -1737,6 +1785,16 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
 }
 
 //Payment Menu (State Pattern)
+void CompleteNurseryUI::ensureSalesContext() {
+    if (!currentCustomer) {
+        // Create a simple default customer if your UI hasn't picked one yet
+        currentCustomer = new Customer("Guest");
+    }
+    if (!salesContext) {
+        salesContext = new SalesContext(BrowsingState::instance(), *currentCustomer);
+    }
+}
+
 void CompleteNurseryUI::showPaymentMenu() {
     clearScreen();
     printHeader("💳 PAYMENT SYSTEM");
