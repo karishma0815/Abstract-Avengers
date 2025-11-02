@@ -73,16 +73,51 @@ void CompleteNurseryUI::initializeNursery() {
     
     Plant* fern = new Succulent("Boston Fern", 35.0, "Fern");
     fern->setCareInstructions("Medium maintenance: Weekly watering, indirect light");
+
+    //added new plants to the list
+    Plant* lotus = new Lotus("Pink Lotus", 65.50);
+    lotus->setCareInstructions("Aquatic plant: Keep in water, full sunlight");
+    
+    Plant* protea = new Protea("King Protea", 85.25);
+    protea->setCareInstructions("Moderate maintenance: Well-drained soil, partial sun");
+    
+    Plant* orchid = new Orchid("Moth Orchid", 42.80);
+    orchid->setCareInstructions("Moderate maintenance: Indirect light, weekly watering");
+    
+    Plant* apple = new Apple("Apple Tree", 95.75);
+    apple->setCareInstructions("Seasonal care: Full sun, regular watering, winter pruning");
+    
+    Plant* jacaranda = new Jacaranda("Jacaranda Tree", 120.00);
+    jacaranda->setCareInstructions("Moderate maintenance: Full sun, drought tolerant");
+    
+    Plant* pine = new Pine("Pine Tree", 75.25);
+    pine->setCareInstructions("Low maintenance: Well-drained soil, full sun");
     
     inventory->add(rose);
     inventory->add(cactus);
     inventory->add(jade);
     inventory->add(fern);
+
+    //adding it to the inventory
+    inventory->add(lotus);
+    inventory->add(protea);
+    inventory->add(orchid);
+    inventory->add(apple);
+    inventory->add(jacaranda);
+    inventory->add(pine);
     
     // Add to stock manager
     stockManager->addFlower(new Rose("Stock Rose", 45.99, "Hybrid Tea"));
     stockManager->addSucculent(new Cacti("Stock Cactus", 32.75, "Barrel"));
     stockManager->addSucculent(new Jade("Stock Jade", 28.50, "Crassula"));
+
+    //adding these new plants to the stock manager
+    stockManager->addFlower(new Lotus("Stock Lotus", 65.50, "Nelumbo"));
+    stockManager->addFlower(new Protea("Stock Protea", 85.25, "King"));
+    stockManager->addSucculent(new Orchid("Stock Orchid", 42.80, "Phalaenopsis"));
+    stockManager->addTree(new Apple("Stock Apple", 95.75, "Malus"));
+    stockManager->addTree(new Jacaranda("Stock Jacaranda", 120.00, "Mimosifolia"));
+    stockManager->addTree(new Pine("Stock Pine", 75.25, "Pinus"));
 }
 
 void CompleteNurseryUI::setupStaff() {
@@ -206,9 +241,9 @@ void CompleteNurseryUI::showMainMenu() {
         switch (choice) {
             case 1: showCustomerMenu(); break;
             case 2: {
-                //showStaffMenu()
-                std::cout<<"StaffMenu still in progress\n";
-                    break;
+                showStaffMenu();
+                // std::cout<<"StaffMenu still in progress\n";
+                //     break;
                 }
             case 3: 
             {
@@ -794,31 +829,70 @@ void CompleteNurseryUI::showPlantCareMenu() {
     switch (action) {
         case 1: {
             double amount;
+            std::cout << selectedPlant->getCareInstructions() << "\n\n";
+            if (dynamic_cast<Rose*>(selectedPlant)) {
+                Rose* plant = dynamic_cast<Rose*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Lotus*>(selectedPlant)) {
+                Lotus* plant = dynamic_cast<Lotus*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Protea*>(selectedPlant)) {
+                Protea* plant = dynamic_cast<Protea*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Cacti*>(selectedPlant)) {
+                Cacti* plant = dynamic_cast<Cacti*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Jade*>(selectedPlant)) {
+                Jade* plant = dynamic_cast<Jade*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Orchid*>(selectedPlant)) {
+                Orchid* plant = dynamic_cast<Orchid*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Apple*>(selectedPlant)) {
+                Apple* plant = dynamic_cast<Apple*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Jacaranda*>(selectedPlant)) {
+                Jacaranda* plant = dynamic_cast<Jacaranda*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Pine*>(selectedPlant)) {
+                Pine* plant = dynamic_cast<Pine*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
             std::cout << " Water amount (liters): ";
             std::cin >> amount;
             WaterCommand waterCmd(selectedPlant, amount);
-            std::cout << "\n " << waterCmd.getDescription() << "\n";
+            //std::cout << "\n " << waterCmd.getDescription() << "\n";
             waterCmd.execute();
             printSuccess("Plant watered!");
             break;
         }
         case 2: {
             std::string type;
+            std::cout << " " << selectedPlant->getCareInstructions() << "\n\n";
             std::cout << " Fertilizer type: ";
-            std::cin.ignore();
+            //std::cin.ignore();
             std::getline(std::cin, type);
             FertilizeCommand fertilizeCmd(selectedPlant, type);
-            std::cout << "\n " << fertilizeCmd.getDescription() << "\n";
+            //std::cout << "\n " << fertilizeCmd.getDescription() << "\n";
             fertilizeCmd.execute();
             printSuccess("Plant fertilized!");
             break;
         }
         case 3: {
             int branches;
-            std::cout << " Number of branches to prune: ";
+            std::cout << " " << selectedPlant->getCareInstructions() << "\n\n";
+            std::cout << " Intensity to prune: ";
             std::cin >> branches;
             PruneCommand pruneCmd(selectedPlant, branches);
-            std::cout << "\n " << pruneCmd.getDescription() << "\n";
+            //std::cout << "\n " << pruneCmd.getDescription() << "\n";
             pruneCmd.execute();
             printSuccess("Plant pruned!");
             break;
@@ -826,12 +900,13 @@ void CompleteNurseryUI::showPlantCareMenu() {
         case 4: {
             int hours;
             std::string intensity;
+            std::cout << " " << selectedPlant->getCareInstructions() << "\n\n";
             std::cout << " Hours of sunlight: ";
             std::cin >> hours;
             std::cout << " Intensity (low/medium/high): ";
             std::cin >> intensity;
             SunlightCommand sunCmd(selectedPlant, hours, intensity);
-            std::cout << "\n " << sunCmd.getDescription() << "\n";
+            //std::cout << "\n " << sunCmd.getDescription() << "\n";
             sunCmd.execute();
             printSuccess("Sunlight adjusted!");
             break;
@@ -861,10 +936,12 @@ void CompleteNurseryUI::showStaffTasksMenu() {
     std::cout << "\n 1. Add Task\n";
     std::cout << " 2. Perform All Tasks\n";
     std::cout << " 3. Clear Tasks\n";
+    std::cout << " 4. Clear Specific Task\n";
+    std::cout << " 5. View Tasks\n";
     std::cout << " 0. Back\n\n";
     
     std::cout << " Enter choice: ";
-    int choice = getValidatedInput(0, 3);
+    int choice = getValidatedInput(0, 5);
     
     switch (choice) {
         case 1: {
@@ -907,6 +984,31 @@ void CompleteNurseryUI::showStaffTasksMenu() {
         case 3:
             selectedStaff->clearTasks();
             printSuccess("All tasks cleared!");
+            break;
+        case 4: {
+            std::cout << "\n";
+            selectedStaff->listTasks();
+            
+            int taskCount = selectedStaff->getTaskCount();
+            
+            if (taskCount == 0) {
+                std::cout << "No tasks to delete.\n";
+                break;
+            }
+            
+            std::cout << "\n Enter task number to delete (0 to cancel): ";
+            int taskNum = getValidatedInput(0, taskCount);
+            
+            if (taskNum == 0) {
+                std::cout << "Cancelled.\n";
+            } else {
+                selectedStaff->clearTask(taskNum - 1);
+            }
+            break;
+        }
+        case 5:
+            std::cout << "\n";
+            selectedStaff->listTasks();
             break;
     }
     pressEnter();
@@ -1089,7 +1191,7 @@ void CompleteNurseryUI::showGreenhouseMenu() {
     }
 }
 
-// ///Stock Management Menu(Kiolin's Factory/Composite)
+//Stock Management Menu(Kiolin's Factory/Composite)
 void CompleteNurseryUI::showStockManagementMenu() {
     clearScreen();
     printHeader("📦 STOCK MANAGEMENT");
@@ -1191,9 +1293,9 @@ void CompleteNurseryUI::showStockManagementMenu() {
             break;
     }
     pressEnter();
-}
+ }
 
-void CompleteNurseryUI::showFactoryProductionMenu() {
+ void CompleteNurseryUI::showFactoryProductionMenu() {
     clearScreen();
     printHeader("🏭 FACTORY PRODUCTION");
     
@@ -1370,7 +1472,6 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
         pressEnter();
     }
 }
-
 
 ///Taskeens BUilder State and Prototype
 

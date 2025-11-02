@@ -16,17 +16,17 @@ void SalesAssistant::careForPlants(){
 
 void SalesAssistant::handleQuery(const CustomerQuery &query){
     if(canHandle(query)){
-        std::cout<<"Sales Assistant "<<getName()<<" handling: "<<query.question<<std::endl;
+        std::cout<<" Sales Assistant "<<getName()<<" handling: "<<query.question<<std::endl;
         if(query.type == CustomerQuery::PRICING){
-            std::cout<<"Providing pricing information and discounts..."<<std::endl;
+            std::cout<<" Providing pricing information and discounts..."<<std::endl;
         } else{
-            std::cout<<"Assisting with general inquiry..."<<std::endl;
+            std::cout<<" Assisting with general inquiry..."<<std::endl;
         }
     } else if(nextHandler != nullptr){
-        std::cout<<"Sales Assistant escalating to specialist..."<<std::endl;
+        std::cout<<" Sales Assistant escalating to specialist..."<<std::endl;
         nextHandler->handleQuery(query);
     } else{
-        std::cout<<"No specialist available for: "<<query.question<<std::endl;
+        std::cout<<" No specialist available for: "<<query.question<<std::endl;
     }
 }
 
