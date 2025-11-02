@@ -446,8 +446,8 @@ void CompleteNurseryUI::showCartMenu() {
                         keepAdding = false;
                         break;
                     }
-                    
-                    if (sel > 0 && sel <= plants.size()) {
+                    ///when comparing integers of different types use static<cast>
+                    if (sel > 0 && sel <= static_cast<int>(plants.size())) {
                         Plant* selectedPlant = plants[sel - 1];
                         
                         // Ask about personalization
@@ -507,7 +507,7 @@ void CompleteNurseryUI::showCartMenu() {
                 std::cout << "\n Select item to remove (0 to cancel): ";
                 int sel = getValidatedInput(0, cartPlants.size());
                 
-                if (sel > 0 && sel <= cartPlants.size()) {
+                if (sel > 0 && sel <= static_cast<int>(cartPlants.size())) {
                     Plant* toRemove = cartPlants[sel - 1];
                     
                     // Use main inventory for removeFromCart
