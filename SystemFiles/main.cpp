@@ -1434,99 +1434,110 @@ std::cout << "Arrangement description: " << giftSet.describe()
 
     std::cout << "CHAIN OF RESPONSIBILITY (customer interaction):" << std::endl;
 
-    JuniorStaff juniorStaff;
-    SalesExpert salesExpert;
-    PlantExpert plantExpert;
-    Manager queryManager("Query Manager", 401, nullptr, "Customer Service");
+// Create chain dynamically to avoid double deletion issues
+JuniorStaff* juniorStaff = new JuniorStaff();
+SalesExpert* salesExpert = new SalesExpert();
+PlantExpert* plantExpert = new PlantExpert();
+Manager* queryManager = new Manager("Query Manager", 401, nullptr, "Customer Service");
 
-    juniorStaff.setNext(&salesExpert);
-    salesExpert.setNext(&plantExpert);
-    plantExpert.setNext(&queryManager);
+// Build the chain - juniorStaff now OWNS the entire chain
+juniorStaff->setNext(salesExpert);
+salesExpert->setNext(plantExpert);
+plantExpert->setNext(queryManager);
 
-    std::cout << "\nGeneral Inquiry (Junior Staff should handle)" << std::endl;
-    CustomerQuery generalQuery(CustomerQuery::GENERAL, "What are your opening hours?", nullptr);
-    std::cout << "Customer: \"" << generalQuery.question << "\"" << std::endl;
-    juniorStaff.handleQuery(generalQuery);
+std::cout << "\nGeneral Inquiry (Junior Staff should handle)" << std::endl;
+CustomerQuery generalQuery(CustomerQuery::GENERAL, "What are your opening hours?", nullptr);
+std::cout << "Customer: \"" << generalQuery.question << "\"" << std::endl;
+juniorStaff->handleQuery(generalQuery);
 
-    std::cout << "\nBasic Pricing Question (Junior Staff should handle)" << std::endl;
-    CustomerQuery pricingQuery(CustomerQuery::PRICING, "How much are your roses?", nullptr);
-    std::cout << "Customer: \"" << pricingQuery.question << "\"" << std::endl;
-    juniorStaff.handleQuery(pricingQuery);
+std::cout << "\nBasic Pricing Question (Junior Staff should handle)" << std::endl;
+CustomerQuery pricingQuery(CustomerQuery::PRICING, "How much are your roses?", nullptr);
+std::cout << "Customer: \"" << pricingQuery.question << "\"" << std::endl;
+juniorStaff->handleQuery(pricingQuery);
 
-    std::cout << "\nAdvanced Pricing Question (Should escalate to Sales Expert)" << std::endl;
-    CustomerQuery advancedPricingQuery(CustomerQuery::PRICING, "Can I get a bulk discount for 100 plants?", nullptr);
-    std::cout << "Customer: \"" << advancedPricingQuery.question << "\"" << std::endl;
-    juniorStaff.handleQuery(advancedPricingQuery);
+std::cout << "\nAdvanced Pricing Question (Should escalate to Sales Expert)" << std::endl;
+CustomerQuery advancedPricingQuery(CustomerQuery::PRICING, "Can I get a bulk discount for 100 plants?", nullptr);
+std::cout << "Customer: \"" << advancedPricingQuery.question << "\"" << std::endl;
+juniorStaff->handleQuery(advancedPricingQuery);
 
-    std::cout << "\nSpecial Request (Should escalate to Sales Expert)" << std::endl;
-    CustomerQuery specialRequestQuery(CustomerQuery::SPECIAL_REQUEST, "Can you deliver plants on Sunday?", nullptr);
-    std::cout << "Customer: \"" << specialRequestQuery.question << "\"" << std::endl;
-    juniorStaff.handleQuery(specialRequestQuery);
+std::cout << "\nSpecial Request (Should escalate to Sales Expert)" << std::endl;
+CustomerQuery specialRequestQuery(CustomerQuery::SPECIAL_REQUEST, "Can you deliver plants on Sunday?", nullptr);
+std::cout << "Customer: \"" << specialRequestQuery.question << "\"" << std::endl;
+juniorStaff->handleQuery(specialRequestQuery);
 
-    std::cout << "\nPlant Care Advice (Should escalate to Plant Expert)" << std::endl;
-    CustomerQuery careAdviceQuery(CustomerQuery::CARE_ADVICE, "How often should I water my cactus?", nullptr);
-    std::cout << "Customer: \"" << careAdviceQuery.question << "\"" << std::endl;
-    juniorStaff.handleQuery(careAdviceQuery);
+std::cout << "\nPlant Care Advice (Should escalate to Plant Expert)" << std::endl;
+CustomerQuery careAdviceQuery(CustomerQuery::CARE_ADVICE, "How often should I water my cactus?", nullptr);
+std::cout << "Customer: \"" << careAdviceQuery.question << "\"" << std::endl;
+juniorStaff->handleQuery(careAdviceQuery);
 
-    std::cout << "\nCustomer Complaint - Plant Death (Should be handled by Plant Expert)" << std::endl;
-    CustomerQuery complaintQuery(CustomerQuery::COMPLAINT, "My plant died after one week", nullptr);
-    std::cout << "Customer: \"" << complaintQuery.question << "\"" << std::endl;
-    juniorStaff.handleQuery(complaintQuery);
+std::cout << "\nCustomer Complaint - Plant Death (Should be handled by Plant Expert)" << std::endl;
+CustomerQuery complaintQuery(CustomerQuery::COMPLAINT, "My plant died after one week", nullptr);
+std::cout << "Customer: \"" << complaintQuery.question << "\"" << std::endl;
+juniorStaff->handleQuery(complaintQuery);
 
-    std::cout << "\nDirect Sales Expert Handling" << std::endl;
-    CustomerQuery directSalesQuery(CustomerQuery::SPECIAL_REQUEST, "I need plants for a corporate event", nullptr);
-    std::cout << "Customer: \"" << directSalesQuery.question << "\"" << std::endl;
-    salesExpert.handleQuery(directSalesQuery);
+std::cout << "\nDirect Sales Expert Handling" << std::endl;
+CustomerQuery directSalesQuery(CustomerQuery::SPECIAL_REQUEST, "I need plants for a corporate event", nullptr);
+std::cout << "Customer: \"" << directSalesQuery.question << "\"" << std::endl;
+salesExpert->handleQuery(directSalesQuery);
 
-    std::cout << "\nDirect Plant Expert Handling" << std::endl;
-    CustomerQuery directPlantQuery(CustomerQuery::CARE_ADVICE, "My fern leaves are turning yellow, what should I do?", nullptr);
-    std::cout << "Customer: \"" << directPlantQuery.question << "\"" << std::endl;
-    plantExpert.handleQuery(directPlantQuery);
+std::cout << "\nDirect Plant Expert Handling" << std::endl;
+CustomerQuery directPlantQuery(CustomerQuery::CARE_ADVICE, "My fern leaves are turning yellow, what should I do?", nullptr);
+std::cout << "Customer: \"" << directPlantQuery.question << "\"" << std::endl;
+plantExpert->handleQuery(directPlantQuery);
 
-    std::cout << "\nDirect Manager Handling" << std::endl;
-    CustomerQuery directManagerQuery(CustomerQuery::COMPLAINT, "I want to speak to the manager about a refund", nullptr);
-    std::cout << "Customer: \"" << directManagerQuery.question << "\"" << std::endl;
-    queryManager.handleQuery(directManagerQuery);
+std::cout << "\nDirect Manager Handling" << std::endl;
+CustomerQuery directManagerQuery(CustomerQuery::COMPLAINT, "I want to speak to the manager about a refund", nullptr);
+std::cout << "Customer: \"" << directManagerQuery.question << "\"" << std::endl;
+queryManager->handleQuery(directManagerQuery);
 
-    std::cout << "\nComplex Query Chain" << std::endl;
-    std::cout << "Testing multiple queries in sequence:" << std::endl;
+std::cout << "\nComplex Query Chain" << std::endl;
+std::cout << "Testing multiple queries in sequence:" << std::endl;
 
-    CustomerQuery query1(CustomerQuery::GENERAL, "What's your location?", nullptr);
-    std::cout << "\nCustomer: \"" << query1.question << "\"" << std::endl;
-    juniorStaff.handleQuery(query1);
+CustomerQuery query1(CustomerQuery::GENERAL, "What's your location?", nullptr);
+std::cout << "\nCustomer: \"" << query1.question << "\"" << std::endl;
+juniorStaff->handleQuery(query1);
 
-    CustomerQuery query2(CustomerQuery::PRICING, "Do you offer student discount?", nullptr);
-    std::cout << "\nCustomer: \"" << query2.question << "\"" << std::endl;
-    juniorStaff.handleQuery(query2);
+CustomerQuery query2(CustomerQuery::PRICING, "Do you offer student discount?", nullptr);
+std::cout << "\nCustomer: \"" << query2.question << "\"" << std::endl;
+juniorStaff->handleQuery(query2);
 
-    CustomerQuery query3(CustomerQuery::CARE_ADVICE, "What soil should I use for my succulents?", nullptr);
-    std::cout << "\nCustomer: \"" << query3.question << "\"" << std::endl;
-    juniorStaff.handleQuery(query3);
+CustomerQuery query3(CustomerQuery::CARE_ADVICE, "What soil should I use for my succulents?", nullptr);
+std::cout << "\nCustomer: \"" << query3.question << "\"" << std::endl;
+juniorStaff->handleQuery(query3);
 
-    CustomerQuery query4(CustomerQuery::COMPLAINT, "The orchid I bought is dying", nullptr);
-    std::cout << "\nCustomer: \"" << query4.question << "\"" << std::endl;
-    juniorStaff.handleQuery(query4);
+CustomerQuery query4(CustomerQuery::COMPLAINT, "The orchid I bought is dying", nullptr);
+std::cout << "\nCustomer: \"" << query4.question << "\"" << std::endl;
+juniorStaff->handleQuery(query4);
 
-    std::cout << "\nBroken Chain (No Next Handler)" << std::endl;
-    JuniorStaff isolatedJunior;
-    CustomerQuery unhandledQuery(CustomerQuery::CARE_ADVICE, "How do I propagate my snake plant?", nullptr);
-    std::cout << "Customer: \"" << unhandledQuery.question << "\"" << std::endl;
-    isolatedJunior.handleQuery(unhandledQuery);
+std::cout << "\nBroken Chain (No Next Handler)" << std::endl;
+// Create isolatedJunior separately on stack since it's not part of the main chain
+JuniorStaff isolatedJunior;
+CustomerQuery unhandledQuery(CustomerQuery::CARE_ADVICE, "How do I propagate my snake plant?", nullptr);
+std::cout << "Customer: \"" << unhandledQuery.question << "\"" << std::endl;
+isolatedJunior.handleQuery(unhandledQuery);
 
-    std::cout << "\nMixed Query Types" << std::endl;
-    std::cout << "Customer with multiple questions:" << std::endl;
+std::cout << "\nMixed Query Types" << std::endl;
+std::cout << "Customer with multiple questions:" << std::endl;
 
-    CustomerQuery mixed1(CustomerQuery::GENERAL, "Do you offer gift wrapping?", nullptr);
-    std::cout << "\nCustomer: \"" << mixed1.question << "\"" << std::endl;
-    juniorStaff.handleQuery(mixed1);
+CustomerQuery mixed1(CustomerQuery::GENERAL, "Do you offer gift wrapping?", nullptr);
+std::cout << "\nCustomer: \"" << mixed1.question << "\"" << std::endl;
+juniorStaff->handleQuery(mixed1);
 
-    CustomerQuery mixed2(CustomerQuery::PRICING, "How much are orchids?", nullptr);
-    std::cout << "\nCustomer: \"" << mixed2.question << "\"" << std::endl;
-    juniorStaff.handleQuery(mixed2);
+CustomerQuery mixed2(CustomerQuery::PRICING, "How much are orchids?", nullptr);
+std::cout << "\nCustomer: \"" << mixed2.question << "\"" << std::endl;
+juniorStaff->handleQuery(mixed2);
 
-    CustomerQuery mixed3(CustomerQuery::CARE_ADVICE, "Should I use fertilizer on my plants?", nullptr);
-    std::cout << "\nCustomer: \"" << mixed3.question << "\"" << std::endl;
-    juniorStaff.handleQuery(mixed3);
+CustomerQuery mixed3(CustomerQuery::CARE_ADVICE, "Should I use fertilizer on my plants?", nullptr);
+std::cout << "\nCustomer: \"" << mixed3.question << "\"" << std::endl;
+juniorStaff->handleQuery(mixed3);
+
+// Cleanup - delete the entire chain through the head
+std::cout << "\nCleaning up chain of responsibility..." << std::endl;
+delete juniorStaff;  // This will delete the entire chain via destructors
+                    // salesExpert, plantExpert, and queryManager are automatically deleted
+                    // through the chain of destructors
+
+std::cout << "Chain cleanup completed successfully!" << std::endl;
 
     std::cout << "===========================================================================================================" <<std::endl;
     std::cout << "===========================================================================================================" <<std::endl;
