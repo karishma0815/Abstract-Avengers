@@ -22,10 +22,12 @@ public:
   const std::string& nameFunc() const;
   void setName(std::string n);
   PlantInventory* getCart();
+  PlantInventory* getInven();
 
 private:
   std::string name;
-  PlantInventory* cart;
+  //PlantInventory* cart;
+  PlantInventory* inventory;
 };
 
 #endif 

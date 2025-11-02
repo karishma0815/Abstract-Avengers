@@ -395,7 +395,7 @@ void CompleteNurseryUI::showBrowsingMenu() {
     }
 }
 
-// Cart Menu (Command Pattern)
+//fixed cart menu with loop-> it works properly
 void CompleteNurseryUI::showCartMenu() {
     while (true) {
         clearScreen();
@@ -415,40 +415,83 @@ void CompleteNurseryUI::showCartMenu() {
         
         switch (choice) {
             case 1: {
-                clearScreen();
-                printSubHeader("SELECT PLANT TO ADD");
+                // LOOP for adding multiple plants
+                bool keepAdding = true;
                 
-                PlantIterator it(inventory);
-                std::vector<Plant*> plants;
-                int num = 1;
-                
-                std::cout << "\n";
-                for (it.first(); !it.isDone(); it.next()) {
-                    plants.push_back(it.currentItem());
-                    std::cout << " " << num++ << ". " << it.currentItem()->getName()
-                             << " - R" << it.currentItem()->getPrice() << "\n";
+                while (keepAdding) {
+                    clearScreen();
+                    printSubHeader("SELECT PLANT TO ADD");
+                    
+                    PlantIterator it(inventory);
+                    std::vector<Plant*> plants;
+                    int num = 1;
+                    
+                    std::cout << "\n Available Plants:\n";
+                    for (it.first(); !it.isDone(); it.next()) {
+                        plants.push_back(it.currentItem());
+                        std::cout << " " << num++ << ". " << it.currentItem()->getName()
+                                 << " - R" << it.currentItem()->getPrice() << "\n";
+                    }
+                    
+                    if (plants.empty()) {
+                        printError("No plants available!");
+                        pressEnter();
+                        break;
+                    }
+                    
+                    std::cout << "\n Select plant (0 to cancel): ";
+                    int sel = getValidatedInput(0, plants.size());
+                    
+                    if (sel == 0) {
+                        keepAdding = false;
+                        break;
+                    }
+                    
+                    if (sel > 0 && sel <= plants.size()) {
+                        Plant* selectedPlant = plants[sel - 1];
+                        
+                        // Ask about personalization
+                        std::cout << "\n Would you like to personalize this plant?\n";
+                        std::cout << " 1. Yes - Add decorations\n";
+                        std::cout << " 2. No - Add as is\n";
+                        std::cout << " Enter choice: ";
+                        int personalizeChoice = getValidatedInput(1, 2);
+                        
+                        if (personalizeChoice == 1) {
+                            personalizeSelectedPlant(selectedPlant);
+                        }
+                        
+                        // KEY FIX: Use the main inventory, which has addToCart()
+                        PlantInventory* mainInventory = currentCustomer->getInven();
+                        
+                        // The addToCart() method internally adds to cartInventory
+                        CustomerCommand* cmd = new AddToCart();
+                        invoker->setCommand(cmd);
+                        invoker->execute(selectedPlant, mainInventory);
+                        
+                        printSuccess(selectedPlant->getName() + " added to cart!");
+                        
+                        // Verify it was added
+                        PlantInventory* actualCart = currentCustomer->getCart();
+                        std::cout << " Cart now has " << actualCart->size() << " items\n";
+                        
+                        // Ask if they want to add more
+                        std::cout << "\n Add another plant? (1=Yes, 0=No): ";
+                        int addMore = getValidatedInput(0, 1);
+                        
+                        if (addMore == 0) {
+                            keepAdding = false;
+                        }
+                        
+                        delete cmd;
+                    }
                 }
-                
-                if (plants.empty()) {
-                    printError("No plants available!");
-                    pressEnter();
-                    break;
-                }
-                
-                std::cout << "\n Select plant (0 to cancel): ";
-                int sel = getValidatedInput(0, plants.size());
-                
-                if (sel > 0) {
-                    CustomerCommand* cmd = new AddToCart();
-                    invoker->setCommand(cmd);
-                    cmd->execute(plants[sel - 1], currentCustomer->getCart());
-                    printSuccess(plants[sel - 1]->getName() + " added to cart!");
-                }
-                pressEnter();
                 break;
             }
+            
             case 2: {
-                CartIterator cartIt(currentCustomer->getCart());
+                PlantInventory* actualCart = currentCustomer->getCart();
+                CartIterator cartIt(actualCart);
                 std::vector<Plant*> cartPlants;
                 
                 for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
@@ -464,17 +507,26 @@ void CompleteNurseryUI::showCartMenu() {
                 std::cout << "\n Select item to remove (0 to cancel): ";
                 int sel = getValidatedInput(0, cartPlants.size());
                 
-                if (sel > 0) {
+                if (sel > 0 && sel <= cartPlants.size()) {
+                    Plant* toRemove = cartPlants[sel - 1];
+                    
+                    // Use main inventory for removeFromCart
+                    PlantInventory* mainInventory = currentCustomer->getInven();
+                    
                     CustomerCommand* cmd = new RemoveFromCart();
                     invoker->setCommand(cmd);
-                    cmd->execute(cartPlants[sel - 1], currentCustomer->getCart());
+                    invoker->execute(toRemove, mainInventory);
+                    
                     printSuccess("Item removed!");
+                    delete cmd;
                 }
                 pressEnter();
                 break;
             }
+            
             case 3: {
-                CartIterator cartIt(currentCustomer->getCart());
+                PlantInventory* actualCart = currentCustomer->getCart();
+                CartIterator cartIt(actualCart);
                 int count = 0;
                 for (cartIt.first(); !cartIt.isDone(); cartIt.next()) count++;
                 
@@ -495,8 +547,22 @@ void CompleteNurseryUI::showCartMenu() {
                 int confirm = getValidatedInput(0, 1);
                 
                 if (confirm == 1) {
-                    //currentCustomer->clearCart();
-                    std::cout<<"///proceed to case 6->payments\n";
+                    // Clear cart
+                    CartIterator clearIt(actualCart);
+                    std::vector<Plant*> itemsToRemove;
+                    
+                    for (clearIt.first(); !clearIt.isDone(); clearIt.next()) {
+                        itemsToRemove.push_back(clearIt.currentItem());
+                    }
+                    
+                    PlantInventory* mainInventory = currentCustomer->getInven();
+                    for (Plant* item : itemsToRemove) {
+                        CustomerCommand* removeCmd = new RemoveFromCart();
+                        invoker->setCommand(removeCmd);
+                        invoker->execute(item, mainInventory);
+                        delete removeCmd;
+                    }
+                    
                     printSuccess("Purchase complete! Thank you!");
                 } else {
                     std::cout << "\n Purchase cancelled.\n";
@@ -531,6 +597,10 @@ void CompleteNurseryUI::displayCart() {
     }
     std::cout << "└──────────────────────────────────────┘\n";
 }
+
+// ============================================================================
+// FIXED calculateCartTotal() - Replace in CompleteNurseryUI.cpp
+// ============================================================================
 
 double CompleteNurseryUI::calculateCartTotal() {
     CartIterator cartIt(currentCustomer->getCart());
