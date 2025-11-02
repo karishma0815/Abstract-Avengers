@@ -153,6 +153,8 @@ void CompleteNurseryUI::setupQueryChain() {
     
     customerQueryChain->setNext(salesExpert);
     salesExpert->setNext(plantExpert);
+    delete salesExpert;
+    delete plantExpert;
 }
 
 // UI Helper functions
@@ -233,7 +235,7 @@ void CompleteNurseryUI::showMainMenu() {
         std::cout << "└──────────────────────────────────────────────────┘\n";
         
         std::cout << "\n Enter choice: ";
-        int choice = getValidatedInput(0, 5);
+        int choice = getValidatedInput(0, 6);
         
         if (choice == 0) {
             std::cout << "\n Thank you for using Abstract Avengers' Nursery System😊!\n";
@@ -272,8 +274,8 @@ void CompleteNurseryUI::showMainMenu() {
                 break;
             }
             case 6:{
-                //showPaymentMenu();
-                std::cout <<"Still in progress!!\n";
+                showPaymentMenu();
+                //std::cout <<"Still in progress!!\n";
                 break;
             }
         }
@@ -650,6 +652,7 @@ double CompleteNurseryUI::calculateCartTotal() {
 
 // Recommendation Menu (Strategy Pattern)
 void CompleteNurseryUI::showRecommendationMenu() {
+    while(true){
     clearScreen();
     printHeader("💡 PLANT RECOMMENDATIONS");
     
@@ -666,27 +669,36 @@ void CompleteNurseryUI::showRecommendationMenu() {
     std::cout << "\n";
     switch (choice) {
         case 1:
+            clearScreen();
             strategyContext->setRecommStrategy(new DefaultRecomm());
             strategyContext->executeRecommStrategy();
+            pressEnter();
             break;
         case 2:
+            clearScreen();
             strategyContext->setRecommStrategy(new WaterRecomm());
             strategyContext->executeRecommStrategy();
+            pressEnter();
             break;
         case 3:
+            clearScreen();
             strategyContext->setRecommStrategy(new SunlightRecomm());
             strategyContext->executeRecommStrategy();
+            pressEnter();
             break;
     }
-    pressEnter();
+   // pressEnter();
+}
 }
 
 // Pricing Menu (Sabira's Strategy Pattern)
 void CompleteNurseryUI::showPricingMenu() {
+    while(true){
     clearScreen();
     printHeader("💰 PRICING OPTIONS");
     
-    double basePrice = 25.0;
+    //double basePrice = 25.0;
+    //get the plants in the carts price
     
     std::cout << "\n 1. Regular Pricing\n";
     std::cout << " 2. Bulk Discount (10+ items)\n";
@@ -701,14 +713,15 @@ void CompleteNurseryUI::showPricingMenu() {
     switch (choice) {
         case 1:
             strategyContext->setPricingStrategy(new RegularPrice());
-            std::cout << " Regular price: R" << strategyContext->executePricingStrategy(1, basePrice, "") << "\n";
+            std::cout << strategyContext->executePricingStrategy(1, basePrice, "") << "\n";
             break;
         case 2:
             strategyContext->setPricingStrategy(new BulkDiscount());
-            std::cout << " Bulk price (10 items): R" << strategyContext->executePricingStrategy(10, basePrice, "BULK10") << "\n";
+            std::cout << strategyContext->executePricingStrategy(10, basePrice, "BULK10") << "\n";
             break;
     }
     pressEnter();
+    }
 }
 
 // Help Menu (Chain of Responsibility)
