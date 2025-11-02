@@ -7,6 +7,7 @@
 #include <string>
 #include <iomanip>
 #include <limits>
+#include <algorithm>
 
 // All includes from all team members
 #include "PlantInventory.h"
@@ -181,7 +182,8 @@ public:
     void showPersonalizationMenu();
     void showPaymentMenu();
     void personalizeSelectedPlant(Plant* plant);
-    
+    void buildArrangementFlow();
+
     //Helper functions
     void displayCart();
     double calculateCartTotal();

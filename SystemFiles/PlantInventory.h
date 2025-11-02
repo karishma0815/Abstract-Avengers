@@ -124,11 +124,17 @@ public:
     // ----- BUILT (DECORATED) ARRANGEMENTS IN CART -----
     void addArrangementToCart(std::unique_ptr<Item> item);
     std::vector<const Item*> cartArrangementsSnapshot() const;
+
     bool buildGiftFromPlantAndAddToCart(Plant& plant,
                                                     double potExtra,  const std::string& potColor,
                                                     double wrapExtra, const std::string& wrapMessage,
                                                     double noteExtra, const std::string& noteText,
                                                     Director& director, ArrangementBuilder& builder);
+                                                  
+    // --- Arrangements cart helpers ---
+    bool removeArrangementFromCart(std::size_t index);
+    std::size_t cartArrangementsCount() const { return cartArrangements_.size(); }
+    void clearCartArrangements() { cartArrangements_.clear(); }
 
 
     private:
@@ -143,6 +149,7 @@ public:
     std::vector<std::string> notes;
 
     std::vector<std::unique_ptr<Item>> cartArrangements_;
+
 };
 
 #endif 
