@@ -214,32 +214,7 @@ const std::vector<std::string>& PlantInventory::getNotes() const{
     return notes;
 }
 
-//for prototype
-void PlantInventory::registerArrangementPrototype(const std::string& key,
-                                                  std::unique_ptr<Item> proto) {
-    arrangementProtos_[key] = std::move(proto);
-}
-
-bool PlantInventory::hasArrangementPrototype(const std::string& key) const {
-    return arrangementProtos_.find(key) != arrangementProtos_.end();
-}
-
-std::size_t PlantInventory::arrangementPrototypeCount() const {
-    return arrangementProtos_.size();
-}
-
-const Item* PlantInventory::getArrangementPrototype(const std::string& key) const {
-    auto it = arrangementProtos_.find(key);
-    if (it == arrangementProtos_.end() || !it->second) return nullptr;
-    return it->second.get();
-}
-
-std::vector<std::string> PlantInventory::arrangementPrototypeKeys() const {
-    std::vector<std::string> out;
-    out.reserve(arrangementProtos_.size());
-    for (const auto& kv : arrangementProtos_) out.push_back(kv.first);
-    return out;
-}
+//for builder
 
 // ===== Built (decorated) arrangements in CART =====
 void PlantInventory::addArrangementToCart(std::unique_ptr<Item> item) 
@@ -255,54 +230,23 @@ std::vector<const Item*> PlantInventory::cartArrangementsSnapshot() const
     return out;
 }
 
-// ===== One-shot build from prototype key & add to cart =====
-bool PlantInventory::buildGiftAndAddToCart(const std::string& key,
-                                           double potExtra,  const std::string& potColor,
-                                           double wrapExtra, const std::string& wrapMessage,
-                                           double noteExtra, const std::string& noteText,
-                                           Director& director, ArrangementBuilder& builder)
+bool PlantInventory::buildGiftFromPlantAndAddToCart(Plant& plant,
+                                                    double potExtra,  const std::string& potColor,
+                                                    double wrapExtra, const std::string& wrapMessage,
+                                                    double noteExtra, const std::string& noteText,
+                                                    Director& director, ArrangementBuilder& builder)
 {
-    const Item* proto = getArrangementPrototype(key);
-    if (!proto) return false;
+    std::unique_ptr<Item> base(new PlantAsItemAdapter(&plant));
 
     director.setBuilder(&builder);
-    // Your Director likely has a build method that accepts Item& + extras.
-    // If you have buildGiftWithNote(Item&, ...), keep using it:
-    std::unique_ptr<Item> product =
-        director.buildGiftWithNote(*proto,
-                                   potExtra,  potColor,
-                                   wrapExtra, wrapMessage,
-                                   noteExtra, noteText);
-
-    if (!product) return false;
-    addArrangementToCart(std::move(product));
-    return true;
-}
-
-bool PlantInventory::buildCustomAndAddToCart(const std::string& name,
-                                             bool /*fert*/,
-                                             const std::string& /*id*/,
-                                             int /*sunHours*/,
-                                             int /*waterLevel*/,
-                                             int price,
-                                             double potExtra,  const std::string& potColor,
-                                             double wrapExtra, const std::string& wrapMessage,
-                                             double noteExtra, const std::string& noteText,
-                                             Director& director, ArrangementBuilder& builder)
-{
-    // 1) Make a temporary Item base (not added to inventory)
-    PlantItem tempBase(name, static_cast<double>(price), /*ready*/ true);
-
-    // 2) Build decoration chain
-    director.setBuilder(&builder);
-    std::unique_ptr<Item> gift =
-        director.buildGiftWithNote(tempBase, potExtra, potColor,
-                                             wrapExtra, wrapMessage,
-                                             noteExtra, noteText);
+    std::unique_ptr<Item> gift = director.buildGiftWithNote(
+        std::move(base),
+        potExtra, potColor,
+        wrapExtra, wrapMessage,
+        noteExtra, noteText
+    );
 
     if (!gift) return false;
-
-    // 3) Store in arranged-items bucket
     addArrangementToCart(std::move(gift));
     return true;
 }

@@ -13,7 +13,6 @@ SRCS =  Arrangement.cpp\
 		GiftWrap.cpp\
 		Note.cpp\
 		PlantItem.cpp\
-		PrototypeRegistry.cpp\
 		SalesContext.cpp\
 		State.cpp\
 		BrowsingState.cpp\
@@ -108,6 +107,7 @@ SRCS =  Arrangement.cpp\
 		PlantInventory.cpp\
 		PlantIterator.cpp\
 		ArrangementsIterator.cpp\
+		PlantAsItemAdapter.cpp\
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)

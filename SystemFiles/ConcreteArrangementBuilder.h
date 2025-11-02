@@ -14,7 +14,7 @@
 class ConcreteArrangementBuilder : public ArrangementBuilder {
 public:
     void reset() override;
-    void buildBasePlant(const Item& proto) override;
+    void buildBasePlant(std::unique_ptr<Item> base) override;
     void buildPot(double extra, const std::string& color) override;
     void buildWrap(double extra, const std::string& message) override;
     void buildNote(double extra, const std::string& text) override;
