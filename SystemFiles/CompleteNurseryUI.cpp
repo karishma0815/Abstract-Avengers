@@ -229,7 +229,8 @@ void CompleteNurseryUI::showMainMenu() {
             case 2: {
                 showStaffMenu();
                 // std::cout<<"StaffMenu still in progress\n";
-                //     break;
+                break;
+                
                 }
             case 3: 
             {
@@ -935,14 +936,148 @@ void CompleteNurseryUI::showStaffMenu() {
             case 3: showInventoryMediatorMenu(); break;
             case 4: showPlantIssuesMenu(); break;
             case 5: {
-                clearScreen();
-                printSubHeader("NURSERY STAFF");
-                std::cout << "\n";
-                for (size_t i = 0; i < nurseryStaff.size(); i++) {
-                    std::cout << " " << (i + 1) << ". " << nurseryStaff[i]->getName()
-                             << " - " << nurseryStaff[i]->getRole() << "\n";
-                }
-                pressEnter();
+                int staffChoice;
+                do {
+                    clearScreen();
+                    printSubHeader("NURSERY STAFF MANAGEMENT");
+                    std::cout << "\n1. View All Staff\n";
+                    std::cout << "2. Add New Staff\n";
+                    std::cout << "3. Remove Staff\n";
+                    std::cout << "4. Back to Main Menu\n";
+                    std::cout << "\nChoose option: ";
+                    
+                    staffChoice = getValidatedInput(1, 5);
+                    
+                    switch (staffChoice) {
+                        case 1: {
+                            clearScreen();
+                            printSubHeader("ALL NURSERY STAFF");
+                            std::cout << "\n";
+                            if (nurseryStaff.empty()) {
+                                std::cout << " No staff members found.\n";
+                            } else {
+                                for (size_t i = 0; i < nurseryStaff.size(); i++) {
+                                    std::cout << " " << (i + 1) << ". " << nurseryStaff[i]->getName()
+                                            << " - " << nurseryStaff[i]->getRole() 
+                                            << " (ID: " << nurseryStaff[i]->getId() << ")\n";
+                                }
+                                std::cout << "\nTotal staff: " << nurseryStaff.size() << "\n";
+                            }
+                            pressEnter();
+                            break;
+                        }
+                        
+                        case 2: {
+                            clearScreen();
+                            printSubHeader("ADD NEW STAFF MEMBER");
+                            
+                            std::cout << "\nSelect staff type:\n";
+                            std::cout << "1. Gardener (ID: 1000+)\n";
+                            std::cout << "2. Sales Assistant (ID: 2000+)\n";
+                            std::cout << "3. Manager (ID: 3000+)\n";
+                            std::cout << "4. Delivery Staff (ID: 4000+)\n";
+                            std::cout << "5. Cancel\n";
+                            std::cout << "\nChoose staff type: ";
+                            
+                            int staffType = getValidatedInput(1, 5);
+                            if (staffType == 5) break;
+                            
+                            // Use factories
+                            StaffFactory* factory = nullptr;
+                            std::string roleName;
+                            
+                            switch (staffType) {
+                                case 1: 
+                                    factory = new GardenerFactory(); 
+                                    roleName = "Gardener";
+                                    break;
+                                case 2: 
+                                    factory = new SalesAssistantFactory(); 
+                                    roleName = "Sales Assistant";
+                                    break;
+                                case 3: 
+                                    factory = new ManagerFactory(); 
+                                    roleName = "Manager";
+                                    break;
+                                case 4: 
+                                    factory = new DeliveryStaffFactory(); 
+                                    roleName = "Delivery Staff";
+                                    break;
+                            }
+                            
+                            if (factory) {
+                                Staff* newStaff = factory->createStaff();
+                                nurseryStaff.push_back(newStaff);
+                                std::cout << "\n ✅ Successfully added:\n";
+                                std::cout << "    Name: " << newStaff->getName() << "\n";
+                                std::cout << "    Role: " << roleName << "\n";
+                                std::cout << "    ID: " << newStaff->getId() << "\n";
+                                delete factory;
+                            } else {
+                                std::cout << "\n Failed to create staff member.\n";
+                            }
+                            
+                            pressEnter();
+                            break;
+                        }
+                        
+                        case 3: { // Remove Staff
+                            clearScreen();
+                            printSubHeader("REMOVE STAFF MEMBER");
+                            
+                            if (nurseryStaff.empty()) {
+                                std::cout << " No staff members to remove.\n";
+                                pressEnter();
+                                break;
+                            }
+                            
+                            std::cout << "\nSelect staff to remove:\n";
+                            for (size_t i = 0; i < nurseryStaff.size(); i++) {
+                                std::cout << " " << (i + 1) << ". " << nurseryStaff[i]->getName()
+                                        << " - " << nurseryStaff[i]->getRole() 
+                                        << " (ID: " << nurseryStaff[i]->getId() << ")\n";
+                            }
+                            std::cout << " " << (nurseryStaff.size() + 1) << ". Cancel\n";
+                            std::cout << "\nChoose staff to remove: ";
+                            
+                            int removeChoice = getValidatedInput(1, static_cast<int>(nurseryStaff.size()) + 1);
+                            
+                            if (removeChoice == static_cast<int>(nurseryStaff.size()) + 1) {
+                                break; // Cancel
+                            }
+                            
+                            // Confirm deletion
+                            size_t index = removeChoice - 1;
+                            std::cout << "\nAre you sure you want to remove:\n";
+                            std::cout << "  Name: " << nurseryStaff[index]->getName() << "\n";
+                            std::cout << "  Role: " << nurseryStaff[index]->getRole() << "\n";
+                            std::cout << "  ID: " << nurseryStaff[index]->getId() << "\n";
+                            std::cout << "\nThis action cannot be undone! (y/n): ";
+                            
+                            char confirm;
+                            std::cin >> confirm;
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            
+                            if (confirm == 'y' || confirm == 'Y') {
+                                std::string removedName = nurseryStaff[index]->getName();
+                                std::string removedRole = nurseryStaff[index]->getRole();
+                                
+                                delete nurseryStaff[index]; // Free memory using your Staff destructor
+                                nurseryStaff.erase(nurseryStaff.begin() + index);
+                                
+                                std::cout << "\n ✅ Successfully removed " << removedName 
+                                        << " (" << removedRole << ")\n";
+                            } else {
+                                std::cout << "\n Removal cancelled.\n";
+                            }
+                            
+                            pressEnter();
+                            break;
+                        }
+                        case 4: // Back to Main Menu
+                            break;
+                    }
+                } while (staffChoice != 4);
                 break;
             }
         }
