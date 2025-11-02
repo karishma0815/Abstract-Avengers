@@ -31,7 +31,8 @@ private:
     std::string season;
     double fstateAge;
     double fstatPrice;
-    Plant* plant;  
+    Plant* plant;
+    std::string fspecies;  
 
 public:
 
@@ -63,7 +64,7 @@ public:
     /**
      * @brief Delegate harvest operation to the current state
      */
-    void harvest();
+    bool harvest();
      /**
      * @brief Delegate readiness check to the current state
      */
@@ -142,6 +143,9 @@ public:
      * @param price Price value to set
      */
     void setStatePrice(double price);
+
+    std::string getSpecies() const { return fspecies; }
+
 };
 
 #endif

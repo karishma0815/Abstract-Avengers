@@ -20,13 +20,17 @@ void MatureState::checkReadiness() {
     }
 }
 
-void MatureState::harvest(PlantContext* ctx) {
+bool MatureState::harvest(PlantContext* ctx) {
     if (isPrimeForSale) {
+        std::cout << "Plant is mature and ready — transitioning to Ready for Sale state.\n";
         ctx->transitionTo(new ReadyForSaleState());
+        return true;  
     } else {
-        std::cout << "Plant is not ready for harvest yet" << std::endl;
+        std::cout << "Plant is not ready for harvest yet.\n";
+        return false; 
     }
 }
+
 
 void MatureState::grow(PlantContext*) {
     daysinState++;
