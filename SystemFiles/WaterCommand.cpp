@@ -23,5 +23,5 @@ std::string WaterCommand::getDescription() const{
 }
 
 void WaterCommand::logAction() const{
-    std::cout<<"[LOG] WaterCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown plant")<<" | Amount: "<<amount<<"L"<<std::endl;
+    std::cout<<" [LOG] WaterCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown plant")<<" | Amount: "<<amount<<"L"<<std::endl;
 }

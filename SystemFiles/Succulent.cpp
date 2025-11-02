@@ -74,36 +74,35 @@ double Succulent::getTotalValue() const {
 void Succulent::water(double amount){
     if (isAlive) {
         lastWaterLevel += amount;
-        std::cout << "Watered " << Plant::name << " (Generic Succulent) with " << amount << "L." << std::endl;
+        std::cout << " Watered " << Plant::name << " (Generic Succulent) with " << amount << "L." << std::endl;
     } else {
-        std::cout << "Cannot water " << Plant::name << " - succulent is not alive!" << std::endl;
+        std::cout << " Cannot water " << Plant::name << " - succulent is not alive!" << std::endl;
     }
 }
 
 void Succulent::fertilize(const std::string &fertilizerType){
     if (isAlive) {
         fertilized = true;
-        std::cout << "Fertilized " << Plant::name << " (Generic Succulent) with " << fertilizerType << std::endl;
+        std::cout << " Fertilized " << Plant::name << " (Generic Succulent) with " << fertilizerType << std::endl;
     } else {
-        std::cout << "Cannot fertilize " << Plant::name << " - succulent is not alive!" << std::endl;
+        std::cout << " Cannot fertilize " << Plant::name << " - succulent is not alive!" << std::endl;
     }
 }
 
 void Succulent::prune(int intensity){
     if (isAlive) {
-        std::cout << "Pruned " << Plant::name << " (Generic Succulent) with intensity " << intensity << std::endl;
+        std::cout << " Pruned " << Plant::name << " (Generic Succulent) with intensity " << intensity << std::endl;
     } else {
-        std::cout << "Cannot prune " << Plant::name << " - succulent is not alive!" << std::endl;
+        std::cout << " Cannot prune " << Plant::name << " - succulent is not alive!" << std::endl;
     }
 }
 
 void Succulent::provideSunlight(int hours, const std::string &intensity){
     if (isAlive) {
         exposureSunlightHours += hours;
-        std::cout << "Provided " << hours << " hours of " << intensity 
-                  << " sunlight to " << Plant::name << " (Generic Succulent)" << std::endl;
+        std::cout << " Provided " << hours << " hours of " << intensity << " sunlight to " << Plant::name << " (Generic Succulent)" << std::endl;
     } else {
-        std::cout << "Cannot provide sunlight to " << Plant::name << " - succulent is not alive!" << std::endl;
+        std::cout << " Cannot provide sunlight to " << Plant::name << " - succulent is not alive!" << std::endl;
     }
 }
 

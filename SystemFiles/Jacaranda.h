@@ -33,7 +33,7 @@ public:
     int getMaxSunlight() const { return MAX_SUNLIGHT; }
     int getOptimalPruneIntensity() const { return OPTIMAL_PRUNE_INTENSITY; }
     int getMaxPruneIntensity() const { return MAX_PRUNE_INTENSITY; }
-    std::string getOptimalFertilizer() const { return "balanced"; }
+    std::string getOptimalFertilizer() const { return "jacaranda-mix"; }
 };
 
 #endif

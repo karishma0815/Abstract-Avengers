@@ -18,5 +18,5 @@ std::string SunlightCommand::getDescription() const{
 }
 
 void SunlightCommand::logAction() const{
-    std::cout<<"[LOG] SunlightCommand executed: "<<getDescription()<<" | Plant: " << (plant ? plant->getName() : "unknown")<<" | Hours: " << hours<<" | Intensity: " << intensity << std::endl;
+    std::cout<<" [LOG] SunlightCommand executed: "<<getDescription()<<" | Plant: " << (plant ? plant->getName() : "unknown")<<" | Hours: " << hours<<" | Intensity: " << intensity << std::endl;
 }

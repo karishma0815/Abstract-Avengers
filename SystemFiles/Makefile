@@ -5,7 +5,6 @@ TARGET = nursery_system
 
 SRCS =  Arrangement.cpp\
 		CompleteNurseryUI.cpp\
-		Arrangement.cpp\
 		ConcreteArrangementBuilder.cpp\
 		Director.cpp\
 		ItemDecorator.cpp\
