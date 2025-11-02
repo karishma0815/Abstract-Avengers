@@ -250,3 +250,10 @@ bool PlantInventory::buildGiftFromPlantAndAddToCart(Plant& plant,
     addArrangementToCart(std::move(gift));
     return true;
 }
+
+bool PlantInventory::removeArrangementFromCart(std::size_t index) {
+    if (index >= cartArrangements_.size()) return false;
+    cartArrangements_.erase(cartArrangements_.begin()
+                            + static_cast<std::ptrdiff_t>(index));
+    return true;
+}
