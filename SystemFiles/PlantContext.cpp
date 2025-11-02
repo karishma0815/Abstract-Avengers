@@ -15,33 +15,29 @@
 #include "Orchid.h"
 #include <iostream>
 
-PlantContext::PlantContext(const std::string& type, const std::string& name, double price, const std::string& species) : fstateAge(0){
-    if (type == "Rose") {
-        plant = new Rose(name, price, species);
-    } else if (type == "Lotus") {
-        plant = new Lotus(name, price, species);
-    } else if (type == "Protea") {
-        plant = new Protea(name, price, species);
-    } else if (type == "Apple") {
-        plant = new Apple(name, price, species);
-    } else if (type == "Jacaranda") {
-        plant = new Jacaranda(name, price, species);
-    } else if (type == "Pine") {
-        plant = new Pine(name, price, species);
-    } else if (type == "Cacti") {
-        plant = new Cacti(name, price, species);
-    } else if (type == "Jade") {
-        plant = new Jade(name, price, species);
-    } else if (type == "Orchid") {
-        plant = new Orchid(name, price, species);
-    } else {
+PlantContext::PlantContext(const std::string& type, const std::string& name, double price, const std::string& species)
+    : fstateAge(0), fspecies(species) 
+{
+    if (type == "Rose") plant = new Rose(name, price, species);
+    else if (type == "Lotus") plant = new Lotus(name, price, species);
+    else if (type == "Protea") plant = new Protea(name, price, species);
+    else if (type == "Apple") plant = new Apple(name, price, species);
+    else if (type == "Jacaranda") plant = new Jacaranda(name, price, species);
+    else if (type == "Pine") plant = new Pine(name, price, species);
+    else if (type == "Cacti") plant = new Cacti(name, price, species);
+    else if (type == "Jade") plant = new Jade(name, price, species);
+    else if (type == "Orchid") plant = new Orchid(name, price, species);
+    else if (type == "Flower") plant = new Flower(name, price, species);
+    else if (type == "Tree") plant = new Tree(name, price, species);
+    else if (type == "Succulent") plant = new Succulent(name, price, species);
+
+    else {
         std::cerr << "Unknown plant type: " << type << ". Defaulting to Protea.\n";
         plant = new Protea(name, price, species);
     }
 
-    // Set the default state (Seedling)
     currentState = new SeedlingState();
-    currentState->setContext(this); 
+    currentState->setContext(this);
 }
 
 
@@ -65,10 +61,11 @@ PlantState* PlantContext::getState() {
     return currentState;
 }
 
-void PlantContext::harvest() {
+bool PlantContext::harvest() {
     if (currentState != nullptr) {
         currentState->harvest(this);
     }
+      return false;
 }
 
 void PlantContext::checkReadiness() {

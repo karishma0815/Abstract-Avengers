@@ -56,7 +56,7 @@ public:
      * @brief Perform harvest operation (typically not allowed in seedling state)
      * @param ctx Pointer to the plant context
      */
-    void harvest(PlantContext* ctx) ;
+    bool harvest(PlantContext* ctx) ;
     /**
      * @brief Perform growth operation on the seedling
      * @param ctx Pointer to the plant context

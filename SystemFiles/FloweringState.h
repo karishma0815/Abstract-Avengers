@@ -58,7 +58,7 @@ public:
      * @brief Perform harvest operation during flowering
      * @param ctx Pointer to the plant context
      */
-    void harvest(PlantContext* ctx) ;
+    bool harvest(PlantContext* ctx) ;
 
      /**
      * @brief Perform growth operation during flowering

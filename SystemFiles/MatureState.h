@@ -59,7 +59,7 @@ public:
      * @brief Perform harvest operation on mature plant
      * @param ctx Pointer to the plant context
      */
-    void harvest(PlantContext* ctx) ;
+    bool harvest(PlantContext* ctx) ;
 
     /**
      * @brief Perform growth operation (typically minimal in mature state)

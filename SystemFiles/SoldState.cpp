@@ -13,8 +13,9 @@ void SoldState::checkReadiness() {
     std::cout << "Plant has been sold. No further actions needed." << std::endl;
 }
 
-void SoldState::harvest(PlantContext*) {
+bool SoldState::harvest(PlantContext*) {
     std::cout << "Plant has already been harvested and sold." << std::endl;
+    return true;
 }
 
 void SoldState::grow(PlantContext*) {

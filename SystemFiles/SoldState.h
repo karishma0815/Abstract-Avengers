@@ -58,7 +58,7 @@ public:
      * @brief Perform harvest operation (no operation in sold state)
      * @param ctx Pointer to the plant context
      */
-    void harvest(PlantContext* ctx) ;
+    bool harvest(PlantContext* ctx) ;
 
      /**
      * @brief Perform growth operation (no operation in sold state)
