@@ -16,6 +16,12 @@
 #include "Cacti.h"
 #include "Jade.h"
 #include "Succulent.h"
+#include "Lotus.h"
+#include "Protea.h"
+#include "Orchid.h"
+#include "Apple.h"
+#include "Jacaranda.h"
+#include "Pine.h"
 
 // Iterator patterns (Sabira)
 #include "PlantIterator.h"
@@ -95,6 +101,10 @@
 #include "SalesContext.h"
 #include "BrowsingState.h"
 #include "AwaitingStockState.h"
+
+#include"Pine.h"
+#include"Lotus.h"
+#include"Apple.h"
 
 class CompleteNurseryUI {
 private:

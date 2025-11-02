@@ -8,11 +8,11 @@
 #include "Customer.h"
 
 Customer::Customer(std::string name) : name(name) {
-    cart = new PlantInventory();
+    inventory = new PlantInventory();
 }
 
 Customer::~Customer() {
-    delete cart;
+    delete inventory;
 }
 
 const std::string& Customer::nameFunc() const 
@@ -26,5 +26,9 @@ void Customer::setName(std::string n)
 }
 
 PlantInventory* Customer::getCart() {
-    return cart;
+    return inventory->getCartInventory();
+}
+
+PlantInventory* Customer::getInven(){
+    return inventory;
 }

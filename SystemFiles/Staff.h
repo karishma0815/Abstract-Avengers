@@ -99,6 +99,25 @@ class Staff{
          * this is a pure virtual method that must be implemented by derived classes to define their specific plant care responsibilities
          */
         virtual void careForPlants() = 0;
+
+        /**
+         * @brief this function removes a specific task from the task queue by index
+         * @param index this is the index of the task to remove
+         * This function deletes the task at the specified index from the task queue if the index is invalid, an error message is displayed and no action is taken.
+         */
+        void clearTask(int index);
+
+        /**
+         * @brief this function displays all the pending tasks in the task queue with their indices
+         */
+        void listTasks() const;
+
+        /**
+         * @brief this function gets the current number of tasks in the task queue
+         * @return size_t the number of pending tasks
+         * This function returns the current size of the task queue
+         */
+        size_t getTaskCount() const { return taskQueue.size(); }
 };
 
 #endif

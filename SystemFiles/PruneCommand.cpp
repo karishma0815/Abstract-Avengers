@@ -18,5 +18,5 @@ std::string PruneCommand::getDescription() const{
 }
 
 void PruneCommand::logAction() const{
-    std::cout<<"[LOG] PruneCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown Plant")<<" | Intensity: "<<intensity<<std::endl;
+    std::cout<<" [LOG] PruneCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown Plant")<<" | Intensity: "<<intensity<<std::endl;
 }

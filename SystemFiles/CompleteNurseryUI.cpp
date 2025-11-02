@@ -75,16 +75,51 @@ void CompleteNurseryUI::initializeNursery() {
     
     Plant* fern = new Succulent("Boston Fern", 35.0, "Fern");
     fern->setCareInstructions("Medium maintenance: Weekly watering, indirect light");
+
+    //added new plants to the list
+    Plant* lotus = new Lotus("Pink Lotus", 65.50);
+    lotus->setCareInstructions("Aquatic plant: Keep in water, full sunlight");
+    
+    Plant* protea = new Protea("King Protea", 85.25);
+    protea->setCareInstructions("Moderate maintenance: Well-drained soil, partial sun");
+    
+    Plant* orchid = new Orchid("Moth Orchid", 42.80);
+    orchid->setCareInstructions("Moderate maintenance: Indirect light, weekly watering");
+    
+    Plant* apple = new Apple("Apple Tree", 95.75);
+    apple->setCareInstructions("Seasonal care: Full sun, regular watering, winter pruning");
+    
+    Plant* jacaranda = new Jacaranda("Jacaranda Tree", 120.00);
+    jacaranda->setCareInstructions("Moderate maintenance: Full sun, drought tolerant");
+    
+    Plant* pine = new Pine("Pine Tree", 75.25);
+    pine->setCareInstructions("Low maintenance: Well-drained soil, full sun");
     
     inventory->add(rose);
     inventory->add(cactus);
     inventory->add(jade);
     inventory->add(fern);
+
+    //adding it to the inventory
+    inventory->add(lotus);
+    inventory->add(protea);
+    inventory->add(orchid);
+    inventory->add(apple);
+    inventory->add(jacaranda);
+    inventory->add(pine);
     
     // Add to stock manager
     stockManager->addFlower(new Rose("Stock Rose", 45.99, "Hybrid Tea"));
     stockManager->addSucculent(new Cacti("Stock Cactus", 32.75, "Barrel"));
     stockManager->addSucculent(new Jade("Stock Jade", 28.50, "Crassula"));
+
+    //adding these new plants to the stock manager
+    stockManager->addFlower(new Lotus("Stock Lotus", 65.50, "Nelumbo"));
+    stockManager->addFlower(new Protea("Stock Protea", 85.25, "King"));
+    stockManager->addSucculent(new Orchid("Stock Orchid", 42.80, "Phalaenopsis"));
+    stockManager->addTree(new Apple("Stock Apple", 95.75, "Malus"));
+    stockManager->addTree(new Jacaranda("Stock Jacaranda", 120.00, "Mimosifolia"));
+    stockManager->addTree(new Pine("Stock Pine", 75.25, "Pinus"));
 }
 
 void CompleteNurseryUI::setupStaff() {
@@ -208,9 +243,9 @@ void CompleteNurseryUI::showMainMenu() {
         switch (choice) {
             case 1: showCustomerMenu(); break;
             case 2: {
-                //showStaffMenu()
-                std::cout<<"StaffMenu still in progress\n";
-                    break;
+                showStaffMenu();
+                // std::cout<<"StaffMenu still in progress\n";
+                //     break;
                 }
             case 3: 
             {
@@ -397,7 +432,7 @@ void CompleteNurseryUI::showBrowsingMenu() {
     }
 }
 
-// Cart Menu (Command Pattern)
+//fixed cart menu with loop-> it works properly
 void CompleteNurseryUI::showCartMenu() {
     while (true) {
         clearScreen();
@@ -417,40 +452,83 @@ void CompleteNurseryUI::showCartMenu() {
         
         switch (choice) {
             case 1: {
-                clearScreen();
-                printSubHeader("SELECT PLANT TO ADD");
+                // LOOP for adding multiple plants
+                bool keepAdding = true;
                 
-                PlantIterator it(inventory);
-                std::vector<Plant*> plants;
-                int num = 1;
-                
-                std::cout << "\n";
-                for (it.first(); !it.isDone(); it.next()) {
-                    plants.push_back(it.currentItem());
-                    std::cout << " " << num++ << ". " << it.currentItem()->getName()
-                             << " - R" << it.currentItem()->getPrice() << "\n";
+                while (keepAdding) {
+                    clearScreen();
+                    printSubHeader("SELECT PLANT TO ADD");
+                    
+                    PlantIterator it(inventory);
+                    std::vector<Plant*> plants;
+                    int num = 1;
+                    
+                    std::cout << "\n Available Plants:\n";
+                    for (it.first(); !it.isDone(); it.next()) {
+                        plants.push_back(it.currentItem());
+                        std::cout << " " << num++ << ". " << it.currentItem()->getName()
+                                 << " - R" << it.currentItem()->getPrice() << "\n";
+                    }
+                    
+                    if (plants.empty()) {
+                        printError("No plants available!");
+                        pressEnter();
+                        break;
+                    }
+                    
+                    std::cout << "\n Select plant (0 to cancel): ";
+                    int sel = getValidatedInput(0, plants.size());
+                    
+                    if (sel == 0) {
+                        keepAdding = false;
+                        break;
+                    }
+                    ///when comparing integers of different types use static<cast>
+                    if (sel > 0 && sel <= static_cast<int>(plants.size())) {
+                        Plant* selectedPlant = plants[sel - 1];
+                        
+                        // Ask about personalization
+                        std::cout << "\n Would you like to personalize this plant?\n";
+                        std::cout << " 1. Yes - Add decorations\n";
+                        std::cout << " 2. No - Add as is\n";
+                        std::cout << " Enter choice: ";
+                        int personalizeChoice = getValidatedInput(1, 2);
+                        
+                        if (personalizeChoice == 1) {
+                            personalizeSelectedPlant(selectedPlant);
+                        }
+                        
+                        // KEY FIX: Use the main inventory, which has addToCart()
+                        PlantInventory* mainInventory = currentCustomer->getInven();
+                        
+                        // The addToCart() method internally adds to cartInventory
+                        CustomerCommand* cmd = new AddToCart();
+                        invoker->setCommand(cmd);
+                        invoker->execute(selectedPlant, mainInventory);
+                        
+                        printSuccess(selectedPlant->getName() + " added to cart!");
+                        
+                        // Verify it was added
+                        PlantInventory* actualCart = currentCustomer->getCart();
+                        std::cout << " Cart now has " << actualCart->size() << " items\n";
+                        
+                        // Ask if they want to add more
+                        std::cout << "\n Add another plant? (1=Yes, 0=No): ";
+                        int addMore = getValidatedInput(0, 1);
+                        
+                        if (addMore == 0) {
+                            keepAdding = false;
+                        }
+                        
+                        delete cmd;
+                    }
                 }
-                
-                if (plants.empty()) {
-                    printError("No plants available!");
-                    pressEnter();
-                    break;
-                }
-                
-                std::cout << "\n Select plant (0 to cancel): ";
-                int sel = getValidatedInput(0, plants.size());
-                
-                if (sel > 0) {
-                    CustomerCommand* cmd = new AddToCart();
-                    invoker->setCommand(cmd);
-                    cmd->execute(plants[sel - 1], currentCustomer->getCart());
-                    printSuccess(plants[sel - 1]->getName() + " added to cart!");
-                }
-                pressEnter();
                 break;
             }
+            
             case 2: {
-                CartIterator cartIt(currentCustomer->getCart());
+                PlantInventory* actualCart = currentCustomer->getCart();
+                CartIterator cartIt(actualCart);
                 std::vector<Plant*> cartPlants;
                 
                 for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
@@ -466,17 +544,26 @@ void CompleteNurseryUI::showCartMenu() {
                 std::cout << "\n Select item to remove (0 to cancel): ";
                 int sel = getValidatedInput(0, cartPlants.size());
                 
-                if (sel > 0) {
+                if (sel > 0 && sel <= static_cast<int>(cartPlants.size())) {
+                    Plant* toRemove = cartPlants[sel - 1];
+                    
+                    // Use main inventory for removeFromCart
+                    PlantInventory* mainInventory = currentCustomer->getInven();
+                    
                     CustomerCommand* cmd = new RemoveFromCart();
                     invoker->setCommand(cmd);
-                    cmd->execute(cartPlants[sel - 1], currentCustomer->getCart());
+                    invoker->execute(toRemove, mainInventory);
+                    
                     printSuccess("Item removed!");
+                    delete cmd;
                 }
                 pressEnter();
                 break;
             }
+            
             case 3: {
-                CartIterator cartIt(currentCustomer->getCart());
+                PlantInventory* actualCart = currentCustomer->getCart();
+                CartIterator cartIt(actualCart);
                 int count = 0;
                 for (cartIt.first(); !cartIt.isDone(); cartIt.next()) count++;
                 
@@ -497,8 +584,22 @@ void CompleteNurseryUI::showCartMenu() {
                 int confirm = getValidatedInput(0, 1);
                 
                 if (confirm == 1) {
-                    //currentCustomer->clearCart();
-                    std::cout<<"///proceed to case 6->payments\n";
+                    // Clear cart
+                    CartIterator clearIt(actualCart);
+                    std::vector<Plant*> itemsToRemove;
+                    
+                    for (clearIt.first(); !clearIt.isDone(); clearIt.next()) {
+                        itemsToRemove.push_back(clearIt.currentItem());
+                    }
+                    
+                    PlantInventory* mainInventory = currentCustomer->getInven();
+                    for (Plant* item : itemsToRemove) {
+                        CustomerCommand* removeCmd = new RemoveFromCart();
+                        invoker->setCommand(removeCmd);
+                        invoker->execute(item, mainInventory);
+                        delete removeCmd;
+                    }
+                    
                     printSuccess("Purchase complete! Thank you!");
                 } else {
                     std::cout << "\n Purchase cancelled.\n";
@@ -533,6 +634,10 @@ void CompleteNurseryUI::displayCart() {
     }
     std::cout << "└──────────────────────────────────────┘\n";
 }
+
+// ============================================================================
+// FIXED calculateCartTotal() - Replace in CompleteNurseryUI.cpp
+// ============================================================================
 
 double CompleteNurseryUI::calculateCartTotal() {
     CartIterator cartIt(currentCustomer->getCart());
@@ -726,31 +831,70 @@ void CompleteNurseryUI::showPlantCareMenu() {
     switch (action) {
         case 1: {
             double amount;
+            std::cout << selectedPlant->getCareInstructions() << "\n\n";
+            if (dynamic_cast<Rose*>(selectedPlant)) {
+                Rose* plant = dynamic_cast<Rose*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Lotus*>(selectedPlant)) {
+                Lotus* plant = dynamic_cast<Lotus*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Protea*>(selectedPlant)) {
+                Protea* plant = dynamic_cast<Protea*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Cacti*>(selectedPlant)) {
+                Cacti* plant = dynamic_cast<Cacti*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Jade*>(selectedPlant)) {
+                Jade* plant = dynamic_cast<Jade*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Orchid*>(selectedPlant)) {
+                Orchid* plant = dynamic_cast<Orchid*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Apple*>(selectedPlant)) {
+                Apple* plant = dynamic_cast<Apple*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Jacaranda*>(selectedPlant)) {
+                Jacaranda* plant = dynamic_cast<Jacaranda*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
+            else if (dynamic_cast<Pine*>(selectedPlant)) {
+                Pine* plant = dynamic_cast<Pine*>(selectedPlant);
+                std::cout << " Water range: " << plant->getMinWater() << "L - " << plant->getMaxWater() << "L (Optimal: " << plant->getOptimalWater() << "L)\n\n";
+            }
             std::cout << " Water amount (liters): ";
             std::cin >> amount;
             WaterCommand waterCmd(selectedPlant, amount);
-            std::cout << "\n " << waterCmd.getDescription() << "\n";
+            //std::cout << "\n " << waterCmd.getDescription() << "\n";
             waterCmd.execute();
             printSuccess("Plant watered!");
             break;
         }
         case 2: {
             std::string type;
+            std::cout << " " << selectedPlant->getCareInstructions() << "\n\n";
             std::cout << " Fertilizer type: ";
-            std::cin.ignore();
+            //std::cin.ignore();
             std::getline(std::cin, type);
             FertilizeCommand fertilizeCmd(selectedPlant, type);
-            std::cout << "\n " << fertilizeCmd.getDescription() << "\n";
+            //std::cout << "\n " << fertilizeCmd.getDescription() << "\n";
             fertilizeCmd.execute();
             printSuccess("Plant fertilized!");
             break;
         }
         case 3: {
             int branches;
-            std::cout << " Number of branches to prune: ";
+            std::cout << " " << selectedPlant->getCareInstructions() << "\n\n";
+            std::cout << " Intensity to prune: ";
             std::cin >> branches;
             PruneCommand pruneCmd(selectedPlant, branches);
-            std::cout << "\n " << pruneCmd.getDescription() << "\n";
+            //std::cout << "\n " << pruneCmd.getDescription() << "\n";
             pruneCmd.execute();
             printSuccess("Plant pruned!");
             break;
@@ -758,12 +902,13 @@ void CompleteNurseryUI::showPlantCareMenu() {
         case 4: {
             int hours;
             std::string intensity;
+            std::cout << " " << selectedPlant->getCareInstructions() << "\n\n";
             std::cout << " Hours of sunlight: ";
             std::cin >> hours;
             std::cout << " Intensity (low/medium/high): ";
             std::cin >> intensity;
             SunlightCommand sunCmd(selectedPlant, hours, intensity);
-            std::cout << "\n " << sunCmd.getDescription() << "\n";
+            //std::cout << "\n " << sunCmd.getDescription() << "\n";
             sunCmd.execute();
             printSuccess("Sunlight adjusted!");
             break;
@@ -793,10 +938,12 @@ void CompleteNurseryUI::showStaffTasksMenu() {
     std::cout << "\n 1. Add Task\n";
     std::cout << " 2. Perform All Tasks\n";
     std::cout << " 3. Clear Tasks\n";
+    std::cout << " 4. Clear Specific Task\n";
+    std::cout << " 5. View Tasks\n";
     std::cout << " 0. Back\n\n";
     
     std::cout << " Enter choice: ";
-    int choice = getValidatedInput(0, 3);
+    int choice = getValidatedInput(0, 5);
     
     switch (choice) {
         case 1: {
@@ -839,6 +986,31 @@ void CompleteNurseryUI::showStaffTasksMenu() {
         case 3:
             selectedStaff->clearTasks();
             printSuccess("All tasks cleared!");
+            break;
+        case 4: {
+            std::cout << "\n";
+            selectedStaff->listTasks();
+            
+            int taskCount = selectedStaff->getTaskCount();
+            
+            if (taskCount == 0) {
+                std::cout << "No tasks to delete.\n";
+                break;
+            }
+            
+            std::cout << "\n Enter task number to delete (0 to cancel): ";
+            int taskNum = getValidatedInput(0, taskCount);
+            
+            if (taskNum == 0) {
+                std::cout << "Cancelled.\n";
+            } else {
+                selectedStaff->clearTask(taskNum - 1);
+            }
+            break;
+        }
+        case 5:
+            std::cout << "\n";
+            selectedStaff->listTasks();
             break;
     }
     pressEnter();
@@ -1021,7 +1193,7 @@ void CompleteNurseryUI::showGreenhouseMenu() {
     }
 }
 
-// ///Stock Management Menu(Kiolin's Factory/Composite)
+//Stock Management Menu(Kiolin's Factory/Composite)
 void CompleteNurseryUI::showStockManagementMenu() {
     clearScreen();
     printHeader("📦 STOCK MANAGEMENT");
@@ -1061,6 +1233,7 @@ void CompleteNurseryUI::showStockManagementMenu() {
             } else if (type == 2) {
                 stockManager->addSucculent(new Cacti(name, price, species));
             } else {
+                //Pine has three params
                 stockManager->addTree(new Pine(name, price, species));
             }
             
@@ -1122,9 +1295,9 @@ void CompleteNurseryUI::showStockManagementMenu() {
             break;
     }
     pressEnter();
-}
+ }
 
-void CompleteNurseryUI::showFactoryProductionMenu() {
+ void CompleteNurseryUI::showFactoryProductionMenu() {
     clearScreen();
     printHeader("🏭 FACTORY PRODUCTION");
     
@@ -1301,7 +1474,6 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
         pressEnter();
     }
 }
-
 
 ///Taskeens Builder State and Decorator
 
@@ -1565,8 +1737,8 @@ void CompleteNurseryUI::showPaymentMenu() {
             printSuccess("Payment processed successfully!");
             std::cout << "╚═════════════════════════╝\n";
             
-            // Clear cart after successful payment
-            currentCustomer->getCart()->clear();
+            //Clear cart after successful payment
+            //currentCustomer->getCart()->clear();
             break;
         }
         
