@@ -6,6 +6,7 @@ class Orchid : public Succulent {
     private:
         static const double OPTIMAL_WATER;
         static const double MIN_WATER;
+        static const double MAX_WATER;
         static const int OPTIMAL_SUNLIGHT;
         static const int MAX_SUNLIGHT;
         static const int OPTIMAL_PRUNE_INTENSITY;
@@ -23,6 +24,7 @@ public:
     
     double getOptimalWater() const { return OPTIMAL_WATER; }
     double getMinWater() const { return MIN_WATER; }
+    double getMaxWater() const { return MIN_WATER; }
     int getOptimalSunlight() const { return OPTIMAL_SUNLIGHT; }
     int getMaxSunlight() const { return MAX_SUNLIGHT; }
     int getOptimalPruneIntensity() const { return OPTIMAL_PRUNE_INTENSITY; }

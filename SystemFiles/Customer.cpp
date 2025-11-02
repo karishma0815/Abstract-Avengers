@@ -7,8 +7,13 @@
 
 #include "Customer.h"
 
-Customer::Customer(std::string name) : name(name) 
-{}
+Customer::Customer(std::string name) : name(name) {
+    inventory = new PlantInventory();
+}
+
+Customer::~Customer() {
+    delete inventory;
+}
 
 const std::string& Customer::nameFunc() const 
 { 
@@ -18,4 +23,12 @@ const std::string& Customer::nameFunc() const
 void Customer::setName(std::string n) 
 { 
     name = n; 
+}
+
+PlantInventory* Customer::getCart() {
+    return inventory->getCartInventory();
+}
+
+PlantInventory* Customer::getInven(){
+    return inventory;
 }

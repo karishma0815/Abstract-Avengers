@@ -4,9 +4,9 @@
 
 void PlantSpecialist::handleIssue(const PlantIssue &issue){
     if(canHandle(issue)){
-        std::cout << "Plant Specialist handling CRITICAL issue: " << issue.getDescription() << " (Severity: CRITICAL)" << std::endl;
+        std::cout << " Plant Specialist handling CRITICAL issue: " << issue.getDescription() << " (Severity: CRITICAL)" << std::endl;
     } else{
-        std::cout << "Error: Plant Specialist cannot handle this issue severity: " << issue.getDescription() << std::endl;
+        std::cout << " Error: Plant Specialist cannot handle this issue severity: " << issue.getDescription() << std::endl;
     }
 }
 

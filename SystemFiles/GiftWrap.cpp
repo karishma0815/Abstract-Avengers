@@ -6,26 +6,17 @@
  */
 
 #include "GiftWrap.h"
-#include <memory>
-#include <utility>
+#include <sstream>
 
 GiftWrap::GiftWrap(std::unique_ptr<Item> inner, double extra, std::string message)
-: ItemDecorator(std::move(inner))
-, extra_(extra)
-, message_(std::move(message))
-{}
+    : ItemDecorator(std::move(inner)), extra_(extra), message_(std::move(message)) {}
 
-double GiftWrap::priceFunc() const 
-{
-    return ItemDecorator::priceFunc() + extra_;
+double GiftWrap::priceFunc() const {
+    return inner_->priceFunc() + extra_;
 }
 
-std::string GiftWrap::describe() const 
-{
-    return ItemDecorator::describe() + " + Wrap(\"" + message_ + "\")";
-}
-
-std::unique_ptr<Item> GiftWrap::clone() const 
-{
-    return std::unique_ptr<Item>( new GiftWrap( cloneInner(), extra_, message_ ) );
+std::string GiftWrap::describe() const {
+    std::ostringstream os;
+    os << inner_->describe() << " + Wrap(\"" << message_ << "\")";
+    return os.str();
 }

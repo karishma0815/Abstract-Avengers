@@ -117,7 +117,8 @@ public:
 
     //this is for when staff wants to set care instructions
     void setCareInstructions(const std::string& instructions);
-
+    
+     virtual std::string getPlantType() const = 0;
     //karishma added the functions
     bool getIsAlive() const;
     virtual void water(double amount) = 0;

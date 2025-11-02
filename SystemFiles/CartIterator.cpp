@@ -9,6 +9,7 @@ CartIterator::CartIterator(PlantInventory* inventory) : Iterator() {
     if (inventory != nullptr) {
         filteredPlants = inventory->getPlants();
     }
+    
 }
 
 CartIterator::~CartIterator() {

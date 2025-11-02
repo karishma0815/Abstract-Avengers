@@ -8,16 +8,6 @@
 #include "Arrangement.h"
 #include <sstream>
 
-Arrangement::Arrangement(const Arrangement& other) 
-{
-    components.reserve(other.components.size());
-    for (const auto& it : other.components) 
-    {
-        //Item::clone() returns std::unique_ptr<Item>
-        components.emplace_back(it->clone());
-    }
-}
-
 void Arrangement::add(std::unique_ptr<Item> item) 
 {
     components.emplace_back(std::move(item));
@@ -76,9 +66,4 @@ bool Arrangement::readyForSale() const
         }
     }
     return true;
-}
-
-std::unique_ptr<Arrangement> Arrangement::clone() const 
-{
-    return std::unique_ptr<Arrangement>(new Arrangement(*this));
 }

@@ -18,5 +18,5 @@ std::string FertilizeCommand::getDescription() const{
 }
 
 void FertilizeCommand::logAction() const{
-    std::cout<<"[LOG] FertilizeCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown Plant")<<" | Fertilizer: "<<fertilizerType<<std::endl;
+    std::cout<<" [LOG] FertilizeCommand executed: "<<getDescription()<<" | Plant: "<<(plant ? plant->getName() : "Unknown Plant")<<" | Fertilizer: "<<fertilizerType<<std::endl;
 }

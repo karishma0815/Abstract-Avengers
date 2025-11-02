@@ -4,6 +4,7 @@ TARGET = nursery_system
 #test
 
 SRCS =  Arrangement.cpp\
+		CompleteNurseryUI.cpp\
 		ConcreteArrangementBuilder.cpp\
 		Director.cpp\
 		ItemDecorator.cpp\
@@ -12,7 +13,6 @@ SRCS =  Arrangement.cpp\
 		GiftWrap.cpp\
 		Note.cpp\
 		PlantItem.cpp\
-		PrototypeRegistry.cpp\
 		SalesContext.cpp\
 		State.cpp\
 		BrowsingState.cpp\
@@ -107,6 +107,7 @@ SRCS =  Arrangement.cpp\
 		PlantInventory.cpp\
 		PlantIterator.cpp\
 		ArrangementsIterator.cpp\
+		PlantAsItemAdapter.cpp\
 		main.cpp 
 
 OBJS = $(SRCS:.cpp=.o)
@@ -135,6 +136,5 @@ coverage: clean
 clean:
 	rm -f $(OBJS) $(TARGET) *.gcda *.gcno *.gcov coverage.info
 	rm -rf coverage_html
-
 
 .PHONY: all run clean valgrind coverage test

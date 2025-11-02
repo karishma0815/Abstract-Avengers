@@ -19,8 +19,9 @@ void SeedlingState::checkReadiness() {
     }
 }
 
-void SeedlingState::harvest(PlantContext*) {
-    std::cout << "Cannot harvest a seedling - too early!" << std::endl;
+bool SeedlingState::harvest(PlantContext*) {
+     std::cout << "Cannot harvest a seedling - too early!\n";
+    return false;
 }
 
 void SeedlingState::grow(PlantContext* ctx) {
