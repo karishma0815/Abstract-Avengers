@@ -249,9 +249,10 @@ void CompleteNurseryUI::showMainMenu() {
                 }
             case 3: 
             {
-                //showGreenhouseMenu();
-                std::cout<<"GreenhouseMenu still in progress\n";
-                break;}
+                showGreenhouseMenu();
+               // std::cout<<"GreenhouseMenu still in progress\n";
+               // break;
+               }
 
             case 4: {
                 //showPatternDemoMenu(); 
@@ -1443,12 +1444,17 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
                 std::cout << "\n Select plant: ";
                 int sel = getValidatedInput(1, growingPlants.size());
                 std::cout << "\n";
-                growingPlants[sel - 1]->harvest();
-                
-                printSuccess("Plant harvested!");
-                delete growingPlants[sel - 1];
-                growingPlants.erase(growingPlants.begin() + (sel - 1));
-                break;
+                 bool harvested = growingPlants[sel - 1]->harvest();
+
+    if (harvested) {
+        printSuccess("Plant harvested!");
+        delete growingPlants[sel - 1];
+        growingPlants.erase(growingPlants.begin() + (sel - 1));
+    } else {
+        printError("Harvest failed. Plant not ready.");
+    }
+
+    break;
             }
             case 5: {
                 if (growingPlants.empty()) {
@@ -1462,8 +1468,8 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
                 PlantContext* p = growingPlants[sel - 1];
                 std::cout << "\n╔══ PLANT DETAILS ══╗\n";
                 std::cout << " Name: " << p->getPlant()->getName() << "\n";
-                std::cout << " Type: " << p->getPlantType() << "\n";
-                std::cout << " Species: " << p->getPlant()->getPlantType() << "\n";
+                std::cout << " Type: " << p->getPlant()->getPlantType() << "\n";
+                std::cout << " Species: " << p->getSpecies() << "\n";
                 std::cout << " Price: R" << p->getPlant()->getPrice() << "\n";
                 std::cout << " Age: " << p->getAge() << " days\n";
                 std::cout << " State: " << p->getCurrentStateName() << "\n";
