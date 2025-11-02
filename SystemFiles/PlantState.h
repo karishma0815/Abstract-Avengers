@@ -55,7 +55,7 @@ public:
      * @param ctx Pointer to the plant context
      * @pure
      */
-    virtual void harvest(PlantContext* ctx) = 0;
+    virtual bool harvest(PlantContext* ctx) = 0;
 
      /**
      * @brief Perform growth operation on the plant

@@ -19,8 +19,9 @@ void FloweringState::checkReadiness() {
     }
 }
 
-void FloweringState::harvest(PlantContext*) {
-    std::cout << "Cannot harvest during flowering stage - too early!" << std::endl;
+bool FloweringState::harvest(PlantContext*) {
+ std::cout << "Cannot harvest during flowering stage - too early!\n";
+    return false;
 }
 
 void FloweringState::grow(PlantContext* ctx) {

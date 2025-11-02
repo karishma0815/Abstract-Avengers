@@ -58,7 +58,7 @@ public:
      * @brief Perform harvest/sale operation, transitioning to sold state
      * @param ctx Pointer to the plant context
      */
-    void harvest(PlantContext* ctx) ;
+    bool harvest(PlantContext* ctx) ;
      /**
      * @brief Perform growth operation (typically none in ready-for-sale state)
      * @param ctx Pointer to the plant context

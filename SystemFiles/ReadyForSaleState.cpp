@@ -16,10 +16,12 @@ void ReadyForSaleState::checkReadiness() {
     std::cout << "Plant is ready for sale at price: $" << price << std::endl;
 }
 
-void ReadyForSaleState::harvest(PlantContext* ctx) {
-    std::cout << "Plant has been sold! Transitioning to Sold state." << std::endl;
+bool ReadyForSaleState::harvest(PlantContext* ctx) {
+    std::cout << "Plant has been sold! Transitioning to Sold state.\n";
     ctx->transitionTo(new SoldState());
+    return true;  
 }
+
 
 void ReadyForSaleState::grow(PlantContext*) {
     std::cout << "Plant is waiting to be sold. No further growth." << std::endl;
