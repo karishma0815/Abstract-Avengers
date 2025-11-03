@@ -11,7 +11,7 @@ double BulkDiscount::calculatePrice(int numberOfPlants, double basePrice, std::s
     const double rate   = 0.10;     // 10% off
 
     if (numberOfPlants >= threshold) {
-        std::cout << "Bulk discount applied (10% off): ";
+        std::cout << " Bulk discount applied (10% off): " << std::endl;
         return basePrice * (1.0 - rate);
     }
     // No discount below threshold – return original total

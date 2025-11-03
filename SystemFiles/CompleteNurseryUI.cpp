@@ -150,9 +150,11 @@ void CompleteNurseryUI::setupQueryChain() {
     customerQueryChain = new JuniorStaff();
     CustomerQueryHandler* salesExpert = new SalesExpert();
     CustomerQueryHandler* plantExpert = new PlantExpert();
+    CustomerQueryHandler* manager = new Manager("John", 101, nullptr, "Customer Service");
     
     customerQueryChain->setNext(salesExpert);
     salesExpert->setNext(plantExpert);
+    plantExpert->setNext(manager);
     //delete salesExpert;
     //delete plantExpert;
 }
