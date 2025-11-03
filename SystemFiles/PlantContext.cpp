@@ -83,9 +83,17 @@ void PlantContext::ingestPlantType(std::string type, PlantState* state) {
 
 void PlantContext::ageState(int daysToAge) {
     fstateAge += daysToAge;
-    if (currentState != nullptr) {
-        for (int i = 0; i < daysToAge; i++) {
+
+    for (int i = 0; i < daysToAge; i++) {
+        PlantState* oldState = currentState;
+        if (currentState != nullptr) {
             currentState->grow(this);
+
+            while (currentState != oldState) {
+                oldState = currentState;
+                std::cout << "State changed -> " << currentState->getStateName() << "\n";
+                currentState->grow(this);
+            }
         }
     }
 }
@@ -132,3 +140,5 @@ void PlantContext::setPlantType(const std::string& type) { fplantType = type; }
 void PlantContext::setStateAge(double age) { fstateAge = age; }
 void PlantContext::setSeason(const std::string& s) { season = s; }
 void PlantContext::setStatePrice(double price) { fstatPrice = price; }
+
+

@@ -4,7 +4,7 @@
 #include <iostream>
 
 MatureState::MatureState()
-    : daysinState(0), isPrimeForSale(false), isInInSeason(false),
+    : daysinState(0), isPrimeForSale(false), isInInSeason(true),
       maturedStateSeason(""), fwaitContext(nullptr), fgrwContext(nullptr),
       fharvestContext(nullptr), fcheckReadiness(nullptr), fgetStateName("Mature"),
       fisValid(true), fgetDaysinState(0), fisPrimeForSale(false),
@@ -32,10 +32,11 @@ bool MatureState::harvest(PlantContext* ctx) {
 }
 
 
-void MatureState::grow(PlantContext*) {
+void MatureState::grow(PlantContext*ctx) {
     daysinState++;
-    if (daysinState >= 30 && isInInSeason) {
+    if (daysinState >= 15 && isInInSeason) { 
         isPrimeForSale = true;
+        ctx->transitionTo(new ReadyForSaleState());
     }
 }
 

@@ -4,7 +4,7 @@
 #include <iostream>
 
 FloweringState::FloweringState()
-    : daysinState(0), requestDays(0), isInSeason(false), currentSeason(""),
+    : daysinState(0), requestDays(10), isInSeason(true), currentSeason(""),
       floweringStrtSeason(""), fwaitContext(nullptr), fgrwContext(nullptr),
       fharvestContext(nullptr), fcheckReadiness(nullptr), fgetStateName("Flowering"),
       fisValid(true), fgetDaysinState(0), fisinSeason(false), fincreaseDay(0) {}

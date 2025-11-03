@@ -1621,6 +1621,7 @@ void CompleteNurseryUI::showStockManagementMenu() {
 
 
 // Plant Lifecycle Menu (Rene's State Pattern)
+
 void CompleteNurseryUI::showPlantLifecycleMenu() {
     while (true) {
         clearScreen();
@@ -1674,23 +1675,29 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
                 std::cout << " State: " << newPlant->getCurrentStateName() << "\n";
                 break;
             }
-            case 2: {
-                if (growingPlants.empty()) {
-                    printError("No plants to age!");
-                    break;
-                }
-                
-                std::cout << "\n Select plant: ";
-                int sel = getValidatedInput(1, growingPlants.size());
-                std::cout << " Age by days: ";
-                int days = getValidatedInput(1, 100);
-                
-                growingPlants[sel - 1]->ageState(days);
-                printSuccess("Plant aged " + std::to_string(days) + " days!");
-                std::cout << " New age: " << growingPlants[sel - 1]->getAge() << " days\n";
-                std::cout << " State: " << growingPlants[sel - 1]->getCurrentStateName() << "\n";
-                break;
-            }
+case 2: {
+    if (growingPlants.empty()) {
+        printError("No plants to age!");
+        break;
+    }
+
+    std::cout << "\n Select plant: ";
+    int sel = getValidatedInput(1, growingPlants.size());
+    std::cout << " Age by days: ";
+    int days = getValidatedInput(1, 100);
+
+    // Age the plant; transitions will be handled inside ageState
+    growingPlants[sel - 1]->ageState(days);
+
+    printSuccess("Plant aged " + std::to_string(days) + " days!");
+    std::cout << " New age: " << growingPlants[sel - 1]->getAge() << " days\n";
+    std::cout << " Current State: " << growingPlants[sel - 1]->getCurrentStateName() << "\n";
+
+    break;
+}
+
+
+
             case 3: {
                 if (growingPlants.empty()) {
                     printError("No plants to check!");
@@ -1704,20 +1711,28 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
                 break;
             }
             case 4: {
-                if (growingPlants.empty()) {
-                    printError("No plants to harvest!");
-                    break;
-                }
-                
-                std::cout << "\n Select plant: ";
-                int sel = getValidatedInput(1, growingPlants.size());
-                std::cout << "\n";
-                growingPlants[sel - 1]->harvest();
-                
-                printSuccess("Plant harvested!");
-                delete growingPlants[sel - 1];
-                growingPlants.erase(growingPlants.begin() + (sel - 1));
-                break;
+    if (growingPlants.empty()) {
+        printError("No plants to harvest!");
+        break;
+    }
+
+    std::cout << "\n Select plant: ";
+    int sel = getValidatedInput(1, growingPlants.size());
+    PlantContext* p = growingPlants[sel - 1];
+
+    // Attempt to harvest; states handle whether it can be harvested
+    bool harvested = p->harvest();
+
+    if (harvested) {
+        printSuccess("Plant harvested successfully!");
+    } else {
+        printError("Plant is not ready for harvest yet.");
+    }
+
+    std::cout << " State: " << p->getCurrentStateName() << "\n";
+    break;
+
+
             }
             case 5: {
                 if (growingPlants.empty()) {
@@ -1731,8 +1746,8 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
                 PlantContext* p = growingPlants[sel - 1];
                 std::cout << "\n╔══ PLANT DETAILS ══╗\n";
                 std::cout << " Name: " << p->getPlant()->getName() << "\n";
-                std::cout << " Type: " << p->getPlantType() << "\n";
-                std::cout << " Species: " << p->getPlant()->getPlantType() << "\n";
+                std::cout << " Type: " << p->getPlant()->getPlantType() << "\n";
+                std::cout << " Species: " << p->getSpecies() << "\n";
                 std::cout << " Price: R" << p->getPlant()->getPrice() << "\n";
                 std::cout << " Age: " << p->getAge() << " days\n";
                 std::cout << " State: " << p->getCurrentStateName() << "\n";
@@ -1743,7 +1758,6 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
         pressEnter();
     }
 }
-
 ///Taskeens Builder State and Decorator
 
 // Personalization Menu (Builder + Decorator patterns) — all decorations FREE
