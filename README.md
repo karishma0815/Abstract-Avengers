@@ -40,7 +40,7 @@ This project can be built using Makefile:
 ``` 
 Compilation: make (Ensure you are currently in the SystemFiles directory)
 Demo Main: make run 
-Testing Main (Unit Tests): make test-<test_filename>
+Unit Tests: make test-<test_filename>
 ```
 
 ### Demo Running
