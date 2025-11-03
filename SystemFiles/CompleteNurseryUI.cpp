@@ -553,7 +553,6 @@ void CompleteNurseryUI::buildArrangementFlow() {
 
 //fixed cart menu with loop-> it works properly
 void CompleteNurseryUI::showCartMenu() {
-    // ---- small helpers local to this function (C++11-safe) -----------------
     struct Local {
         static int countPlants(PlantInventory* cart) {
             int n = 0;
@@ -614,7 +613,7 @@ void CompleteNurseryUI::showCartMenu() {
             int sub = getValidatedInput(0, 2);
 
             if (sub == 2) {
-                buildArrangementFlow(); // your existing arrangement flow
+                buildArrangementFlow(); 
                 break;                  // back to cart menu
             }
             if (sub == 0) break;
@@ -702,59 +701,63 @@ void CompleteNurseryUI::showCartMenu() {
             break;
         }
 
-        case 3: {
-    PlantInventory* actualCart = currentCustomer->getCart();
+        case 3: { // Checkout (State machine)
+            // Ensure we have a customer and a SalesContext:
+            if (!currentCustomer) currentCustomer = new Customer("Guest");
+            if (!salesContext)
+                salesContext = new SalesContext(BrowsingState::instance(), *currentCustomer);
 
-    // Count plants
-    int plantCount = 0;
-    CartIterator cartIt(actualCart);
-    for (cartIt.first(); !cartIt.isDone(); cartIt.next()) plantCount++;
+            PlantInventory* actualCart = currentCustomer->getCart();
+            const int plantCount = Local::countPlants(actualCart);
+            const int arrCount   = static_cast<int>(inventory->cartArrangementsSnapshot().size());
+            const int count      = plantCount + arrCount;
 
-    // Count arrangements
-    int arrCount = static_cast<int>(inventory->cartArrangementsCount());
-    int count = plantCount + arrCount;
+            if (count == 0) {
+                printError("Cart is empty!");
+                pressEnter();
+                break;
+            }
 
-    if (count == 0) {
-        printError("Cart is empty!");
-        pressEnter();
-        break;
-    }
+            const double total = calculateCartTotal();
 
-    double total = calculateCartTotal();
+            clearScreen();
+            printSubHeader("CHECKOUT");
+            std::cout << " Items: " << count << "\n";
+            std::cout << " Total: R" << total << "\n\n";
 
-    std::cout << "\n╔═══ CHECKOUT ═══╗\n";
-    std::cout << " Items: " << count << "\n";
-    std::cout << " Total: R" << total << "\n";
-    std::cout << "╚════════════════╝\n";
+            std::cout << " Confirm purchase? (1=Yes, 0=No): ";
+            int confirm = getValidatedInput(0, 1);
+            if (!confirm) {
+                std::cout << "\n Purchase cancelled.\n";
+                pressEnter();
+                break;
+            }
 
-    std::cout << "\n Confirm purchase? (1=Yes, 0=No): ";
-    int confirm = getValidatedInput(0, 1);
+            const bool ok = Local::runCheckoutFlow(salesContext);
 
-    if (confirm == 1) {
-        // ---- Clear PLANTS (existing behaviour) ----
-        std::vector<Plant*> itemsToRemove;
-        CartIterator clearIt(actualCart);
-        for (clearIt.first(); !clearIt.isDone(); clearIt.next())
-            itemsToRemove.push_back(clearIt.currentItem());
+            if (ok) {
+                // Clear cart items only on success
+                std::vector<Plant*> toRemove;
+                { CartIterator it(actualCart); for (it.first(); !it.isDone(); it.next())
+                        toRemove.push_back(it.currentItem()); }
 
-        PlantInventory* mainInventory = currentCustomer->getInven();
-        for (Plant* item : itemsToRemove) {
-            CustomerCommand* removeCmd = new RemoveFromCart();
-            invoker->setCommand(removeCmd);
-            invoker->execute(item, mainInventory);
-            delete removeCmd;
+                PlantInventory* mainInventory = currentCustomer->getInven();
+                for (Plant* p : toRemove) {
+                    CustomerCommand* removeCmd = new RemoveFromCart();
+                    invoker->setCommand(removeCmd);
+                    invoker->execute(p, mainInventory);
+                    delete removeCmd;
+                }
+                inventory->clearCartArrangements();
+
+                printSuccess("Purchase complete! Thank you!");
+            } else {
+                std::cout << "\n Payment was not completed. Your cart is unchanged.\n";
+            }
+
+            pressEnter();
+            break;
         }
-
-        // ---- Clear ARRANGEMENTS (new) ----
-        inventory->clearCartArrangements();
-
-        printSuccess("Purchase complete! Thank you!");
-    } else {
-        std::cout << "\n Purchase cancelled.\n";
-    }
-    pressEnter();
-    break;
-}
 
         case 4: {
             // Ask for assistance from the cart screen:
@@ -769,7 +772,7 @@ void CompleteNurseryUI::showCartMenu() {
             pressEnter();
             break;
         }
-    }
+        }
     }
 }
 
