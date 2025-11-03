@@ -142,3 +142,14 @@ void SalesContext::eventCancel()
 { 
     state->onCancel(); 
 }
+
+bool SalesContext::isTerminal() const 
+{
+  const std::string s = current().getStateName();
+  return s == "Completed" || s == "Cancelled";
+}
+
+void SalesContext::resetToBrowsing() {
+  authorized = false;   // ensure clean payment state
+  setState(BrowsingState::instance());
+}

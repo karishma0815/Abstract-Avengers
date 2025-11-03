@@ -36,6 +36,7 @@ private:
     std::string fgetStateName;
     double fgetSoldPrice;
     std::string fgetData;
+    bool printedLifecycleComplete = false;
 
 public:
 

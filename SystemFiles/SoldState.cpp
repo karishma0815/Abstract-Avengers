@@ -19,7 +19,10 @@ bool SoldState::harvest(PlantContext*) {
 }
 
 void SoldState::grow(PlantContext*) {
-    std::cout << "Plant lifecycle is complete. No further growth." << std::endl;
+    if (!printedLifecycleComplete) {
+        std::cout << "Plant lifecycle is complete. No further growth." << std::endl;
+        printedLifecycleComplete = true;
+    }
 }
 
 std::string SoldState::getStateName() {

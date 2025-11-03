@@ -12,6 +12,7 @@
 
 #include "Customer.h"
 #include "State.h"
+#include "BrowsingState.h"
 
 #include <unordered_map>
 #include <string>
@@ -67,6 +68,9 @@ public:
   void eventRetry();
   void eventCancel();
 
+  bool isTerminal() const;
+  void resetToBrowsing();
+
 private:
   State* state = nullptr;           
   Customer* customer = nullptr;          
@@ -97,6 +101,7 @@ public:
     testCaptureNext = ok; 
     testCaptureArmed = true;
   }
+
 #endif
 
 };

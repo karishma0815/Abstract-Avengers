@@ -6,6 +6,6 @@ RegularPrice::~RegularPrice(){}
 
 double RegularPrice::calculatePrice(int numberOfPlants,double basePrice,std::string coupon){
     std::cout<<"Regular Price applied: ";
-    return basePrice;
+    return numberOfPlants*basePrice;
 }
 

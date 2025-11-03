@@ -87,7 +87,6 @@ SRCS =  Arrangement.cpp\
 		DeliveryStaffFactory.cpp\
 		AddToCart.cpp\
 		BulkDiscount.cpp\
-		CareIterator.cpp\
 		CartIterator.cpp\
 		CustomerCommand.cpp\
 		DefaultRecomm.cpp\
@@ -95,6 +94,7 @@ SRCS =  Arrangement.cpp\
 		PlantContainer.cpp\
 		PriceRangeIterator.cpp\
 		PricingStrategy.cpp\
+		Promotional.cpp\
 		RecommStrategy.cpp\
 		RegularPrice.cpp\
 		RemoveFromCart.cpp\

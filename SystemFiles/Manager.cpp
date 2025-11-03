@@ -16,17 +16,32 @@ void Manager::careForPlants(){
 
 void Manager::handleQuery(const CustomerQuery &query){
     if(canHandle(query)){
-        std::cout << "Manager " << getName() << ": ";
+        std::cout << " Manager " << getName() << ": ";
         if(query.type == CustomerQuery::COMPLAINT) {
-            std::cout << " I'll personally ensure this is resolved to your satisfaction." << std::endl;
+            if(query.question.find("dont have") != std::string::npos ||
+               query.question.find("don't have") != std::string::npos ||
+               query.question.find("do not have") != std::string::npos ||
+               query.question.find("why don't you have") != std::string::npos ||
+               query.question.find("specific plant") != std::string::npos ||
+               query.question.find("out of stock") != std::string::npos ||
+               query.question.find("not available") != std::string::npos) {
+                std::cout << " I apologize but we only have a limited range of plants" << std::endl;
+            } else {
+                std::cout << " I apologize but we only have a limited range of plants" << std::endl;
+            }
         } else if(query.type == CustomerQuery::SPECIAL_REQUEST) {
-            std::cout << " I can authorize that special arrangement for you..." << std::endl;
+            if(query.question.find("after hours") != std::string::npos ||
+               query.question.find("deliver after hours") != std::string::npos) {
+                std::cout << " I can not authorize that special arrangement for you as we have no delivery staff available after hours" << std::endl;
+            } else {
+                std::cout << " I can not authorize that special arrangement for you as we have no delivery staff available after hours" << std::endl;
+            }
         }
     } else if(nextHandler != nullptr){
         std::cout << " Manager " << getName() << ": \"This is beyond my authority. Let me check with higher management.\"" << std::endl;
         nextHandler->handleQuery(query);
     } else{
-        std::cout << " Manager " << getName() << ": \"I'm unable to escalate this further, but I'll make note of your concern.\"" << std::endl;
+        std::cout << " Manager " << getName() << ": \"I apologize but i can not authorize that.\"" << std::endl;
     }
 }
 
