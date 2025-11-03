@@ -17,15 +17,13 @@ The goal is to show how structured design brings order and flexibility to a comp
 
 # Documentation
 
-<!--[Report](Documents/City_Development_Report.pdf)
+[Report](Documents/Report_Google_Docs.pdf)
 
-[Doxygen Documentation](Documents/Doxygen/)-->
+[Presentation](Documents/Presentation.pptx)
 
 [UML Diagrams](UML/)
 
 # Setup
-
-### Prerequisites
 
 ### Cloning
 
