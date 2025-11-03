@@ -436,200 +436,376 @@ void CompleteNurseryUI::showBrowsingMenu() {
     }
 }
 
+//for arrangements
+void CompleteNurseryUI::buildArrangementFlow() {
+    clearScreen();
+    printSubHeader("CUSTOM ARRANGEMENT");
+
+    // Ask how many different plants (min 2)
+    std::cout << "\n How many different plants do you want? (min 2): ";
+    int qty = getValidatedInput(2, 50);
+
+    // Snapshot and ensure enough distinct plants to choose from
+    std::vector<Plant*> available = inventory->getPlants();
+    std::sort(available.begin(), available.end());
+    available.erase(std::unique(available.begin(), available.end()), available.end());
+
+    if (static_cast<int>(available.size()) < qty) {
+        printError("Not enough different plants on the sales floor.");
+        pressEnter();
+        return;
+    }
+
+    // Choose plants (each must be unique)
+    std::vector<std::unique_ptr<Item>> items;
+    items.reserve(static_cast<size_t>(qty));
+    double itemsSubtotal = 0.0;
+
+    for (int k = 0; k < qty; ++k) {
+        clearScreen();
+        std::cout << " Select base plant " << (k+1) << " of " << qty << ":\n\n";
+        for (size_t i = 0; i < available.size(); ++i) {
+            std::cout << "  " << (i+1) << ". " << available[i]->getName()
+                      << " (R" << available[i]->getPrice() << ")\n";
+        }
+        std::cout << "\n Enter choice: ";
+        int idx = getValidatedInput(1, static_cast<int>(available.size())) - 1;
+
+        Plant* chosen = available[static_cast<size_t>(idx)];
+        available.erase(available.begin() + idx);           // prevent duplicates
+
+        // Wrap abstract Plant* as Item via adapter
+        std::unique_ptr<Item> base(new PlantAsItemAdapter(chosen));
+        itemsSubtotal += base->priceFunc();
+        items.push_back(std::move(base));
+    }
+
+    // Ask ONE-TIME decoration for the whole arrangement (free)
+    bool wantPot=false, wantWrap=false, wantNote=false;
+    std::string potColor, noteText;
+
+    // Pot
+    std::cout << "\n Add decorative pot to the arrangement? (1 = yes, 0 = no): ";
+    wantPot = (getValidatedInput(0,1) == 1);
+    if (wantPot) {
+        const auto& pots = inventory->getPots();
+        if (!pots.empty()) {
+            std::cout << " Available Pots:\n";
+            for (size_t i=0;i<pots.size();++i) std::cout << "  " << (i+1) << ". " << pots[i] << "\n";
+            std::cout << " Choose pot (1-" << pots.size() << "): ";
+            int p = getValidatedInput(1, static_cast<int>(pots.size()));
+            potColor = pots[static_cast<size_t>(p-1)];
+        } else {
+            potColor = "Standard";
+        }
+    }
+
+    // Wrap (bouquet style) — no message
+    std::cout << " Add bouquet-style gift wrap? (1 = yes, 0 = no): ";
+    wantWrap = (getValidatedInput(0,1) == 1);
+
+    // Note (with message)
+    std::cout << " Add a note? (1 = yes, 0 = no): ";
+    wantNote = (getValidatedInput(0,1) == 1);
+    if (wantNote) {
+        std::cout << " Note text: ";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::getline(std::cin, noteText);
+        if (noteText.empty()) wantNote = false;
+    }
+
+    // Apply the ONE decoration chain to the first item only (free)
+    if (!items.empty() && (wantPot || wantWrap || wantNote)) {
+        ConcreteArrangementBuilder builder;
+        builder.reset();
+        builder.buildBasePlant(std::move(items[0]));   // take ownership
+
+        if (wantPot)  builder.buildPot (0.0, potColor);
+        if (wantWrap) builder.buildWrap(0.0, "Bouquet Wrap");
+        if (wantNote) builder.buildNote(0.0, noteText);
+
+        items[0] = builder.getResult();               // decorated first item
+    }
+
+    // Preview & confirm
+    clearScreen();
+    printSubHeader("ARRANGEMENT PREVIEW (decorated once)");
+    for (size_t i = 0; i < items.size(); ++i) {
+        std::cout << "  - " << items[i]->describe()
+                  << "  [R" << items[i]->priceFunc() << "]";
+        if (i == 0 && (wantPot || wantWrap || wantNote)) std::cout << "  {decor}";
+        std::cout << "\n";
+    }
+    std::cout << "Items subtotal: R" << itemsSubtotal << "\n";
+    std::cout << "Arrangement surcharge: R0 (free)\n";
+    std::cout << "Total price: R" << itemsSubtotal << "\n";
+
+    std::cout << "\n Add arrangement to cart? (1 = yes, 0 = no): ";
+    int addAll = getValidatedInput(0,1);
+    if (addAll == 1) {
+        for (auto& up : items) inventory->addArrangementToCart(std::move(up));
+        printSuccess("Arrangement added to cart!");
+    } else {
+        printSuccess("Arrangement built (not added to cart).");
+    }
+    pressEnter();
+}
+
 //fixed cart menu with loop-> it works properly
 void CompleteNurseryUI::showCartMenu() {
+    // ---- small helpers local to this function (C++11-safe) -----------------
+    struct Local {
+        static int countPlants(PlantInventory* cart) {
+            int n = 0;
+            if (!cart) return 0;
+            CartIterator it(cart);
+            for (it.first(); !it.isDone(); it.next()) ++n;
+            return n;
+        }
+        static std::string stateName(SalesContext* sc) {
+            return sc ? sc->current().getStateName() : std::string();
+        }
+        static bool runCheckoutFlow(SalesContext* sc) {
+            // Make sure the machine accepts checkout
+            sc->setState(CartOpenState::instance());
+
+            // CartOpen -> PendingPayment
+            sc->eventCheckout();
+            if (stateName(sc) != "PendingPayment") return false;
+
+            // PendingPayment -> PaymentAuthorized | PaymentFailed
+            sc->eventAuthorize();
+            std::string s = stateName(sc);
+            if (s == "PaymentFailed") return false;
+
+            // PaymentAuthorized -> Completed (or back to Pending on capture fail)
+            if (s == "PaymentAuthorized") sc->eventCommit();
+
+            return stateName(sc) == "Completed";
+        }
+    };
+    // -----------------------------------------------------------------------
+
     while (true) {
         clearScreen();
         printHeader("🛒 SHOPPING CART");
-        
+
         displayCart();
-        
+
         std::cout << "\n 1. Add Plant to Cart\n";
         std::cout << " 2. Remove from Cart\n";
-        std::cout << " 3. Checkout\n";
+        std::cout << " 3. Checkout (State machine)\n";
+        std::cout << " 4. Ask for assistance\n";
         std::cout << " 0. Back\n\n";
-        
+
         std::cout << " Enter choice: ";
-        int choice = getValidatedInput(0, 3);
-        
+        int choice = getValidatedInput(0, 4);
         if (choice == 0) break;
-        
+
         switch (choice) {
-            case 1: {
-                // LOOP for adding multiple plants
-                bool keepAdding = true;
-                
-                while (keepAdding) {
-                    clearScreen();
-                    printSubHeader("SELECT PLANT TO ADD");
-                    
-                    PlantIterator it(inventory);
-                    std::vector<Plant*> plants;
-                    int num = 1;
-                    
-                    std::cout << "\n Available Plants:\n";
-                    for (it.first(); !it.isDone(); it.next()) {
-                        plants.push_back(it.currentItem());
-                        std::cout << " " << num++ << ". " << it.currentItem()->getName()
-                                 << " - R" << it.currentItem()->getPrice() << "\n";
-                    }
-                    
-                    if (plants.empty()) {
-                        printError("No plants available!");
-                        pressEnter();
-                        break;
-                    }
-                    
-                    std::cout << "\n Select plant (0 to cancel): ";
-                    int sel = getValidatedInput(0, plants.size());
-                    
-                    if (sel == 0) {
-                        keepAdding = false;
-                        break;
-                    }
-                    ///when comparing integers of different types use static<cast>
-                    if (sel > 0 && sel <= static_cast<int>(plants.size())) {
-                        Plant* selectedPlant = plants[sel - 1];
-                        
-                        // Ask about personalization
-                        std::cout << "\n Would you like to personalize this plant?\n";
-                        std::cout << " 1. Yes - Add decorations\n";
-                        std::cout << " 2. No - Add as is\n";
-                        std::cout << " Enter choice: ";
-                        int personalizeChoice = getValidatedInput(1, 2);
-                        
-                        if (personalizeChoice == 1) {
-                            personalizeSelectedPlant(selectedPlant);
-                        }
-                        
-                        // KEY FIX: Use the main inventory, which has addToCart()
-                        PlantInventory* mainInventory = currentCustomer->getInven();
-                        
-                        // The addToCart() method internally adds to cartInventory
-                        CustomerCommand* cmd = new AddToCart();
-                        invoker->setCommand(cmd);
-                        invoker->execute(selectedPlant, mainInventory);
-                        
-                        printSuccess(selectedPlant->getName() + " added to cart!");
-                        
-                        // Verify it was added
-                        PlantInventory* actualCart = currentCustomer->getCart();
-                        std::cout << " Cart now has " << actualCart->size() << " items\n";
-                        
-                        // Ask if they want to add more
-                        std::cout << "\n Add another plant? (1=Yes, 0=No): ";
-                        int addMore = getValidatedInput(0, 1);
-                        
-                        if (addMore == 0) {
-                            keepAdding = false;
-                        }
-                        
-                        delete cmd;
-                    }
-                }
-                break;
+        case 1: {
+            // Submenu: add single plant OR build a custom arrangement
+            clearScreen();
+            printSubHeader("ADD TO CART");
+            std::cout << "\n 1. Add single plant\n";
+            std::cout << " 2. Build custom arrangement\n";
+            std::cout << " 0. Back\n\n";
+            std::cout << " Enter choice: ";
+            int sub = getValidatedInput(0, 2);
+
+            if (sub == 2) {
+                buildArrangementFlow(); // your existing arrangement flow
+                break;                  // back to cart menu
             }
-            
-            case 2: {
-                PlantInventory* actualCart = currentCustomer->getCart();
-                CartIterator cartIt(actualCart);
-                std::vector<Plant*> cartPlants;
-                
-                for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
-                    cartPlants.push_back(cartIt.currentItem());
+            if (sub == 0) break;
+
+            // ---- single plant add loop ----
+            bool keepAdding = true;
+            while (keepAdding) {
+                clearScreen();
+                printSubHeader("SELECT PLANT TO ADD");
+
+                PlantIterator it(inventory);
+                std::vector<Plant*> plants;
+                int num = 1;
+
+                std::cout << "\n Available Plants:\n";
+                for (it.first(); !it.isDone(); it.next()) {
+                    plants.push_back(it.currentItem());
+                    std::cout << " " << num++ << ". " << it.currentItem()->getName()
+                              << " - R" << it.currentItem()->getPrice() << "\n";
                 }
-                
-                if (cartPlants.empty()) {
-                    printError("Cart is empty!");
+
+                if (plants.empty()) {
+                    printError("No plants available!");
                     pressEnter();
                     break;
                 }
-                
-                std::cout << "\n Select item to remove (0 to cancel): ";
-                int sel = getValidatedInput(0, cartPlants.size());
-                
-                if (sel > 0 && sel <= static_cast<int>(cartPlants.size())) {
-                    Plant* toRemove = cartPlants[sel - 1];
-                    
-                    // Use main inventory for removeFromCart
-                    PlantInventory* mainInventory = currentCustomer->getInven();
-                    
-                    CustomerCommand* cmd = new RemoveFromCart();
-                    invoker->setCommand(cmd);
-                    invoker->execute(toRemove, mainInventory);
-                    
-                    printSuccess("Item removed!");
-                    delete cmd;
+
+                std::cout << "\n Select plant (0 to cancel): ";
+                int sel = getValidatedInput(0, static_cast<int>(plants.size()));
+                if (sel == 0) { keepAdding = false; break; }
+
+                Plant* selectedPlant = plants[sel - 1];
+
+                // Optional personalize
+                std::cout << "\n Personalize this plant first? (1 = yes, 0 = no): ";
+                int personalizeChoice = getValidatedInput(0, 1);
+                if (personalizeChoice == 1) {
+                    personalizeSelectedPlant(selectedPlant);
                 }
-                pressEnter();
-                break;
+
+                // Add to cart via Command (main inventory)
+                PlantInventory* mainInventory = currentCustomer->getInven();
+                CustomerCommand* cmd = new AddToCart();
+                invoker->setCommand(cmd);
+                invoker->execute(selectedPlant, mainInventory);
+                delete cmd;
+
+                printSuccess(selectedPlant->getName() + " added to cart!");
+
+                std::cout << "\n Add another single plant? (1=Yes, 0=No): ";
+                int addMore = getValidatedInput(0, 1);
+                if (addMore == 0) keepAdding = false;
             }
-            
-            case 3: {
-                PlantInventory* actualCart = currentCustomer->getCart();
-                CartIterator cartIt(actualCart);
-                int count = 0;
-                for (cartIt.first(); !cartIt.isDone(); cartIt.next()) count++;
-                
-                if (count == 0) {
-                    printError("Cart is empty!");
-                    pressEnter();
-                    break;
-                }
-                
-                double total = calculateCartTotal();
-                
-                std::cout << "\n╔═══ CHECKOUT ═══╗\n";
-                std::cout << " Items: " << count << "\n";
-                std::cout << " Total: R" << total << "\n";
-                std::cout << "╚════════════════╝\n";
-                
-                std::cout << "\n Confirm purchase? (1=Yes, 0=No): ";
-                int confirm = getValidatedInput(0, 1);
-                
-                if (confirm == 1) {
-                    // Clear cart
-                    CartIterator clearIt(actualCart);
-                    std::vector<Plant*> itemsToRemove;
-                    
-                    for (clearIt.first(); !clearIt.isDone(); clearIt.next()) {
-                        itemsToRemove.push_back(clearIt.currentItem());
-                    }
-                    
-                    PlantInventory* mainInventory = currentCustomer->getInven();
-                    for (Plant* item : itemsToRemove) {
-                        CustomerCommand* removeCmd = new RemoveFromCart();
-                        invoker->setCommand(removeCmd);
-                        invoker->execute(item, mainInventory);
-                        delete removeCmd;
-                    }
-                    
-                    printSuccess("Purchase complete! Thank you!");
-                } else {
-                    std::cout << "\n Purchase cancelled.\n";
-                }
-                pressEnter();
-                break;
-            }
+            break;
         }
+
+        case 2: { // Remove from cart
+            PlantInventory* actualCart = currentCustomer->getCart();
+            CartIterator cartIt(actualCart);
+            std::vector<Plant*> cartPlants;
+
+            for (cartIt.first(); !cartIt.isDone(); cartIt.next())
+                cartPlants.push_back(cartIt.currentItem());
+
+            if (cartPlants.empty()) {
+                printError("Cart is empty!");
+                pressEnter();
+                break;
+            }
+
+            std::cout << "\n Select item to remove (0 to cancel): ";
+            int sel = getValidatedInput(0, static_cast<int>(cartPlants.size()));
+            if (sel > 0) {
+                Plant* toRemove = cartPlants[sel - 1];
+                PlantInventory* mainInventory = currentCustomer->getInven();
+
+                CustomerCommand* cmd = new RemoveFromCart();
+                invoker->setCommand(cmd);
+                invoker->execute(toRemove, mainInventory);
+                delete cmd;
+
+                printSuccess("Item removed!");
+            }
+            pressEnter();
+            break;
+        }
+
+        case 3: {
+    PlantInventory* actualCart = currentCustomer->getCart();
+
+    // Count plants
+    int plantCount = 0;
+    CartIterator cartIt(actualCart);
+    for (cartIt.first(); !cartIt.isDone(); cartIt.next()) plantCount++;
+
+    // Count arrangements
+    int arrCount = static_cast<int>(inventory->cartArrangementsCount());
+    int count = plantCount + arrCount;
+
+    if (count == 0) {
+        printError("Cart is empty!");
+        pressEnter();
+        break;
+    }
+
+    double total = calculateCartTotal();
+
+    std::cout << "\n╔═══ CHECKOUT ═══╗\n";
+    std::cout << " Items: " << count << "\n";
+    std::cout << " Total: R" << total << "\n";
+    std::cout << "╚════════════════╝\n";
+
+    std::cout << "\n Confirm purchase? (1=Yes, 0=No): ";
+    int confirm = getValidatedInput(0, 1);
+
+    if (confirm == 1) {
+        // ---- Clear PLANTS (existing behaviour) ----
+        std::vector<Plant*> itemsToRemove;
+        CartIterator clearIt(actualCart);
+        for (clearIt.first(); !clearIt.isDone(); clearIt.next())
+            itemsToRemove.push_back(clearIt.currentItem());
+
+        PlantInventory* mainInventory = currentCustomer->getInven();
+        for (Plant* item : itemsToRemove) {
+            CustomerCommand* removeCmd = new RemoveFromCart();
+            invoker->setCommand(removeCmd);
+            invoker->execute(item, mainInventory);
+            delete removeCmd;
+        }
+
+        // ---- Clear ARRANGEMENTS (new) ----
+        inventory->clearCartArrangements();
+
+        printSuccess("Purchase complete! Thank you!");
+    } else {
+        std::cout << "\n Purchase cancelled.\n";
+    }
+    pressEnter();
+    break;
+}
+
+        case 4: {
+            // Ask for assistance from the cart screen:
+            // If CartOpen is active it ignores assist; bounce to SeekingAssistance.
+            if (!currentCustomer) currentCustomer = new Customer("Guest");
+            if (!salesContext)
+                salesContext = new SalesContext(BrowsingState::instance(), *currentCustomer);
+
+            salesContext->setState(SeekingAssistanceState::instance());
+            // Let the state show its welcome/message
+            salesContext->eventAssistComplete(); // or call a small query flow if you have one
+            pressEnter();
+            break;
+        }
+    }
     }
 }
 
 void CompleteNurseryUI::displayCart() {
     CartIterator cartIt(currentCustomer->getCart());
+
     bool isEmpty = true;
     double total = 0.0;
-    int num = 1;
-    
+    int line = 1;
+
     std::cout << "\n┌─── YOUR CART ────────────────────────┐\n";
+
+    // --- Plants ---
+    int plantCount = 0;
     for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
         isEmpty = false;
         Plant* p = cartIt.currentItem();
-        std::cout << "│ " << num++ << ". " << std::setw(20) << p->getName()
-                 << " R" << std::setw(6) << p->getPrice() << " │\n";
+        std::cout << "│ " << line++ << ". " << std::setw(20) << p->getName()
+                  << " R" << std::setw(6) << p->getPrice() << " │\n";
         total += p->getPrice();
+        ++plantCount;
     }
-    
+
+    // --- Arrangements (NEW) ---
+    const auto arr = inventory->cartArrangementsSnapshot();
+    for (std::size_t i = 0; i < arr.size(); ++i) {
+        const Item* it = arr[i];
+        if (!it) continue;
+        isEmpty = false;
+        std::cout << "│ " << line++ << ". " 
+                  << std::setw(20) << it->describe()
+                  << " R" << std::setw(6) << it->priceFunc()
+                  << " │  [ARR]\n";
+        total += it->priceFunc();
+    }
+
     if (isEmpty) {
         std::cout << "│  Cart is empty                       │\n";
     } else {
@@ -639,15 +815,24 @@ void CompleteNurseryUI::displayCart() {
     std::cout << "└──────────────────────────────────────┘\n";
 }
 
+
 // ============================================================================
 // FIXED calculateCartTotal() - Replace in CompleteNurseryUI.cpp
 // ============================================================================
 
 double CompleteNurseryUI::calculateCartTotal() {
-    CartIterator cartIt(currentCustomer->getCart());
     double total = 0.0;
+
+    // Plants
+    CartIterator cartIt(currentCustomer->getCart());
     for (cartIt.first(); !cartIt.isDone(); cartIt.next()) {
         total += cartIt.currentItem()->getPrice();
+    }
+
+    // Arrangements
+    const auto arr = inventory->cartArrangementsSnapshot();
+    for (const Item* it : arr) {
+        if (it) total += it->priceFunc();
     }
     return total;
 }
@@ -1558,176 +1743,142 @@ void CompleteNurseryUI::showPlantLifecycleMenu() {
 
 ///Taskeens Builder State and Decorator
 
-// Personalization Menu (Builder + Decorator patterns)
+// Personalization Menu (Builder + Decorator patterns) — all decorations FREE
 void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
     clearScreen();
     printHeader("🎨 PERSONALIZE YOUR PLANT");
-    
-    std::cout << "\n Selected: " << plant->getName() << " (R" << plant->getPrice() << ")\n";
+
+    std::cout << "\n Selected: " << plant->getName()
+              << " (R" << plant->getPrice() << ")\n";
     printSubHeader("DECORATION OPTIONS");
-    
-    std::cout << " 1. Add Decorative Pot\n";
-    std::cout << " 2. Add Gift Wrap\n";
-    std::cout << " 3. Add Personal Note\n";
-    std::cout << " 4. Create Custom Arrangement (Builder)\n";
-    std::cout << " 5. View Available Options\n";
+
+    std::cout << " 1. Add Decorative Pot (choose color)\n";
+    std::cout << " 2. Add Gift Wrap (bouquet style, choose color; no message)\n";
+    std::cout << " 3. Add Personal Note (choose color + message)\n";
+    std::cout << " 4. View Available Options\n";
     std::cout << " 0. Done\n\n";
 
-    // Collect choices first; we apply them when user selects option 4
-    bool wantPot  = false, wantWrap = false, wantNote = false;
-    double potPrice = 0.0, wrapPrice = 0.0, notePrice = 0.0;
-    std::string potColor, wrapMessage, noteText;
+    bool        wantPot  = false, wantWrap = false, wantNote = false;
+    std::string potColor, wrapColor, noteColor, noteText;
 
-    auto flushLine = [](){
-        if (std::cin.peek() == '\n') std::cin.get();
+    auto clear_stdin_line = [](){
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     };
-    
+
+    auto eat_pending_newline = [](){
+        if (std::cin.peek() == '\n') std::cin.get();  // consume exactly one '\n' if present
+    };
+
     while (true) {
         std::cout << " Enter choice (0 when done): ";
-        int choice = getValidatedInput(0, 5);
-        
+        int choice = getValidatedInput(0, 4);
         if (choice == 0) {
             printSuccess("Personalization complete!");
             break;
         }
-        
+
         switch (choice) {
-            case 1: { //Decorative Pot
-                std::cout << "\n Available Pots:\n";
+            case 1: { // Decorative Pot (FREE; pick color)
                 const auto& pots = inventory->getPots();
-                for (size_t i = 0; i < pots.size(); i++) {
+                if (pots.empty()) {
+                    printError("No pot colors available.");
+                    break;
+                }
+                std::cout << "\n Available Pot Colors:\n";
+                for (size_t i = 0; i < pots.size(); ++i) {
                     std::cout << "  " << (i + 1) << ". " << pots[i] << "\n";
                 }
-                
-                std::cout << "\n Select pot (0 to skip): ";
-                int potChoice = getValidatedInput(0, static_cast<int>(pots.size()));
-                
-                if (potChoice > 0) {
-                    flushLine();
-                    std::cout << " Pot color: ";
-                    std::cin.ignore();
-                    std::getline(std::cin, potColor);
-                    
-                    double potPrice = 25.0;
-                    wantPot = true; //choice changed to true
-                    std::cout << "\n ✓ Added " << potColor << " decorative pot (+R" << potPrice << ")\n";
-                }
-                else
-                {
+                std::cout << "\n Select pot color (0 to skip): ";
+                int ix = getValidatedInput(0, static_cast<int>(pots.size()));
+                if (ix == 0) {
                     wantPot = false;
                     std::cout << " Skipped pot.\n";
+                } else {
+                    potColor = pots[static_cast<size_t>(ix - 1)];
+                    wantPot  = true;
+                    std::cout << " ✓ Decorative pot '" << potColor << "' selected (FREE)\n";
                 }
                 break;
             }
-            
-            case 2: { //Gift Wrap
-                std::cout << "\n Available Gift Wraps:\n";
+
+            case 2: { // Gift Wrap (FREE; pick color, no message)
                 const auto& wraps = inventory->getGiftWraps();
-                for (size_t i = 0; i < wraps.size(); i++) {
+                if (wraps.empty()) {
+                    printError("No gift wrap colors available.");
+                    break;
+                }
+                std::cout << "\n Available Gift Wrap Colors:\n";
+                for (size_t i = 0; i < wraps.size(); ++i) {
                     std::cout << "  " << (i + 1) << ". " << wraps[i] << "\n";
                 }
-                
-                std::cout << "\n Select wrap (0 to skip): ";
-                int wrapChoice = getValidatedInput(0, wraps.size());
-                
-                if (wrapChoice > 0) {
-                    flushLine();
-                    std::cout << " Gift message: ";
-                    std::cin.ignore();
-                    std::getline(std::cin, wrapMessage);
-                    
-                    double wrapPrice = 15.0;
-                    wantWrap = true; //choice changed to true
-                    std::cout << "\n ✓ Added gift wrap with message (+R" << wrapPrice << ")\n";
-                }
-                else
-                {
+                std::cout << "\n Select wrap color (0 to skip): ";
+                int ix = getValidatedInput(0, static_cast<int>(wraps.size()));
+                if (ix == 0) {
                     wantWrap = false;
                     std::cout << " Skipped wrap.\n";
+                } else {
+                    wrapColor = wraps[static_cast<size_t>(ix - 1)];
+                    wantWrap  = true;
+                    std::cout << " ✓ Bouquet-style gift wrap '" << wrapColor << "' selected (FREE)\n";
                 }
                 break;
             }
-            
-            case 3: { //Note
-                std::cout << "\n Available Notes:\n";
+
+            case 3: { // Personal Note (FREE; choose color + message)
                 const auto& notes = inventory->getNotes();
-                for (size_t i = 0; i < notes.size(); i++) {
-                    std::cout << "  " << (i + 1) << ". " << notes[i] << "\n";
-                }
-                
-                flushLine();
-                std::cout << "\n Your note: ";
-                std::cin.ignore();
-                std::getline(std::cin, noteText);
-                
-                double notePrice = 5.0;
-                wantNote = !noteText.empty();
-                if(wantNote)
-                {
-                    std::cout << "\n ✓ Added personal note (+R" << notePrice << ")\n";
-                }
-                else
-                {
-                    std::cout << " Skipped note.\n";
-                }
-                break;
-            }
-            
-            case 4: { //build
-                clearScreen();
-                printSubHeader("CUSTOM ARRANGEMENT BUILDER");
-                
-                std::cout << "\n Creating custom arrangement...\n";
-                std::cout << " This demonstrates the Builder pattern!\n\n";
-                
-                // 1) Wrap abstract Plant* as an Item (adapter) and hand over OWNERSHIP
-                std::unique_ptr<Item> base(new PlantAsItemAdapter(plant));
-
-                // 2) Drive the builder (owned-base API; no clones anywhere)
-                ConcreteArrangementBuilder builder;
-                builder.reset();
-                builder.buildBasePlant(std::move(base));  
-
-                // These flags/values should be gathered earlier in your UI flow
-                if (wantPot)  builder.buildPot (potPrice,  potColor);
-                if (wantWrap) builder.buildWrap(wrapPrice, wrapMessage);
-                if (wantNote) builder.buildNote(notePrice, noteText);
-
-                // 3) Get the finished decorated Item
-                std::unique_ptr<Item> giftItem = builder.getResult();
-                if (!giftItem) {
-                    printError("Failed to build the arrangement.");
-                    pressEnter();
+                if (notes.empty()) {
+                    printError("No note colors available.");
                     break;
                 }
 
-                std::cout << " Arrangement created: " << giftItem->describe() << "\n";
-                std::cout << " Total price: R" << giftItem->priceFunc() << "\n";
-
-                std::cout << "\n Add this arrangement to cart? (1 = yes, 0 = no): ";
-                int add = getValidatedInput(0, 1);
-                if (add == 1) {
-                    inventory->addArrangementToCart(std::move(giftItem));
-                    printSuccess("Added to cart!");
-                } 
-                else 
-                {
-                    printSuccess("Arrangement built (not added to cart).");
+                std::cout << "\n Available Note Colors:\n";
+                for (size_t i = 0; i < notes.size(); ++i) {
+                    std::cout << "  " << (i + 1) << ". " << notes[i] << "\n";
                 }
-                pressEnter();
+
+                std::cout << "\n Select note color (0 to skip): ";
+                int ix = getValidatedInput(0, static_cast<int>(notes.size()));
+                if (ix == 0) {
+                wantNote = false;
+                    std::cout << " Skipped note.\n";
+                    break;
+                }
+
+                noteColor = notes[static_cast<size_t>(ix - 1)];
+
+                std::cout << "\n Enter note text (leave blank to skip): ";
+                eat_pending_newline();                 
+                std::getline(std::cin, noteText);
+
+                if (!noteText.empty() && noteText.back() == '\r') noteText.pop_back();
+
+                if (noteText.empty()) {
+                    wantNote = false;
+                    std::cout << " Skipped note.\n";
+                } else {
+                    wantNote = true;
+                    std::cout << " ✓ Note added (FREE)\n";
+                }
                 break;
             }
 
-            case 5: {
+            case 4: { // View all options
                 clearScreen();
-                printSubHeader("ALL DECORATION OPTIONS");
-                inventory->displayAllOptions();
+                printSubHeader("Available Decoration Options");
+                std::cout << "\n🎁 Gift Wrap Colors:\n";
+                for (const auto& c : inventory->getGiftWraps()) std::cout << "  • " << c << "\n";
+                std::cout << "\n🪴 Pot Colors:\n";
+                for (const auto& c : inventory->getPots()) std::cout << "  • " << c << "\n";
+                std::cout << "\n📝 Note Colors:\n";
+                for (const auto& c : inventory->getNotes()) std::cout << "  • " << c << "\n";
+                std::cout << "\n";
                 pressEnter();
                 break;
             }
         }
     }
 }
+
 
 //Payment Menu (State Pattern)
 void CompleteNurseryUI::showPaymentMenu() {
