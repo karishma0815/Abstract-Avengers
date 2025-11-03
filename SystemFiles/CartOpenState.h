@@ -22,6 +22,7 @@ public:
 
   void onCheckout() override;
   void onCancel() override;
+  void onAssist() override;
 
 private:
   CartOpenState() = default;

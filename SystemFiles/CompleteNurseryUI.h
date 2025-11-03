@@ -103,6 +103,13 @@
 #include "SalesContext.h"
 #include "BrowsingState.h"
 #include "AwaitingStockState.h"
+#include "SeekingAssistanceState.h"
+#include "CartOpenState.h"
+#include "PendingPaymentState.h"
+#include "PaymentAuthorizedState.h"
+#include "PaymentFailedState.h"
+#include "CompletedState.h"
+#include "CancelledState.h"
 
 #include"Pine.h"
 #include"Lotus.h"
@@ -184,6 +191,7 @@ public:
     void showPaymentMenu();
     void personalizeSelectedPlant(Plant* plant);
     void buildArrangementFlow();
+    void ensureSalesContext();
 
     //Helper functions
     void displayCart();
