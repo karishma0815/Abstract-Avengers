@@ -1,0 +1,44 @@
+/**
+ * @mainpage Nursery System Documentation
+ *
+ * @section intro Introduction
+ * A comprehensive plant nursery management system that handles inventory, 
+ * sales, customer management, and plant care operations.
+ *
+ * @section features Features
+ * - Plant inventory management with various plant types (Flowers, Succulents, Trees)
+ * - Customer sales system with shopping cart and payment processing
+ * - Plant state management (Seedling, Flowering, Mature, etc.)
+ * - Staff management with different roles (Gardeners, Sales, Delivery)
+ * - Plant care command system (Watering, Fertilizing, Pruning)
+ * - Customer query handling and support
+ * - Arrangement building with decorator pattern
+ *
+ * @section design Design Patterns
+ * This system implements several design patterns:
+ * - **State Pattern**: For plant lifecycle and sales process states
+ * - **Factory Pattern**: For creating plants and staff members
+ * - **Observer Pattern**: For stock management notifications
+ * - **Decorator Pattern**: For arrangement customization
+ * - **Command Pattern**: For plant care operations
+ * - **Strategy Pattern**: For pricing and recommendation strategies
+ * - **Iterator Pattern**: For collection traversal
+ * - **Mediator Pattern**: For inventory communication
+ *
+ * @section usage Usage
+ * To build the system:
+ * \code
+ * cd SystemFiles
+ * make
+ * make run
+ * \endcode
+ *
+ * @section testing Testing
+ * Run unit tests with:
+ * \code
+ * make test-withTheNameOfTheFile
+ * make valgrind
+ * \endcode
+ *
+ * @author Taskeen, Sabira, Karishma, Rene, Kiolin
+ */
