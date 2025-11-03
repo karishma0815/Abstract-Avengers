@@ -15,3 +15,9 @@ bin/
 *.so
 *.a
 *.dylib
+
+# Windows Zone.Identifier metadata files
+*.Identifier
+:Zone.Identifier
+Zone.Identifier
+*:Zone.Identifier
