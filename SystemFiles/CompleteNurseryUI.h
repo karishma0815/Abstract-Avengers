@@ -38,6 +38,7 @@
 #include "FertilizeCommand.h"
 #include "PruneCommand.h"
 #include "SunlightCommand.h"
+#include"Promotional.h"
 
 // Strategy patterns (Sabira)
 #include "StratContext.h"

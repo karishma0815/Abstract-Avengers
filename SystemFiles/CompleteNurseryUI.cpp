@@ -137,6 +137,8 @@ void CompleteNurseryUI::setupQueryChain() {
     
     customerQueryChain->setNext(salesExpert);
     salesExpert->setNext(plantExpert);
+    delete salesExpert;
+    delete plantExpert;
 }
 
 // UI Helper functions
@@ -816,6 +818,7 @@ double CompleteNurseryUI::calculateCartTotal() {
 
 // Recommendation Menu (Strategy Pattern)
 void CompleteNurseryUI::showRecommendationMenu() {
+    while(true){
     clearScreen();
     printHeader("💡 PLANT RECOMMENDATIONS");
     
@@ -832,49 +835,104 @@ void CompleteNurseryUI::showRecommendationMenu() {
     std::cout << "\n";
     switch (choice) {
         case 1:
+            clearScreen();
             strategyContext->setRecommStrategy(new DefaultRecomm());
             strategyContext->executeRecommStrategy();
+            pressEnter();
             break;
         case 2:
+            clearScreen();
             strategyContext->setRecommStrategy(new WaterRecomm());
             strategyContext->executeRecommStrategy();
+            pressEnter();
             break;
         case 3:
+            clearScreen();
             strategyContext->setRecommStrategy(new SunlightRecomm());
             strategyContext->executeRecommStrategy();
+            pressEnter();
             break;
     }
-    pressEnter();
+   // pressEnter();
+}
 }
 
-// Pricing Menu (Sabira's Strategy Pattern)
+// Pricing Menu (Strategy Pattern for pricing)
 void CompleteNurseryUI::showPricingMenu() {
-    clearScreen();
-    printHeader("💰 PRICING OPTIONS");
-    
-    double basePrice = 25.0;
-    
-    std::cout << "\n 1. Regular Pricing\n";
-    std::cout << " 2. Bulk Discount (10+ items)\n";
-    std::cout << " 0. Back\n\n";
-    
-    std::cout << " Enter choice: ";
-    int choice = getValidatedInput(0, 2);
-    
-    if (choice == 0) return;
-    
-    std::cout << "\n";
-    switch (choice) {
-        case 1:
-            strategyContext->setPricingStrategy(new RegularPrice());
-            std::cout << " Regular price: R" << strategyContext->executePricingStrategy(1, basePrice, "") << "\n";
-            break;
-        case 2:
-            strategyContext->setPricingStrategy(new BulkDiscount());
-            std::cout << " Bulk price (10 items): R" << strategyContext->executePricingStrategy(10, basePrice, "BULK10") << "\n";
-            break;
+    while (true) {
+        clearScreen();
+        printHeader("💰 PRICING OPTIONS");
+
+        if (!currentCustomer) {
+            printError("Please sign in as a customer first!");
+            pressEnter();
+            return;
+        }
+
+        // Calculate cart count and total
+        CartIterator cartIt(currentCustomer->getCart());
+        int itemCount = 0;
+        for (cartIt.first(); !cartIt.isDone(); cartIt.next()) itemCount++;
+        double cartTotal = calculateCartTotal();
+
+        std::cout << "\n Cart items: " << itemCount << "\n";
+        std::cout << " Current total: R" << cartTotal << "\n";
+
+        if (itemCount == 0) {
+            printError("Your cart is empty! Add items before pricing.");
+            pressEnter();
+            return;
+        }
+
+        std::cout << "\n 1. Regular Pricing\n";
+        std::cout << " 2. Bulk Discount (10+ items)\n";
+        std::cout << " 3. Promotional (enter code)\n";
+        std::cout << " 0. Back\n\n";
+
+        std::cout << " Enter choice: ";
+        int choice = getValidatedInput(0, 3);
+
+        if (choice == 0) return;
+
+        std::cout << "\n";
+        switch (choice) {
+            case 1: {
+                // Regular pricing – no discounts; we treat cartTotal as the base
+                strategyContext->setPricingStrategy(new RegularPrice());
+                double total = strategyContext->executePricingStrategy(1, cartTotal, "");
+                std::cout << " Regular total: R" << total << "\n";
+                break;
+            }
+            case 2: {
+                // Bulk: needs 10+ items
+                if (itemCount >= 10) {
+                    strategyContext->setPricingStrategy(new BulkDiscount());
+                    double discounted = strategyContext->executePricingStrategy(itemCount, cartTotal, "");
+                    std::cout << " Items: " << itemCount << "\n";
+                    std::cout << " Discounted total: R" << discounted << "\n";
+                    std::cout << " You save: R" << (cartTotal - discounted) << "\n";
+                } else {
+                    int needed = 10 - itemCount;
+                    std::cout << " Bulk discount applies at 10+ items. Add " << needed
+                              << " more item" << (needed == 1 ? "" : "s") << " to qualify." << "\n";
+                }
+                break;
+            }
+            case 3: {
+                // Promotional – prompt for a code
+                std::string code;
+                std::cout << " Enter promo code: ";
+                std::getline(std::cin, code);
+
+                strategyContext->setPricingStrategy(new Promotional());
+                double promoTotal = strategyContext->executePricingStrategy(itemCount, cartTotal, code);
+                std::cout << " Total after promo: R" << promoTotal << "\n";
+                std::cout << " You save: R" << (cartTotal - promoTotal) << "\n";
+                break;
+            }
+        }
+        pressEnter();
     }
-    pressEnter();
 }
 
 // Help Menu (Chain of Responsibility)
