@@ -19,10 +19,6 @@ The goal is to show how structured design brings order and flexibility to a comp
 
 <!--[Report](Documents/City_Development_Report.pdf)
 
-[API Documentation](Documents/API_Documentation.pdf)
-
-[Functional Requirements](Documents/Function_Requirements.pdf)
-
 [Doxygen Documentation](Documents/Doxygen/)-->
 
 [UML Diagrams](UML/)
@@ -34,7 +30,7 @@ The goal is to show how structured design brings order and flexibility to a comp
 ### Cloning
 
 ```
-https://github.com/karishma0815/Final-project-214.git
+https://github.com/karishma0815/Abstract-Avengers.git
 ```
 
 ### Building
@@ -42,11 +38,10 @@ https://github.com/karishma0815/Final-project-214.git
 This project can be built using Makefile:
 
 ``` 
-<!--update here-->
-```
-<!--Compilation: make (Ensure you are currently in the SystemFiles directory)
+Compilation: make (Ensure you are currently in the SystemFiles directory)
 Demo Main: make run 
-Testing Main (Unit Tests): make run_tests-->
+Unit Tests: make test-<test_filename>
+```
 
 ### Demo Running
 
@@ -69,7 +64,7 @@ Testing Main (Unit Tests): make run_tests-->
         Taskeen Abdoola<br>u22698681<br>
       </td>
       <td align="center">
-        The Customers & The Sales Floor: <br>Builder<br>Adapter<br>Decorator<br>State<br>
+        The Customers & The Sales Floor: <br>Builder<br>Decorator<br>Adapter<br>State<br>
       </td>
       <td>
         <img src="Images/Scarlet_Witch.jpg" width="200" height="200" style="border-radius: 8px;">

@@ -9,6 +9,7 @@
 #include "PendingPaymentState.h"
 #include "CancelledState.h"
 #include "SalesContext.h"
+#include "SeekingAssistanceState.h"
 
 CartOpenState& CartOpenState::instance() 
 {
@@ -37,4 +38,10 @@ void CartOpenState::onCancel()
 {
   ctxFunc().notify("Order cancelled.");
   ctxFunc().setState(CancelledState::instance());
+}
+
+void CartOpenState::onAssist() 
+{
+  ctxFunc().notify("Connecting you to staff for assistance...");
+  ctxFunc().setState(SeekingAssistanceState::instance());
 }

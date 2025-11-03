@@ -4,7 +4,7 @@
 #include <iostream>
 
 FloweringState::FloweringState()
-    : daysinState(0), requestDays(0), isInSeason(false), currentSeason(""),
+    : daysinState(0), requestDays(10), isInSeason(true), currentSeason(""),
       floweringStrtSeason(""), fwaitContext(nullptr), fgrwContext(nullptr),
       fharvestContext(nullptr), fcheckReadiness(nullptr), fgetStateName("Flowering"),
       fisValid(true), fgetDaysinState(0), fisinSeason(false), fincreaseDay(0) {}
@@ -19,8 +19,9 @@ void FloweringState::checkReadiness() {
     }
 }
 
-void FloweringState::harvest(PlantContext*) {
-    std::cout << "Cannot harvest during flowering stage - too early!" << std::endl;
+bool FloweringState::harvest(PlantContext*) {
+ std::cout << "Cannot harvest during flowering stage - too early!\n";
+    return false;
 }
 
 void FloweringState::grow(PlantContext* ctx) {

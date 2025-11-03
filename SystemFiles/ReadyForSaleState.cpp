@@ -5,7 +5,7 @@
 #include <sstream>
 
 ReadyForSaleState::ReadyForSaleState()
-    : daysinState(0), price(0.0), season(""), prepareSale(""),
+    : daysinState(0), price(100.0), season("Summer"), prepareSale(""),
       fwaitContext(nullptr), fgrwContext(nullptr), fharvestContext(nullptr),
       fcheckReadiness(nullptr), fgetStateName("Ready for Sale"), fisValid(true),
       fgetDaysinState(0), fgetPrice(0.0) {}
@@ -16,13 +16,18 @@ void ReadyForSaleState::checkReadiness() {
     std::cout << "Plant is ready for sale at price: $" << price << std::endl;
 }
 
-void ReadyForSaleState::harvest(PlantContext* ctx) {
-    std::cout << "Plant has been sold! Transitioning to Sold state." << std::endl;
+bool ReadyForSaleState::harvest(PlantContext* ctx) {
+    std::cout << "Plant has been sold! Transitioning to Sold state.\n";
     ctx->transitionTo(new SoldState());
+    return true;  
 }
 
-void ReadyForSaleState::grow(PlantContext*) {
-    std::cout << "Plant is waiting to be sold. No further growth." << std::endl;
+
+void ReadyForSaleState::grow(PlantContext*ctx) {
+ daysinState++;
+    if (daysinState >= 5) {  
+        ctx->transitionTo(new SoldState());
+    }
 }
 
 std::string ReadyForSaleState::getStateName() {

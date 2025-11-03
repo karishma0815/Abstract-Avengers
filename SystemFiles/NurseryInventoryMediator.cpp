@@ -9,14 +9,14 @@ NurseryInventoryMediator::NurseryInventoryMediator(){
 
 void NurseryInventoryMediator::notify(Staff *sender, const std::string &event, Plant *plant, int quantity){
     std::string senderName = (sender != nullptr) ? sender->getName() : "System";
-    std::cout << "Inventory mediator: " << senderName << " triggered event: " << event << std::endl;
+    std::cout << " Inventory mediator: " << senderName << " triggered event: " << event << std::endl;
     
     std::string plantId = getPlantId(plant);
     int currentSalesFloorStock = getSalesFloorStock(plant);
     
     if(event == "plant moved to sales"){
         updateInventory(plant, quantity);
-        std::cout << "🔄 Moved " << quantity << " " << plantId << " from greenhouse to sales floor. Sales floor now has: " 
+        std::cout << " Moved " << quantity << " " << plantId << " from greenhouse to sales floor. Sales floor now has: " 
                   << getSalesFloorStock(plant) << std::endl;
         
     } else if(event == "plant sold"){
@@ -27,11 +27,11 @@ void NurseryInventoryMediator::notify(Staff *sender, const std::string &event, P
         
         if (quantity > 0) {
             updateInventory(plant, -quantity);
-            std::cout << "💰 Sold " << quantity << " " << plantId << " from sales floor. Remaining: " 
+            std::cout << " Sold " << quantity << " " << plantId << " from sales floor. Remaining: " 
                       << getSalesFloorStock(plant) << std::endl;
             autoRestockIfNeeded(plantId);
         } else {
-            std::cout << "❌ Cannot sell " << plantId << " - out of stock on sales floor!" << std::endl;
+            std::cout << " Cannot sell " << plantId << " - out of stock on sales floor!" << std::endl;
         }
         
     } else if(event == "customer delivery"){
@@ -42,14 +42,14 @@ void NurseryInventoryMediator::notify(Staff *sender, const std::string &event, P
         
         if (quantity > 0) {
             updateInventory(plant, -quantity);
-            std::cout << "🚚 Delivered " << quantity << " " << plantId << " to customer. Sales floor remaining: " 
+            std::cout << " Delivered " << quantity << " " << plantId << " to customer. Sales floor remaining: " 
                       << getSalesFloorStock(plant) << std::endl;
             
             autoRestockIfNeeded(plantId);
         }
         
     } else if(event == "new shipment"){
-        std::cout << "💡 Greenhouse always has stock for " << plantId << ". No need for new shipments." << std::endl;
+        std::cout << " Greenhouse always has stock for " << plantId << ". No need for new shipments." << std::endl;
         
     } else if(event == "return to greenhouse"){
         if(quantity > currentSalesFloorStock) {
@@ -58,17 +58,17 @@ void NurseryInventoryMediator::notify(Staff *sender, const std::string &event, P
         }
         
         updateInventory(plant, -quantity);
-        std::cout << "↩️ Returned " << quantity << " " << plantId << " from sales floor to greenhouse. Sales floor now has: " 
+        std::cout << " Returned " << quantity << " " << plantId << " from sales floor to greenhouse. Sales floor now has: " 
                   << getSalesFloorStock(plant) << std::endl;
         
     } else if(event == "check stock"){
-        std::cout << "📊 Current stock for " << plantId << " - Greenhouse: ALWAYS IN STOCK, Sales Floor: " << currentSalesFloorStock << std::endl;
+        std::cout << " Current stock for " << plantId << " - Greenhouse: ALWAYS IN STOCK, Sales Floor: " << currentSalesFloorStock << std::endl;
         
     } else if(event == "restock from greenhouse"){
         restockFromGreenhouse(plant, quantity);
         
     } else {
-        std::cout << "Unknown event: " << event << std::endl;
+        std::cout << " Unknown event: " << event << std::endl;
     }
 }
 
@@ -135,7 +135,7 @@ void NurseryInventoryMediator::autoRestockIfNeeded(const std::string &plantId){
     if (currentStock == 0) {
         int restockAmount = initialStock;
         salesFloorStock[plantId] = initialStock;
-        std::cout << "🔄 AUTO-RESTOCK: Restocked " << restockAmount << " " << plantId 
+        std::cout << " AUTO-RESTOCK: Restocked " << restockAmount << " " << plantId 
                   << " from greenhouse. Sales floor now has: " << salesFloorStock[plantId] << std::endl;
     }
 }
@@ -148,7 +148,7 @@ void NurseryInventoryMediator::restockFromGreenhouse(Plant *plant, int quantity)
     std::string plantId = getPlantId(plant);
     
     salesFloorStock[plantId] += quantity;
-    std::cout << "🔄 RESTOCKED " << quantity << " " << plantId 
+    std::cout << " RESTOCKED " << quantity << " " << plantId 
               << " from greenhouse. Sales floor now has: " << salesFloorStock[plantId] << std::endl;
 }
 

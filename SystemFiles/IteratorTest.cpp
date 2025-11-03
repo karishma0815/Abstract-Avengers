@@ -4,21 +4,16 @@
 #include "Plant.h"
 #include "PlantInventory.h"
 #include "Iterator.h"
-#include "CareIterator.h"
 #include "CartIterator.h"
 #include "PlantIterator.h"
 #include "PriceRangeIterator.h"
+#include "Rose.h"
+#include "Cacti.h"
+#include "Orchid.h"
+#include "Jade.h"
+#include "Lotus.h"
 #include <vector>
 #include <memory>
-
-// Mock Plant class for testing (if your actual Plant class has dependencies)
-class TestPlant : public Plant {
-public:
-    TestPlant(std::string name, double price, std::string careInstructions = "") 
-        : Plant(name, false, "TEST_" + name, 5, 3, price) {
-        setCareInstructions(careInstructions);
-    }
-};
 
 // Test case: PlantIterator with empty inventory
 TEST_CASE("PlantIterator with Empty Inventory") {
@@ -39,10 +34,10 @@ TEST_CASE("PlantIterator with Empty Inventory") {
 TEST_CASE("PlantIterator with Multiple Plants") {
     PlantInventory inventory;
     
-    // Add test plants
-    Plant* plant1 = new TestPlant("Rose", 25.0, "Water daily");
-    Plant* plant2 = new TestPlant("Cactus", 15.0, "Low water needs");
-    Plant* plant3 = new TestPlant("Fern", 35.0, "Medium water");
+    // Add test plants using real plant classes
+    Plant* plant1 = new Rose("Rose", 25.0);
+    Plant* plant2 = new Cacti("Cactus", 15.0);
+    Plant* plant3 = new Orchid("Fern", 35.0);
     
     inventory.add(plant1);
     inventory.add(plant2);
@@ -73,46 +68,13 @@ TEST_CASE("PlantIterator with Multiple Plants") {
     //delete plant3;
 }
 
-//Test case: CareIterator filters correctly
-TEST_CASE("CareIterator Filters by Care Instructions") {
-    PlantInventory inventory;
-    
-    Plant* lowCarePlant = new TestPlant("Cactus", 15.0, "Low maintenance plant");
-    Plant* highCarePlant = new TestPlant("Rose", 25.0, "Needs daily care and attention");
-    Plant* mediumCarePlant = new TestPlant("Fern", 20.0, "Medium care requirements");
-    
-    inventory.add(lowCarePlant);
-    inventory.add(highCarePlant);
-    inventory.add(mediumCarePlant);
-    
-    // Test filtering for "low" care plants
-    CareIterator lowCareIterator(&inventory, "low");
-    
-    int count = 0;
-    for (lowCareIterator.first(); !lowCareIterator.isDone(); lowCareIterator.next()) {
-        std::string care = lowCareIterator.currentItem()->getCareInstructions();
-        // Convert to lowercase for check
-        std::string lowerCare = care;
-        std::transform(lowerCare.begin(), lowerCare.end(), lowerCare.begin(), ::tolower);
-        CHECK(lowerCare.find("low") != std::string::npos);
-        count++;
-    }
-    
-    CHECK(count == 1); // Only cactus should match
-    
-    // Cleanup
-    //delete lowCarePlant;
-    //delete highCarePlant;
-    //delete mediumCarePlant;
-}
-
 // Test case: PriceRangeIterator filters by price
 TEST_CASE("PriceRangeIterator Filters by Price Range") {
     PlantInventory inventory;
     
-    Plant* cheapPlant = new TestPlant("Cactus", 10.0);
-    Plant* mediumPlant = new TestPlant("Fern", 25.0);
-    Plant* expensivePlant = new TestPlant("Rose", 50.0);
+    Plant* cheapPlant = new Cacti("Cactus", 10.0);
+    Plant* mediumPlant = new Orchid("Fern", 25.0);
+    Plant* expensivePlant = new Rose("Rose", 50.0);
     
     inventory.add(cheapPlant);
     inventory.add(mediumPlant);
@@ -141,8 +103,8 @@ TEST_CASE("PriceRangeIterator Filters by Price Range") {
 TEST_CASE("CartIterator with Shopping Cart") {
     PlantInventory cart; // Represents shopping cart
     
-    Plant* plant1 = new TestPlant("Rose", 25.0);
-    Plant* plant2 = new TestPlant("Cactus", 15.0);
+    Plant* plant1 = new Rose("Rose", 25.0);
+    Plant* plant2 = new Cacti("Cactus", 15.0);
     
     cart.add(plant1);
     cart.add(plant2);
@@ -170,8 +132,8 @@ TEST_CASE("CartIterator with Shopping Cart") {
 TEST_CASE("Iterator HasNext Method") {
     PlantInventory inventory;
     
-    Plant* plant1 = new TestPlant("Plant1", 10.0);
-    Plant* plant2 = new TestPlant("Plant2", 20.0);
+    Plant* plant1 = new Jade("Plant1", 10.0);
+    Plant* plant2 = new Lotus("Plant2", 20.0);
     
     inventory.add(plant1);
     inventory.add(plant2);
@@ -193,9 +155,9 @@ TEST_CASE("Iterator HasNext Method") {
 TEST_CASE("Multiple Iterator Types Work Independently") {
     PlantInventory inventory;
     
-    Plant* plant1 = new TestPlant("LowCarePlant", 10.0, "Low maintenance");
-    Plant* plant2 = new TestPlant("HighCarePlant", 40.0, "High maintenance needed");
-    Plant* plant3 = new TestPlant("BudgetPlant", 15.0, "Easy to care for");
+    Plant* plant1 = new Rose("LowCarePlant", 10.0);
+    Plant* plant2 = new Orchid("HighCarePlant", 40.0);
+    Plant* plant3 = new Cacti("BudgetPlant", 15.0);
     
     inventory.add(plant1);
     inventory.add(plant2);
@@ -203,28 +165,20 @@ TEST_CASE("Multiple Iterator Types Work Independently") {
     
     // Test different iterators on same inventory
     PlantIterator allIterator(&inventory);
-    CareIterator careIterator(&inventory, "low");
     PriceRangeIterator priceIterator(&inventory, 10.0, 20.0);
     
-    int allCount = 0, careCount = 0, priceCount = 0;
+    int allCount = 0, priceCount = 0;
     
     // Count all plants
     for (allIterator.first(); !allIterator.isDone(); allIterator.next()) {
         allCount++;
     }
-    
-    // Count low care plants
-    for (careIterator.first(); !careIterator.isDone(); careIterator.next()) {
-        careCount++;
-    }
-    
     // Count plants in price range
     for (priceIterator.first(); !priceIterator.isDone(); priceIterator.next()) {
         priceCount++;
     }
     
     CHECK(allCount == 3);
-    CHECK(careCount == 1); // Only "Low maintenance" contains "low"
     CHECK(priceCount == 2); // Plants costing 10 and 15
     
     // Cleanup
@@ -239,19 +193,17 @@ TEST_CASE("Iterator Edge Cases") {
         PlantInventory emptyInventory;
         
         PlantIterator plantIt(&emptyInventory);
-        CareIterator careIt(&emptyInventory, "any");
         PriceRangeIterator priceIt(&emptyInventory, 0.0, 100.0);
         CartIterator cartIt(&emptyInventory);
         
         CHECK(plantIt.isDone() == true);
-        CHECK(careIt.isDone() == true);
         CHECK(priceIt.isDone() == true);
         CHECK(cartIt.isDone() == true);
     }
     
     SUBCASE("Single plant inventory") {
         PlantInventory singleInventory;
-        Plant* singlePlant = new TestPlant("Single", 10.0, "Test care");
+        Plant* singlePlant = new Jade("Single", 10.0);
         singleInventory.add(singlePlant);
         
         PlantIterator it(&singleInventory);

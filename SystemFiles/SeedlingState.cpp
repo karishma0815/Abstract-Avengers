@@ -4,8 +4,8 @@
 #include <iostream>
 
 SeedlingState::SeedlingState() 
-    : daysinState(0), requestDays(0), hasReceivedProperCare(false),
-      minDaysInState(0), fwaitContext(nullptr), fgrwContext(nullptr),
+    : daysinState(0), requestDays(0), hasReceivedProperCare(true),
+      minDaysInState(5), fwaitContext(nullptr), fgrwContext(nullptr),
       fharvestContext(nullptr), fcheckReadiness(nullptr), fgetStateName("Seedling"),
       fisValid(true), fgetDaysinState(0), frequiredDaysInState(0) {}
 
@@ -19,8 +19,9 @@ void SeedlingState::checkReadiness() {
     }
 }
 
-void SeedlingState::harvest(PlantContext*) {
-    std::cout << "Cannot harvest a seedling - too early!" << std::endl;
+bool SeedlingState::harvest(PlantContext*) {
+     std::cout << "Cannot harvest a seedling - too early!\n";
+    return false;
 }
 
 void SeedlingState::grow(PlantContext* ctx) {

@@ -20,7 +20,7 @@ public:
         * @param message Wrap message text.
         * @return Finished item.
         */
-    std::unique_ptr<Item> buildGift(const Item& proto,
+    std::unique_ptr<Item> buildGift(std::unique_ptr<Item> base,
                                     double potExtra,  const std::string& potColor,
                                     double wrapExtra, const std::string& message);
 
@@ -30,7 +30,7 @@ public:
         * @param text Note text.
         * @return Finished item.
         */
-    std::unique_ptr<Item> buildGiftWithNote(const Item& proto,
+    std::unique_ptr<Item> buildGiftWithNote(std::unique_ptr<Item> base,
                                             double potExtra,  const std::string& potColor,
                                             double wrapExtra, const std::string& message,
                                             double noteExtra, const std::string& noteText);

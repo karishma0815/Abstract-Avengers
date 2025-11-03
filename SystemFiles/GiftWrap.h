@@ -19,7 +19,6 @@ public:
     double priceFunc() const override;
     std::string describe() const override;
     bool readyForSale() const override { return ItemDecorator::readyForSale(); }
-    std::unique_ptr<Item> clone() const override;
 
 private:
     double      extra_;

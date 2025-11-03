@@ -31,8 +31,3 @@ Item* ItemDecorator::innerRaw() const
 {
     return inner_.get();
 }
-
-std::unique_ptr<Item> ItemDecorator::cloneInner() const 
-{
-    return inner_->clone();
-}

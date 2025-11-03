@@ -1,5 +1,7 @@
 #include "Jacaranda.h"
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 const double Jacaranda::OPTIMAL_WATER = 1.5;
 const double Jacaranda::MIN_WATER = 1.0;
@@ -24,17 +26,15 @@ std::string Jacaranda::getPlantType() const {
 void Jacaranda::water(double amount){
     if (isAlive) {
         if (amount > MAX_WATER) {
-            std::cout << "JACARANDA CARE: Too much water! Maximum is " << static_cast<int>(MAX_WATER) 
-                      << "L. Optimal is 1.5L." << std::endl;  // ✅ Add warning
+            std::cout << " JACARANDA CARE: Too much water! Maximum is " << static_cast<int>(MAX_WATER) << "L. Optimal is 1.5L." << std::endl;
+            return;
         } else if (amount < MIN_WATER) {
-            std::cout << "JACARANDA CARE: Needs at least " << static_cast<int>(MIN_WATER) 
-                      << "L! Optimal is 1.5L." << std::endl;
-        } else if (amount == OPTIMAL_WATER) {
-            std::cout << "JACARANDA CARE: Perfect! 1.5L is the ideal amount." << std::endl;
-        }
+            std::cout << " JACARANDA CARE: Needs at least " << static_cast<int>(MIN_WATER) << "L! Optimal is 1.5L." << std::endl;
+            return;
+        } 
         
         lastWaterLevel += amount;
-        std::cout << "Watered " << Plant::name << " (Jacaranda) with " << amount << "L." << std::endl;
+        std::cout << " Watered " << Plant::name << " (Jacaranda) with " << amount << "L." << std::endl;
     } else {
         std::cout << "Cannot water " << Plant::name << " - jacaranda tree is not alive!" << std::endl;
     }
@@ -45,14 +45,13 @@ void Jacaranda::fertilize(const std::string &fertilizerType){
         std::string optimalFertilizer = getOptimalFertilizer();
         
         if (fertilizerType != optimalFertilizer) {
-            std::cout << "JACARANDA CARE: Consider using '" << optimalFertilizer 
-                      << "' fertilizer for best growth and flowering." << std::endl;  // ✅ Combined message
+            std::cout << " JACARANDA CARE: Consider using '" << optimalFertilizer << "' fertilizer for best growth and flowering." << std::endl;
         } else {
-            std::cout << "JACARANDA CARE: Perfect fertilizer choice for flowering!" << std::endl;
+            std::cout << " JACARANDA CARE: Perfect fertilizer choice for flowering!" << std::endl;
         }
         
         fertilized = true;
-        std::cout << "Fertilized " << Plant::name << " (Jacaranda) with " << fertilizerType << std::endl;
+        std::cout << " Fertilized " << Plant::name << " (Jacaranda) with " << fertilizerType << std::endl;
     } else {
         std::cout << "Cannot fertilize " << Plant::name << " - jacaranda tree is not alive!" << std::endl;
     }
@@ -61,17 +60,15 @@ void Jacaranda::fertilize(const std::string &fertilizerType){
 void Jacaranda::prune(int intensity){
     if (isAlive) {
         if (intensity > MAX_PRUNE_INTENSITY) {
-            std::cout << "JACARANDA CARE: Too aggressive! Maximum pruning intensity is " 
-                      << MAX_PRUNE_INTENSITY << ". Optimal is " << OPTIMAL_PRUNE_INTENSITY << "." << std::endl;
+            std::cout << " JACARANDA CARE: Too aggressive! Maximum pruning intensity is " << MAX_PRUNE_INTENSITY << ". Optimal is " << OPTIMAL_PRUNE_INTENSITY << "." << std::endl;
         } else if (intensity < OPTIMAL_PRUNE_INTENSITY) {
-            std::cout << "JACARANDA CARE: Light pruning is good for maintenance. Optimal intensity is " 
-                      << OPTIMAL_PRUNE_INTENSITY << "." << std::endl;
+            std::cout << " JACARANDA CARE: Light pruning is good for maintenance. Optimal intensity is " << OPTIMAL_PRUNE_INTENSITY << "." << std::endl;
         } else if (intensity == OPTIMAL_PRUNE_INTENSITY) {
-            std::cout << "JACARANDA CARE: Perfect pruning intensity!" << std::endl;
+            std::cout << " JACARANDA CARE: Perfect pruning intensity!" << std::endl;
         }
         
-        std::cout << "JACARANDA CARE: Prune lightly after flowering to maintain shape." << std::endl;
-        std::cout << "Pruned " << Plant::name << " (Jacaranda) with intensity " << intensity << std::endl;
+        std::cout << " JACARANDA CARE: Prune lightly after flowering to maintain shape." << std::endl;
+        std::cout << " Pruned " << Plant::name << " (Jacaranda) with intensity " << intensity << std::endl;
     } else {
         std::cout << "Cannot prune " << Plant::name << " - jacaranda tree is not alive!" << std::endl;
     }
@@ -80,34 +77,30 @@ void Jacaranda::prune(int intensity){
 void Jacaranda::provideSunlight(int hours, const std::string &intensity){
     if (isAlive) {
         if (hours < MIN_SUNLIGHT) {
-            std::cout << "JACARANDA CARE: Needs more sun! Minimum " << MIN_SUNLIGHT 
-                      << " hours daily. Optimal is " << OPTIMAL_SUNLIGHT << " hours." << std::endl;
+            std::cout << " JACARANDA CARE: Needs more sun! Minimum " << MIN_SUNLIGHT << " hours daily. Optimal is " << OPTIMAL_SUNLIGHT << " hours." << std::endl;
         } else if (hours > MAX_SUNLIGHT) {
-            std::cout << "JACARANDA CARE: Too much direct sun! Maximum " << MAX_SUNLIGHT 
-                      << " hours. Optimal is " << OPTIMAL_SUNLIGHT << " hours." << std::endl;
+            std::cout << " JACARANDA CARE: Too much direct sun! Maximum " << MAX_SUNLIGHT << " hours. Optimal is " << OPTIMAL_SUNLIGHT << " hours." << std::endl;
         } else if (hours >= OPTIMAL_SUNLIGHT) {
-            std::cout << "JACARANDA CARE: Perfect sunlight amount for flowering!" << std::endl;
+            std::cout << " JACARANDA CARE: Perfect sunlight amount for flowering!" << std::endl;
         }
         
         if (intensity == "low") {
-            std::cout << "JACARANDA CARE: Prefers medium to high intensity sunlight for best growth." << std::endl;
+            std::cout << " JACARANDA CARE: Prefers medium to high intensity sunlight for best growth." << std::endl;
         }
         
         exposureSunlightHours += hours;
-        std::cout << "Provided " << hours << " hours of " << intensity 
-                  << " sunlight to " << Plant::name << " (Jacaranda)" << std::endl;
+        std::cout << " Provided " << hours << " hours of " << intensity << " sunlight to " << Plant::name << " (Jacaranda)" << std::endl;
     } else {
         std::cout << "Cannot provide sunlight to " << Plant::name << " - jacaranda tree is not alive!" << std::endl;
     }
 }
 
 std::string Jacaranda::getCareInstructions() const{
-    std::string instructions = "JACARANDA TREE CARE: \n";
-        instructions += "• Water: 1.5L regularly (min 1L, max 3L)\n";
-        instructions += "• Sunlight: " + std::to_string(OPTIMAL_SUNLIGHT) + " hours daily (min " + 
-                    std::to_string(MIN_SUNLIGHT) + " hours)\n";
-        instructions += "• Fertilizer: " + getOptimalFertilizer() + " fertilizer regularly when young\n";
-        instructions += "• Pruning: Light pruning (intensity " + std::to_string(OPTIMAL_PRUNE_INTENSITY) + 
-                    ") after flowering for shape";
-        return instructions;
+    std::stringstream ss;
+        ss << " JACARANDA TREE CARE: \n";
+        ss << "• Water: " << std::fixed << std::setprecision(2) << OPTIMAL_WATER << "L regularly (min " << MIN_WATER << "L, max " << MAX_WATER << "L)\n";
+        ss << "• Sunlight: " << OPTIMAL_SUNLIGHT << " hours daily (min " << MIN_SUNLIGHT << " hours)\n";
+        ss << "• Fertilizer: " << getOptimalFertilizer() << " fertilizer regularly when young\n";
+        ss << "• Pruning: Light pruning (intensity " << OPTIMAL_PRUNE_INTENSITY << ") after flowering for shape";
+        return ss.str();
 }

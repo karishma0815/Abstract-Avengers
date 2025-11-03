@@ -19,7 +19,6 @@ public:
     double priceFunc() const override;
     std::string describe() const override;
     bool readyForSale() const override;
-    std::unique_ptr<Item> clone() const override;
 
     const std::string& name() const;
     void setReady(bool r);

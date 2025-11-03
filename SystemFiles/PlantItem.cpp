@@ -27,11 +27,6 @@ bool PlantItem::readyForSale() const
     return ready_; 
 }
 
-std::unique_ptr<Item> PlantItem::clone() const 
-{
-    return std::unique_ptr<Item>( new PlantItem(*this) );
-}
-
 const std::string& PlantItem::name() const 
 { 
     return name_; 
