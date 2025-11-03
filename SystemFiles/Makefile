@@ -128,7 +128,7 @@ test: $(TEST_TARGET)
 
 $(TEST_TARGET): $(CORE_OBJS)
 	@echo "Please specify a test file. Usage: make test-<test_filename>"
-	@echo "Example: make test-PlantTest.cpp"
+	@echo "Example: make test-PlantTest"
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
