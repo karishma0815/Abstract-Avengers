@@ -526,151 +526,17 @@ void CompleteNurseryUI::buildArrangementFlow() {
     pressEnter();
 }
 
-//for arrangements
-void CompleteNurseryUI::buildArrangementFlow() {
-    clearScreen();
-    printSubHeader("CUSTOM ARRANGEMENT");
-
-    // Ask how many different plants (min 2)
-    std::cout << "\n How many different plants do you want? (min 2): ";
-    int qty = getValidatedInput(2, 50);
-
-    // Snapshot and ensure enough distinct plants to choose from
-    std::vector<Plant*> available = inventory->getPlants();
-    std::sort(available.begin(), available.end());
-    available.erase(std::unique(available.begin(), available.end()), available.end());
-
-    if (static_cast<int>(available.size()) < qty) {
-        printError("Not enough different plants on the sales floor.");
-        pressEnter();
-        return;
-    }
-
-    // Choose plants (each must be unique)
-    std::vector<std::unique_ptr<Item>> items;
-    items.reserve(static_cast<size_t>(qty));
-    double itemsSubtotal = 0.0;
-
-    for (int k = 0; k < qty; ++k) {
-        clearScreen();
-        std::cout << " Select base plant " << (k+1) << " of " << qty << ":\n\n";
-        for (size_t i = 0; i < available.size(); ++i) {
-            std::cout << "  " << (i+1) << ". " << available[i]->getName()
-                      << " (R" << available[i]->getPrice() << ")\n";
-        }
-        std::cout << "\n Enter choice: ";
-        int idx = getValidatedInput(1, static_cast<int>(available.size())) - 1;
-
-        Plant* chosen = available[static_cast<size_t>(idx)];
-        available.erase(available.begin() + idx);           // prevent duplicates
-
-        // Wrap abstract Plant* as Item via adapter
-        std::unique_ptr<Item> base(new PlantAsItemAdapter(chosen));
-        itemsSubtotal += base->priceFunc();
-        items.push_back(std::move(base));
-    }
-
-    // Ask ONE-TIME decoration for the whole arrangement (free)
-    bool wantPot=false, wantWrap=false, wantNote=false;
-    std::string potColor, noteText;
-
-    // Pot
-    std::cout << "\n Add decorative pot to the arrangement? (1 = yes, 0 = no): ";
-    wantPot = (getValidatedInput(0,1) == 1);
-    if (wantPot) {
-        const auto& pots = inventory->getPots();
-        if (!pots.empty()) {
-            std::cout << " Available Pots:\n";
-            for (size_t i=0;i<pots.size();++i) std::cout << "  " << (i+1) << ". " << pots[i] << "\n";
-            std::cout << " Choose pot (1-" << pots.size() << "): ";
-            int p = getValidatedInput(1, static_cast<int>(pots.size()));
-            potColor = pots[static_cast<size_t>(p-1)];
-        } else {
-            potColor = "Standard";
-        }
-    }
-
-    // Wrap (bouquet style) — no message
-    std::cout << " Add bouquet-style gift wrap? (1 = yes, 0 = no): ";
-    wantWrap = (getValidatedInput(0,1) == 1);
-
-    // Note (with message)
-    std::cout << " Add a note? (1 = yes, 0 = no): ";
-    wantNote = (getValidatedInput(0,1) == 1);
-    if (wantNote) {
-        std::cout << " Note text: ";
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::getline(std::cin, noteText);
-        if (noteText.empty()) wantNote = false;
-    }
-
-    // Apply the ONE decoration chain to the first item only (free)
-    if (!items.empty() && (wantPot || wantWrap || wantNote)) {
-        ConcreteArrangementBuilder builder;
-        builder.reset();
-        builder.buildBasePlant(std::move(items[0]));   // take ownership
-
-        if (wantPot)  builder.buildPot (0.0, potColor);
-        if (wantWrap) builder.buildWrap(0.0, "Bouquet Wrap");
-        if (wantNote) builder.buildNote(0.0, noteText);
-
-        items[0] = builder.getResult();               // decorated first item
-    }
-
-    // Preview & confirm
-    clearScreen();
-    printSubHeader("ARRANGEMENT PREVIEW (decorated once)");
-    for (size_t i = 0; i < items.size(); ++i) {
-        std::cout << "  - " << items[i]->describe()
-                  << "  [R" << items[i]->priceFunc() << "]";
-        if (i == 0 && (wantPot || wantWrap || wantNote)) std::cout << "  {decor}";
-        std::cout << "\n";
-    }
-    std::cout << "Items subtotal: R" << itemsSubtotal << "\n";
-    std::cout << "Arrangement surcharge: R0 (free)\n";
-    std::cout << "Total price: R" << itemsSubtotal << "\n";
-
-    std::cout << "\n Add arrangement to cart? (1 = yes, 0 = no): ";
-    int addAll = getValidatedInput(0,1);
-    if (addAll == 1) {
-        for (auto& up : items) inventory->addArrangementToCart(std::move(up));
-        printSuccess("Arrangement added to cart!");
-    } else {
-        printSuccess("Arrangement built (not added to cart).");
-    }
-    pressEnter();
-}
-
 //fixed cart menu with loop-> it works properly
 void CompleteNurseryUI::showCartMenu() {
     struct Local {
         static int countPlants(PlantInventory* cart) {
-            int n = 0;
-            if (!cart) return 0;
+            int n = 0; if (!cart) return 0;
             CartIterator it(cart);
             for (it.first(); !it.isDone(); it.next()) ++n;
             return n;
         }
         static std::string stateName(SalesContext* sc) {
             return sc ? sc->current().getStateName() : std::string();
-        }
-        static bool runCheckoutFlow(SalesContext* sc) {
-            // Make sure the machine accepts checkout
-            sc->setState(CartOpenState::instance());
-
-            // CartOpen -> PendingPayment
-            sc->eventCheckout();
-            if (stateName(sc) != "PendingPayment") return false;
-
-            // PendingPayment -> PaymentAuthorized | PaymentFailed
-            sc->eventAuthorize();
-            std::string s = stateName(sc);
-            if (s == "PaymentFailed") return false;
-
-            // PaymentAuthorized -> Completed (or back to Pending on capture fail)
-            if (s == "PaymentAuthorized") sc->eventCommit();
-
-            return stateName(sc) == "Completed";
         }
     };
     // -----------------------------------------------------------------------
@@ -684,7 +550,6 @@ void CompleteNurseryUI::showCartMenu() {
         std::cout << "\n 1. Add Plant to Cart\n";
         std::cout << " 2. Remove from Cart\n";
         std::cout << " 3. Checkout (State machine)\n";
-        std::cout << " 4. Ask for assistance\n";
         std::cout << " 0. Back\n\n";
 
         std::cout << " Enter choice: ";
@@ -791,14 +656,13 @@ void CompleteNurseryUI::showCartMenu() {
             break;
         }
 
-        case 3: { // Checkout (State machine)
-            // Ensure we have a customer and a SalesContext:
+        case 3: { // checkout — interactive state flow
             if (!currentCustomer) currentCustomer = new Customer("Guest");
             if (!salesContext)
                 salesContext = new SalesContext(BrowsingState::instance(), *currentCustomer);
 
-            PlantInventory* actualCart = currentCustomer->getCart();
-            const int plantCount = Local::countPlants(actualCart);
+            PlantInventory* cart = currentCustomer->getCart();
+            const int plantCount = Local::countPlants(cart);
             const int arrCount   = static_cast<int>(inventory->cartArrangementsSnapshot().size());
             const int count      = plantCount + arrCount;
 
@@ -823,14 +687,103 @@ void CompleteNurseryUI::showCartMenu() {
                 break;
             }
 
-            const bool ok = Local::runCheckoutFlow(salesContext);
+            // Ensure we’re in CartOpen and move to PendingPayment
+            salesContext->setState(CartOpenState::instance());
+            salesContext->eventCheckout(); // CartOpen -> PendingPayment
+            if (Local::stateName(salesContext) != "PendingPayment") {
+                printError("Could not move to PendingPayment.");
+                pressEnter();
+                break;
+            }
 
-            if (ok) {
-                // Clear cart items only on success
+            bool finished = false;
+            bool success  = false;
+
+            while (!finished) {
+                const std::string s = Local::stateName(salesContext);
+
+                if (s == "PendingPayment") {
+                    std::cout << "\n Authorize payment? (1=Yes, 0=No): ";
+                    int authYes = getValidatedInput(0, 1);
+#ifdef SUPPORT_TEST_TOGGLES
+                    salesContext->forceNextAuth(authYes == 1);
+#endif
+                    salesContext->eventAuthorize();
+
+                    const std::string afterAuth = Local::stateName(salesContext);
+                    if (afterAuth == "PaymentFailed") {
+                        std::cout << "\n Authorization failed. Retry? (1=Yes, 0=No): ";
+                        int retry = getValidatedInput(0, 1);
+                        if (retry == 1) {
+                            salesContext->eventRetry(); // -> PendingPayment
+                            continue;
+                        } else {
+                            finished = true;  // leave cart unchanged
+                        }
+                    }
+                    // else either PaymentAuthorized or (in some implementations) Completed
+                    continue;
+                }
+
+                if (s == "PaymentAuthorized") {
+                    std::cout << "\n Capture & complete order now? (1=Yes, 0=No): ";
+                    int cap = getValidatedInput(0, 1);
+                    if (cap == 0) {
+                        std::cout << " Cancel the order? (1=Yes, 0=No): ";
+                        int cancel = getValidatedInput(0, 1);
+                        if (cancel == 1) {
+                            salesContext->eventCancel(); // -> Cancelled
+                            finished = true;
+                        }
+                        else {
+                            // stay authorized; user can decide again
+                        }
+                        continue;
+                    }
+
+#ifdef SUPPORT_TEST_TOGGLES
+                    // Ask if user wants to simulate a capture failure
+                    std::cout << " Simulate capture failure? (1=Yes, 0=No): ";
+                    int failCap = getValidatedInput(0, 1);
+                    salesContext->forceNextCapture(failCap == 0); // true = succeed
+                    // if you prefer “true means succeed”, keep as above.
+#endif
+                    salesContext->eventCommit(); // -> Completed or PaymentFailed
+                    continue;
+                }
+
+                if (s == "PaymentFailed") {
+                    std::cout << "\n Payment failed. Retry full payment? (1=Yes, 0=No): ";
+                    int retry = getValidatedInput(0, 1);
+                    if (retry == 1) {
+                        salesContext->eventRetry(); // -> PendingPayment
+                        continue;
+                    } else {
+                        finished = true;
+                        continue;
+                    }
+                }
+
+                if (s == "Completed") {
+                    success  = true;
+                    finished = true;
+                    continue;
+                }
+
+                if (s == "Cancelled") {
+                    finished = true;
+                    continue;
+                }
+
+                // Any other state: exit safety
+                finished = true;
+            }
+
+            if (success) {
+                // Clear cart (plants + arrangements)
                 std::vector<Plant*> toRemove;
-                { CartIterator it(actualCart); for (it.first(); !it.isDone(); it.next())
+                { CartIterator it(cart); for (it.first(); !it.isDone(); it.next())
                         toRemove.push_back(it.currentItem()); }
-
                 PlantInventory* mainInventory = currentCustomer->getInven();
                 for (Plant* p : toRemove) {
                     CustomerCommand* removeCmd = new RemoveFromCart();
@@ -847,21 +800,7 @@ void CompleteNurseryUI::showCartMenu() {
 
             pressEnter();
             break;
-        }
-
-        case 4: {
-            // Ask for assistance from the cart screen:
-            // If CartOpen is active it ignores assist; bounce to SeekingAssistance.
-            if (!currentCustomer) currentCustomer = new Customer("Guest");
-            if (!salesContext)
-                salesContext = new SalesContext(BrowsingState::instance(), *currentCustomer);
-
-            salesContext->setState(SeekingAssistanceState::instance());
-            // Let the state show its welcome/message
-            salesContext->eventAssistComplete(); // or call a small query flow if you have one
-            pressEnter();
-            break;
-        }
+            }
         }
     }
 }
@@ -1867,15 +1806,11 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
     std::cout << " 4. View Available Options\n";
     std::cout << " 0. Done\n\n";
 
-    bool        wantPot  = false, wantWrap = false, wantNote = false;
+    // current session selections (not flags)
     std::string potColor, wrapColor, noteColor, noteText;
 
-    auto clear_stdin_line = [](){
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    };
-
     auto eat_pending_newline = [](){
-        if (std::cin.peek() == '\n') std::cin.get();  // consume exactly one '\n' if present
+        if (std::cin.peek() == '\n') std::cin.get();
     };
 
     while (true) {
@@ -1883,72 +1818,65 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
         int choice = getValidatedInput(0, 4);
         if (choice == 0) {
             printSuccess("Personalization complete!");
+            // TODO: persist potColor / wrapColor / noteColor+noteText
+            //       into your add-to-cart builder flow if you want them applied.
             break;
         }
 
         switch (choice) {
-            case 1: { // Decorative Pot (FREE; pick color)
+            case 1: { // Pot (FREE)
                 const auto& pots = inventory->getPots();
-                if (pots.empty()) {
-                    printError("No pot colors available.");
-                    break;
-                }
+                if (pots.empty()) { printError("No pot colors available."); break; }
+
                 std::cout << "\n Available Pot Colors:\n";
-                for (size_t i = 0; i < pots.size(); ++i) {
+                for (size_t i = 0; i < pots.size(); ++i)
                     std::cout << "  " << (i + 1) << ". " << pots[i] << "\n";
-                }
+
                 std::cout << "\n Select pot color (0 to skip): ";
                 int ix = getValidatedInput(0, static_cast<int>(pots.size()));
                 if (ix == 0) {
-                    wantPot = false;
+                    potColor.clear();
                     std::cout << " Skipped pot.\n";
                 } else {
                     potColor = pots[static_cast<size_t>(ix - 1)];
-                    wantPot  = true;
                     std::cout << " ✓ Decorative pot '" << potColor << "' selected (FREE)\n";
                 }
                 break;
             }
 
-            case 2: { // Gift Wrap (FREE; pick color, no message)
+            case 2: { // Wrap (FREE, no message)
                 const auto& wraps = inventory->getGiftWraps();
-                if (wraps.empty()) {
-                    printError("No gift wrap colors available.");
-                    break;
-                }
+                if (wraps.empty()) { printError("No gift wrap colors available."); break; }
+
                 std::cout << "\n Available Gift Wrap Colors:\n";
-                for (size_t i = 0; i < wraps.size(); ++i) {
+                for (size_t i = 0; i < wraps.size(); ++i)
                     std::cout << "  " << (i + 1) << ". " << wraps[i] << "\n";
-                }
+
                 std::cout << "\n Select wrap color (0 to skip): ";
                 int ix = getValidatedInput(0, static_cast<int>(wraps.size()));
                 if (ix == 0) {
-                    wantWrap = false;
+                    wrapColor.clear();
                     std::cout << " Skipped wrap.\n";
                 } else {
                     wrapColor = wraps[static_cast<size_t>(ix - 1)];
-                    wantWrap  = true;
                     std::cout << " ✓ Bouquet-style gift wrap '" << wrapColor << "' selected (FREE)\n";
                 }
                 break;
             }
 
-            case 3: { // Personal Note (FREE; choose color + message)
+            case 3: { // Note (FREE; color + message)
                 const auto& notes = inventory->getNotes();
-                if (notes.empty()) {
-                    printError("No note colors available.");
-                    break;
-                }
+                if (notes.empty()) { printError("No note colors available."); break; }
 
                 std::cout << "\n Available Note Colors:\n";
-                for (size_t i = 0; i < notes.size(); ++i) {
+                for (size_t i = 0; i < notes.size(); ++i)
                     std::cout << "  " << (i + 1) << ". " << notes[i] << "\n";
-                }
 
                 std::cout << "\n Select note color (0 to skip): ";
                 int ix = getValidatedInput(0, static_cast<int>(notes.size()));
                 if (ix == 0) {
-                wantNote = false;
+                    noteColor.clear();
+                    noteText.clear();
                     std::cout << " Skipped note.\n";
                     break;
                 }
@@ -1956,16 +1884,14 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
                 noteColor = notes[static_cast<size_t>(ix - 1)];
 
                 std::cout << "\n Enter note text (leave blank to skip): ";
-                eat_pending_newline();                 
+                eat_pending_newline();
                 std::getline(std::cin, noteText);
-
                 if (!noteText.empty() && noteText.back() == '\r') noteText.pop_back();
 
                 if (noteText.empty()) {
-                    wantNote = false;
+                    noteColor.clear();
                     std::cout << " Skipped note.\n";
                 } else {
-                    wantNote = true;
                     std::cout << " ✓ Note added (FREE)\n";
                 }
                 break;
@@ -1987,7 +1913,6 @@ void CompleteNurseryUI::personalizeSelectedPlant(Plant* plant) {
         }
     }
 }
-
 
 //Payment Menu (State Pattern)
 void CompleteNurseryUI::showPaymentMenu() {
