@@ -826,8 +826,8 @@ int main() {
     std::cout << "=== Abstract Avengers: Plant Nursery System ===\n\n";
     std::cout<<"---------------------------------------------------------------------\n";
     std::cout << "Choose a mode:\n";
-    std::cout << "1. Interactive UI Mode\n";
-    std::cout << "2. Demonstration Mode\n\n";
+    std::cout << "1. DemoMain (Interactive)\n";
+    std::cout << "2. testingMain\n\n";
     std::cout << "Enter your choice: ";
 
     int choice = getValidatedInput(1,2);
@@ -838,11 +838,11 @@ int main() {
         return 0;
     }
     else if (choice==2){
-        std::cout << "Starting Demonstration Mode...\n";
+        std::cout << "Starting TestingMain Mode...\n";
     }
     std::cout<<"------------------------------------------------\n";
     // Demonstration mode starts here
-    std::cout << "\n=== Starting Demonstration Mode ===\n";
+    std::cout << "\n=== Starting TestingMain Mode ===\n";
 
     // 1) “Stock” items (no Prototype pattern anymore)
     printHeader("1) Create sales-floor bases (no Prototype)");
@@ -1092,7 +1092,7 @@ int main() {
       demonstrateEarlyHarvestAttempt();
       
       
-      std::cout << "\n\nWould you like to enter interactive mode? (y/n): ";
+      std::cout << "\n\nWould you like to see an in depth plant care interactive mode? (y/n): ";
       char response;
       std::cin >> response;
       
