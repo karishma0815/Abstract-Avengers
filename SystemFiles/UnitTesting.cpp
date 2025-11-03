@@ -50,8 +50,7 @@
 only tested the execute, constructors and logAction for water, fertilize, prune and sunlight*/
 
 TEST_CASE("testing all of the constructors and their execution") {
-    // Use the correct constructor for your concrete plant classes
-    Rose testPlant("Test Plant", 0.0); // name, price only
+    Rose testPlant("Test Plant", 0.0);
     
     SUBCASE("all of the constructors work") {
         CHECK_NOTHROW(WaterCommand(&testPlant, 2.0));
@@ -100,7 +99,7 @@ TEST_CASE("testing all of the constructors and their execution") {
 }
 
 TEST_CASE("testing the logAction") {
-    Orchid testPlant("Test Plant", 0.0); // name, price only
+    Orchid testPlant("Test Plant", 0.0);
     
     SUBCASE("all the log actions work") {
         WaterCommand waterCmd(&testPlant, 2.0);
@@ -127,7 +126,7 @@ TEST_CASE("command safety and edge cases") {
     }
     
     SUBCASE("testing multiple executions") {
-        Jade testPlant("Test Plant", 0.0); // name, price only
+        Jade testPlant("Test Plant", 0.0);
         WaterCommand waterCmd(&testPlant, 1.0);
         
         CHECK_NOTHROW(waterCmd.execute());
@@ -136,7 +135,7 @@ TEST_CASE("command safety and edge cases") {
     }
     
     SUBCASE("testing command combinations") {
-        Lotus testPlant("Test Plant", 0.0); // name, price only
+        Lotus testPlant("Test Plant", 0.0);
         
         CHECK_NOTHROW(WaterCommand(&testPlant, 2.0).execute());
         CHECK_NOTHROW(FertilizeCommand(&testPlant, "Organic").execute());
@@ -150,7 +149,7 @@ only tested the constructor for plant issue, setNext for the plant care handler 
 
 TEST_CASE("testing the PlantIssue constructor") {
     SUBCASE("testing the constructor with valid parameters") {
-        Rose testPlant("Test Plant", 0.0); // name, price only
+        Rose testPlant("Test Plant", 0.0); 
         
         CHECK_NOTHROW(PlantIssue(PlantIssue::LOW, "Minor leaf spots", &testPlant));
         CHECK_NOTHROW(PlantIssue(PlantIssue::MEDIUM, "Moderate wilting", &testPlant));
@@ -164,7 +163,7 @@ TEST_CASE("testing the PlantIssue constructor") {
     }
     
     SUBCASE("testing the constructor with empty description") {
-        Orchid testPlant("Test Plant", 0.0); // name, price only
+        Orchid testPlant("Test Plant", 0.0); 
         CHECK_NOTHROW(PlantIssue(PlantIssue::MEDIUM, "", &testPlant));
     }
 }
@@ -207,7 +206,7 @@ TEST_CASE("setNext chain setup") {
 
 TEST_CASE("testing JuniorGardener canHandle logic") {
     JuniorGardener junior;
-    Jade testPlant("Test Plant", 0.0); // name, price only
+    Jade testPlant("Test Plant", 0.0); 
     
     SUBCASE("testing handles with LOW severity") {
         PlantIssue lowIssue(PlantIssue::LOW, "Minor issue", &testPlant);
@@ -237,7 +236,7 @@ TEST_CASE("testing JuniorGardener canHandle logic") {
 
 TEST_CASE("testing the SeniorGardener canHandle logic") {
     SeniorGardener senior;
-    Jacaranda testPlant("Test Plant", 0.0); // name, price only
+    Jacaranda testPlant("Test Plant", 0.0);
     
     SUBCASE("testing if it does not handle LOW severity") {
         PlantIssue lowIssue(PlantIssue::LOW, "Minor issue", &testPlant);
@@ -262,7 +261,7 @@ TEST_CASE("testing the SeniorGardener canHandle logic") {
 
 TEST_CASE("testing the PlantSpecialist canHandle logic") {
     PlantSpecialist specialist;
-    Apple testPlant("Test Plant", 0.0); // name, price only
+    Apple testPlant("Test Plant", 0.0);
     
     SUBCASE("testing if it does not handle LOW severity") {
         PlantIssue lowIssue(PlantIssue::LOW, "Minor issue", &testPlant);
@@ -286,7 +285,7 @@ TEST_CASE("testing the PlantSpecialist canHandle logic") {
 }
 
 TEST_CASE("testing the JuniorGardener handleIssue") {
-    Lotus testPlant("Test Plant", 0.0); // name, price only
+    Lotus testPlant("Test Plant", 0.0);
     
     SUBCASE("testing if it handles LOW severity issue") {
         JuniorGardener junior;
@@ -338,7 +337,7 @@ TEST_CASE("testing the JuniorGardener handleIssue") {
 }
 
 TEST_CASE("testing the SeniorGardener handleIssue") {
-    Protea testPlant("Test Plant", 0.0); // name, price only
+    Protea testPlant("Test Plant", 0.0); 
     
     SUBCASE("testing if it handles HIGH severity issue") {
         SeniorGardener senior;
@@ -376,7 +375,7 @@ TEST_CASE("testing the SeniorGardener handleIssue") {
 }
 
 TEST_CASE("testing the PlantSpecialist handleIssue") {
-    Pine testPlant("Test Plant", 0.0); // name, price only
+    Pine testPlant("Test Plant", 0.0);
     
     SUBCASE("testing if it handles CRITICAL severity issue") {
         PlantSpecialist specialist;
@@ -413,7 +412,7 @@ TEST_CASE("testing the PlantSpecialist handleIssue") {
 }
 
 TEST_CASE("testing the complete Chain of Responsibility") {
-    Cacti testPlant("Test Plant", 0.0); // name, price only
+    Cacti testPlant("Test Plant", 0.0);
     
     SUBCASE("testing the full escalation chain") {
         JuniorGardener junior;
@@ -457,7 +456,6 @@ TEST_CASE("testing the complete Chain of Responsibility") {
         JuniorGardener junior;
         SeniorGardener senior;
         junior.setNext(&senior);
-        // No specialist set
         
         PlantIssue criticalIssue(PlantIssue::CRITICAL, "Critical issue", &testPlant);
         CHECK_NOTHROW(junior.handleIssue(criticalIssue));
@@ -465,8 +463,8 @@ TEST_CASE("testing the complete Chain of Responsibility") {
 }
 
 TEST_CASE("testing the chain edge cases") {
-    Rose testPlant("Test Plant", 0.0); // name, price only
-    
+    Rose testPlant("Test Plant", 0.0); 
+
     SUBCASE("testing empty descriptions") {
         JuniorGardener junior;
         
@@ -507,7 +505,7 @@ TEST_CASE("testing the NurseryInventoryMediator constructor") {
         NurseryInventoryMediator mediator;
         
         Rose testPlant("Test Plant", 5.0, "TP001");
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
     }
 }
@@ -517,16 +515,14 @@ TEST_CASE("testing the updateInventory function") {
     Orchid testPlant("Test Plant", 5.0, "TP001");
     
     SUBCASE("testing basic inventory updates") {
-        // Note: updateInventory only takes 2 arguments, not 3
-        mediator.updateInventory(&testPlant, 50); // salesFloorQuantity only
+        mediator.updateInventory(&testPlant, 50);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 50);
-        // greenhouse stock remains 1000000 since we're only updating sales floor
         CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
     }
     
     SUBCASE("testing negative prevention - sales floor") {
         mediator.updateInventory(&testPlant, 30);
-        mediator.updateInventory(&testPlant, -50); // Should prevent negative
+        mediator.updateInventory(&testPlant, -50);
         
         CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
         CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
@@ -534,8 +530,8 @@ TEST_CASE("testing the updateInventory function") {
     
     SUBCASE("testing multiple sequential updates") {
         mediator.updateInventory(&testPlant, 100);
-        mediator.updateInventory(&testPlant, 30); // Add 30 more
-        mediator.updateInventory(&testPlant, -10); // Remove 10
+        mediator.updateInventory(&testPlant, 30);
+        mediator.updateInventory(&testPlant, -10); 
         
         CHECK(mediator.getSalesFloorStock(&testPlant) == 120);
         CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
@@ -555,7 +551,7 @@ TEST_CASE("testing the notify function - event handling") {
     SUBCASE("testing new shipment event") {
         mediator.notify(&testGardener, "new shipment", &testPlant, 200);
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
     }
     
@@ -563,7 +559,7 @@ TEST_CASE("testing the notify function - event handling") {
         mediator.notify(&testGardener, "new shipment", &testPlant, 150);
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 80);
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 80);
     }
     
@@ -572,7 +568,7 @@ TEST_CASE("testing the notify function - event handling") {
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 60);
         mediator.notify(&testGardener, "plant sold", &testPlant, 40);
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 20);
     }
     
@@ -581,7 +577,7 @@ TEST_CASE("testing the notify function - event handling") {
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 70);
         mediator.notify(&testGardener, "customer delivery", &testPlant, 50);
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 20);
     }
     
@@ -590,7 +586,7 @@ TEST_CASE("testing the notify function - event handling") {
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 80);
         mediator.notify(&testGardener, "return to greenhouse", &testPlant, 20);
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 60);
     }
     
@@ -598,13 +594,13 @@ TEST_CASE("testing the notify function - event handling") {
         mediator.notify(&testGardener, "new shipment", &testPlant, 100);
         
         CHECK_NOTHROW(mediator.notify(&testGardener, "check stock", &testPlant, 0));
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
     }
     
     SUBCASE("testing the unknown") {
         CHECK_NOTHROW(mediator.notify(&testGardener, "unknown event", &testPlant, 50));
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
     }
 }
 
@@ -617,8 +613,8 @@ TEST_CASE("testing the notify function - edge cases and safety") {
         mediator.notify(&testGardener, "new shipment", &testPlant, 50);
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 100);
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
-        CHECK(mediator.getSalesFloorStock(&testPlant) == 100); // Can move up to requested amount
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
+        CHECK(mediator.getSalesFloorStock(&testPlant) == 100);
     }
     
     SUBCASE("testing over selling from sales floor") {
@@ -626,7 +622,7 @@ TEST_CASE("testing the notify function - edge cases and safety") {
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 40);
         mediator.notify(&testGardener, "plant sold", &testPlant, 60);
         
-        CHECK(mediator.getSalesFloorStock(&testPlant) == 0); // Sell what's available
+        CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
         CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
     }
     
@@ -635,20 +631,20 @@ TEST_CASE("testing the notify function - edge cases and safety") {
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 30);
         mediator.notify(&testGardener, "customer delivery", &testPlant, 50);
         
-        CHECK(mediator.getSalesFloorStock(&testPlant) == 0); // Deliver what's available
+        CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
         CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
     }
     
     SUBCASE("testing negative quantity handling") {
         CHECK_NOTHROW(mediator.notify(&testGardener, "new shipment", &testPlant, -50));
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
     }
     
     SUBCASE("testing zero quantity handling") {
         CHECK_NOTHROW(mediator.notify(&testGardener, "new shipment", &testPlant, 0));
         CHECK_NOTHROW(mediator.notify(&testGardener, "plant sold", &testPlant, 0));
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
     }
     
@@ -656,8 +652,6 @@ TEST_CASE("testing the notify function - edge cases and safety") {
         CHECK_NOTHROW(mediator.notify(&testGardener, "new shipment", nullptr, 100));
         CHECK_NOTHROW(mediator.notify(&testGardener, "plant sold", nullptr, 50));
         
-        // For null plants, greenhouse stock check might behave differently
-        // but for valid plants it should be 1000000
         CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
     }
@@ -666,7 +660,7 @@ TEST_CASE("testing the notify function - edge cases and safety") {
         CHECK_NOTHROW(mediator.notify(nullptr, "new shipment", &testPlant, 100));
         CHECK_NOTHROW(mediator.notify(nullptr, "plant sold", &testPlant, 50));
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
     }
 }
 
@@ -678,10 +672,10 @@ TEST_CASE("testing complete inventory workflow") {
     
     SUBCASE("testing complete business day scenario") {
         mediator.notify(&gardener, "new shipment", &testPlant, 500);
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         
         mediator.notify(&gardener, "plant moved to sales", &testPlant, 300);
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 300);
         
         mediator.notify(&salesAsst, "plant sold", &testPlant, 100);
@@ -692,7 +686,7 @@ TEST_CASE("testing complete inventory workflow") {
         CHECK(mediator.getSalesFloorStock(&testPlant) == 60);
         
         mediator.notify(&salesAsst, "return to greenhouse", &testPlant, 20);
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 40);
         
         CHECK_NOTHROW(mediator.notify(&salesAsst, "check stock", &testPlant, 0));
@@ -705,8 +699,8 @@ TEST_CASE("testing complete inventory workflow") {
         mediator.notify(&gardener, "new shipment", &rose, 200);
         mediator.notify(&gardener, "new shipment", &cactus, 100);
         
-        CHECK(mediator.getGreenhouseStock(&rose) == 1000000); // Greenhouse always has stock
-        CHECK(mediator.getGreenhouseStock(&cactus) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&rose) == 1000000);
+        CHECK(mediator.getGreenhouseStock(&cactus) == 1000000);
         
         mediator.notify(&gardener, "plant moved to sales", &rose, 80);
         mediator.notify(&gardener, "plant moved to sales", &cactus, 40);
@@ -735,8 +729,8 @@ TEST_CASE("testing inventory integrity") {
         CHECK(mediator.getSalesFloorStock(&testPlant) == 0);
         
         mediator.notify(&testGardener, "plant moved to sales", &testPlant, 80);
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
-        CHECK(mediator.getSalesFloorStock(&testPlant) == 80); // Can move plants to sales floor
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
+        CHECK(mediator.getSalesFloorStock(&testPlant) == 80);
     }
     
     SUBCASE("testing large quantity handling") {
@@ -744,13 +738,10 @@ TEST_CASE("testing inventory integrity") {
         CHECK_NOTHROW(mediator.notify(&testGardener, "plant moved to sales", &testPlant, 5000));
         CHECK_NOTHROW(mediator.notify(&testGardener, "plant sold", &testPlant, 3000));
         
-        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000); // Greenhouse always has stock
+        CHECK(mediator.getGreenhouseStock(&testPlant) == 1000000);
         CHECK(mediator.getSalesFloorStock(&testPlant) == 2000);
     }
 }
-
-/*CHAIN OF RESPONSIBILITY (customer interaction)
-only tested the handleQuery, canHandle and setNext*/
 
 TEST_SUITE("testing the customer query handling system") {
 
@@ -776,18 +767,20 @@ TEST_SUITE("testing the customer query handling system") {
         JuniorStaff junior;
         
         SUBCASE("testing the general queries - should handle") {
-            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::GENERAL, "What are your opening hours?", nullptr)) == true);
-            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::GENERAL, "Where is your location?", nullptr)) == true);
-            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::GENERAL, "Do you offer gift wrapping?", nullptr)) == true);
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::GENERAL, "opening hours", nullptr)) == true);
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::GENERAL, "location", nullptr)) == true);
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::GENERAL, "gift wrapping", nullptr)) == true);
         }
         
         SUBCASE("testing the pricing queries - should handle") {
-            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "How much for roses?", nullptr)) == true);
-            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "What's the price of orchids?", nullptr)) == true);
-            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "Do you have student discount?", nullptr)) == true);
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "student discount", nullptr)) == true);
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "bulk discount", nullptr)) == true);
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "any discount", nullptr)) == true);
         }
         
         SUBCASE("testing the should not handle") {
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "How much for roses?", nullptr)) == false);
+            CHECK(junior.canHandle(CustomerQuery(CustomerQuery::PRICING, "What's the price of orchids?", nullptr)) == false);
             CHECK(junior.canHandle(CustomerQuery(CustomerQuery::CARE_ADVICE, "My plant is dying", nullptr)) == false);
             CHECK(junior.canHandle(CustomerQuery(CustomerQuery::COMPLAINT, "I want to complain", nullptr)) == false);
             CHECK(junior.canHandle(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "Can you deliver on Sunday?", nullptr)) == false);
@@ -796,140 +789,228 @@ TEST_SUITE("testing the customer query handling system") {
     }
 
     TEST_CASE("testing the JuniorStaff - handleQuery()") {
-        JuniorStaff junior;
-        
         SUBCASE("testing the handle general queries") {
+            JuniorStaff junior;
             CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::GENERAL, "opening hours", nullptr)));
             CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::GENERAL, "location", nullptr)));
             CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::GENERAL, "gift wrapping", nullptr)));
         }
         
         SUBCASE("testing the handle pricing queries") {
-            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::PRICING, "rose prices", nullptr)));
-            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::PRICING, "orchid cost", nullptr)));
+            JuniorStaff junior;
             CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::PRICING, "student discount", nullptr)));
+            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::PRICING, "bulk discount", nullptr)));
         }
         
         SUBCASE("escalate unhandled queries - no next handler") {
+            JuniorStaff junior;
             CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::COMPLAINT, "My plant died", nullptr)));
+            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)));
+            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::PRICING, "How much for roses?", nullptr)));
         }
         
         SUBCASE("escalate to next handler") {
-            SalesExpert sales;
-            junior.setNext(&sales);
+            JuniorStaff* junior = new JuniorStaff();
+            SalesExpert* sales = new SalesExpert();
             
-            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "bulk order", nullptr)));
+            junior->setNext(sales);
+            
+            CHECK_NOTHROW(junior->handleQuery(CustomerQuery(CustomerQuery::PRICING, "How much for roses?", nullptr)));
+            CHECK_NOTHROW(junior->handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)));
+            
+            delete junior;
         }
     }
 
     TEST_CASE("testing the SalesExpert - canHandle()") {
         SalesExpert expert;
         
-        SUBCASE("testing the should handle ONLY pricing queries") {
+        SUBCASE("testing the should handle ALL pricing queries") {
             CHECK(expert.canHandle(CustomerQuery(CustomerQuery::PRICING, "bulk discount", nullptr)) == true);
             CHECK(expert.canHandle(CustomerQuery(CustomerQuery::PRICING, "corporate rates", nullptr)) == true);
-            // CHANGED: SalesExpert should NOT handle SPECIAL_REQUEST - only PRICING
-            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "Sunday delivery", nullptr)) == false);
-            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "installation", nullptr)) == false);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::PRICING, "How much for roses?", nullptr)) == true);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::PRICING, "What's the price?", nullptr)) == true);
         }
         
         SUBCASE("testing the should not handle") {
             CHECK(expert.canHandle(CustomerQuery(CustomerQuery::GENERAL, "opening hours", nullptr)) == false);
             CHECK(expert.canHandle(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)) == false);
             CHECK(expert.canHandle(CustomerQuery(CustomerQuery::COMPLAINT, "complaint", nullptr)) == false);
-            // Also should not handle SPECIAL_REQUEST
             CHECK(expert.canHandle(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "special delivery", nullptr)) == false);
         }
     }
 
     TEST_CASE("testing the SalesExpert - handleQuery()") {
-        SalesExpert expert;
-        
         SUBCASE("testing the handle bulk discount queries") {
+            SalesExpert expert;
             CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::PRICING, "bulk discount for 100 plants", nullptr)));
         }
         
-        SUBCASE("testing the handle corporate pricing") {
-            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::PRICING, "corporate account", nullptr)));
+        SUBCASE("testing the handle rose pricing") {
+            SalesExpert expert;
+            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::PRICING, "How much are roses?", nullptr)));
         }
         
-        SUBCASE("testing the escalate special delivery requests") {
-            // CHANGED: SalesExpert should escalate SPECIAL_REQUEST since it only handles PRICING
-            PlantExpert plant;
-            expert.setNext(&plant);
-            
-            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "deliver on Sunday", nullptr)));
-        }
-        
-        SUBCASE("testing the escalate installation requests") {
-            // CHANGED: SalesExpert should escalate SPECIAL_REQUEST since it only handles PRICING
-            PlantExpert plant;
-            expert.setNext(&plant);
-            
-            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "install plants", nullptr)));
+        SUBCASE("testing with no next handler") {
+            SalesExpert expert;
+            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)));
+            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "special request", nullptr)));
         }
         
         SUBCASE("testing the escalate to next handler") {
-            PlantExpert plant;
-            expert.setNext(&plant);
+            SalesExpert* expert = new SalesExpert();
+            PlantExpert* plant = new PlantExpert();
             
-            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)));
+            expert->setNext(plant);
+            
+            CHECK_NOTHROW(expert->handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)));
+            CHECK_NOTHROW(expert->handleQuery(CustomerQuery(CustomerQuery::COMPLAINT, "complaint", nullptr)));
+            
+            delete expert;
         }
     }
 
-    // ... REST OF THE TEST CODE REMAINS THE SAME (PlantExpert, Manager, etc.)
+    TEST_CASE("testing the PlantExpert - canHandle()") {
+        PlantExpert expert;
+        
+        SUBCASE("testing the should handle care advice and complaints") {
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)) == true);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::COMPLAINT, "complaint", nullptr)) == true);
+        }
+        
+        SUBCASE("testing the should handle plant-related keywords") {
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::GENERAL, "plant health", nullptr)) == true);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::GENERAL, "water my plant", nullptr)) == true);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::GENERAL, "sunlight for plant", nullptr)) == true);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::GENERAL, "my plant died", nullptr)) == true);
+        }
+        
+        SUBCASE("testing the should not handle") {
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::GENERAL, "opening hours", nullptr)) == false);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::PRICING, "bulk discount", nullptr)) == false);
+            CHECK(expert.canHandle(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "special delivery", nullptr)) == false);
+        }
+    }
+
+    TEST_CASE("testing the PlantExpert - handleQuery()") {
+        SUBCASE("testing the handle watering questions") {
+            PlantExpert expert;
+            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "water my plant", nullptr)));
+        }
+        
+        SUBCASE("testing the handle sunlight questions") {
+            PlantExpert expert;
+            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "sunlight for plant", nullptr)));
+        }
+        
+        SUBCASE("testing with no next handler") {
+            PlantExpert expert;
+            CHECK_NOTHROW(expert.handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "special request", nullptr)));
+        }
+        
+        SUBCASE("testing the escalate to next handler") {
+            PlantExpert* expert = new PlantExpert();
+            Manager* manager = new Manager("Test Manager", 1, nullptr, "Customer Service");
+            
+            expert->setNext(manager);
+            
+            CHECK_NOTHROW(expert->handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "special delivery", nullptr)));
+            
+            delete expert;
+        }
+    }
+
+    TEST_CASE("testing the Manager - canHandle()") {
+        Manager manager("Test Manager", 1, nullptr, "Customer Service");
+        
+        SUBCASE("testing the should handle complaints and special requests") {
+            CHECK(manager.canHandle(CustomerQuery(CustomerQuery::COMPLAINT, "complaint", nullptr)) == true);
+            CHECK(manager.canHandle(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "special request", nullptr)) == true);
+        }
+        
+        SUBCASE("testing the should not handle") {
+            CHECK(manager.canHandle(CustomerQuery(CustomerQuery::GENERAL, "opening hours", nullptr)) == false);
+            CHECK(manager.canHandle(CustomerQuery(CustomerQuery::PRICING, "bulk discount", nullptr)) == false);
+            CHECK(manager.canHandle(CustomerQuery(CustomerQuery::CARE_ADVICE, "plant care", nullptr)) == false);
+        }
+    }
+
+    TEST_CASE("testing the Manager - handleQuery()") {
+        SUBCASE("testing the handle complaints") {
+            Manager manager("Test Manager", 1, nullptr, "Customer Service");
+            CHECK_NOTHROW(manager.handleQuery(CustomerQuery(CustomerQuery::COMPLAINT, "complaint", nullptr)));
+        }
+        
+        SUBCASE("testing the handle special requests") {
+            Manager manager("Test Manager", 1, nullptr, "Customer Service");
+            CHECK_NOTHROW(manager.handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "special request", nullptr)));
+        }
+        
+        SUBCASE("testing with no next handler") {
+            Manager manager("Test Manager", 1, nullptr, "Customer Service");
+            CHECK_NOTHROW(manager.handleQuery(CustomerQuery(CustomerQuery::GENERAL, "general question", nullptr)));
+        }
+    }
 
     TEST_CASE("testing the integration tests") {
         SUBCASE("testing the customer with simple pricing question") {
-            JuniorStaff junior;
-            SalesExpert sales;
-            PlantExpert plant;
-            Manager manager("Store Manager", 1, nullptr, "Retail");
+            JuniorStaff* junior = new JuniorStaff();
+            SalesExpert* sales = new SalesExpert();
+            PlantExpert* plant = new PlantExpert();
+            Manager* manager = new Manager("Store Manager", 1, nullptr, "Retail");
             
-            junior.setNext(&sales);
-            sales.setNext(&plant);
-            plant.setNext(&manager);
+            junior->setNext(sales);
+            sales->setNext(plant);
+            plant->setNext(manager);
             
-            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::PRICING, "How much are roses?", nullptr)));
+            CHECK_NOTHROW(junior->handleQuery(CustomerQuery(CustomerQuery::PRICING, "How much are roses?", nullptr)));
+            delete junior;
+        }
+        
+        SUBCASE("testing the customer with discount pricing question") {
+            JuniorStaff* junior = new JuniorStaff();
+            SalesExpert* sales = new SalesExpert();
+            
+            junior->setNext(sales);
+            
+            CHECK_NOTHROW(junior->handleQuery(CustomerQuery(CustomerQuery::PRICING, "student discount", nullptr)));
+            
+            delete junior;
         }
         
         SUBCASE("testing the customer with complex plant care issue") {
-            JuniorStaff junior;
-            SalesExpert sales;
-            PlantExpert plant;
+            JuniorStaff* junior = new JuniorStaff();
+            SalesExpert* sales = new SalesExpert();
+            PlantExpert* plant = new PlantExpert();
             
-            junior.setNext(&sales);
-            sales.setNext(&plant);
+            junior->setNext(sales);
+            sales->setNext(plant);
             
-            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "My fern is dying, leaves turning yellow", nullptr)));
+            CHECK_NOTHROW(junior->handleQuery(CustomerQuery(CustomerQuery::CARE_ADVICE, "My fern is dying, leaves turning yellow", nullptr)));
+            
+            delete junior;
         }
         
         SUBCASE("testing the customer complaint escalation") {
-            JuniorStaff junior;
-            SalesExpert sales;
-            PlantExpert plant;
-            Manager manager("Complaint Manager", 1, nullptr, "Customer Service");
+            JuniorStaff* junior = new JuniorStaff();
+            SalesExpert* sales = new SalesExpert();
+            PlantExpert* plant = new PlantExpert();
+            Manager* manager = new Manager("Complaint Manager", 1, nullptr, "Customer Service");
             
-            junior.setNext(&sales);
-            sales.setNext(&plant);
-            plant.setNext(&manager);
+            junior->setNext(sales);
+            sales->setNext(plant);
+            plant->setNext(manager);
             
-            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::COMPLAINT, "My expensive orchid died after one week!", nullptr)));
+            CHECK_NOTHROW(junior->handleQuery(CustomerQuery(CustomerQuery::COMPLAINT, "My expensive orchid died after one week!", nullptr)));
+            
+            delete junior;
         }
         
-        SUBCASE("testing the special request authorization") {
+        SUBCASE("testing general query handled directly by junior staff") {
             JuniorStaff junior;
-            SalesExpert sales;
-            Manager manager("Authorization Manager", 1, nullptr, "Operations");
-            
-            junior.setNext(&sales);
-            sales.setNext(&manager);
-            
-            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::SPECIAL_REQUEST, "Need special delivery arrangements", nullptr)));
+            CHECK_NOTHROW(junior.handleQuery(CustomerQuery(CustomerQuery::GENERAL, "opening hours", nullptr)));
         }
     }
-
-    // ... REST OF THE TEST CODE REMAINS THE SAME
 }
 
 TEST_SUITE("testing the query response content validation") {
