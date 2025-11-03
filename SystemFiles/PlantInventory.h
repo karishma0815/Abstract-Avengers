@@ -38,8 +38,6 @@ public:
      */
     Iterator* createPlantIterator(PlantInventory* inventory) override;
 
-    Iterator* createCareIterator(PlantInventory* inventory, const std::string& care) override;
-
     Iterator* createPriceRangeIterator(PlantInventory* inventory, double min, double max) override;
 
     /**

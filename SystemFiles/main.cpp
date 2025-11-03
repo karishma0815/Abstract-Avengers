@@ -96,7 +96,6 @@ Demonstrates:
 #include <iomanip>
 #include "Plant.h"
 #include "PlantInventory.h"
-#include "CareIterator.h"
 #include "CartIterator.h"
 #include "PlantIterator.h"
 #include "PriceRangeIterator.h"
@@ -595,19 +594,9 @@ void simulateCustomerBrowsing() {
     for (browsePlants.first(); !browsePlants.isDone(); browsePlants.next()) {
         printPlantDetails(browsePlants.currentItem());
     }
-    
-    // Scenario 2: Customer looks for low-maintenance plants
-    printHeader("Scenario 2: Customer Searches for Low-Maintenance Plants");
-    std::cout << "Customer: 'I'm looking for plants that are easy to care for...'" << std::endl;
-    
-    CareIterator easyCarePlants(nurseryInventory, "low");
-    std::cout << "\nShowing low-maintenance plants:" << std::endl;
-    for (easyCarePlants.first(); !easyCarePlants.isDone(); easyCarePlants.next()) {
-        printPlantDetails(easyCarePlants.currentItem());
-    }
 
-    // Scenario 3: Customer has a specific budget
-    printHeader("Scenario 3: Customer Browses by Price Range");
+    // Scenario 2: Customer has a specific budget
+    printHeader("Scenario 2: Customer Browses by Price Range");
     std::cout << "Customer: 'What plants do you have between R15 and R25?'" << std::endl;
     
     PriceRangeIterator budgetPlants(nurseryInventory, 15.0, 25.0);
@@ -618,7 +607,7 @@ void simulateCustomerBrowsing() {
 
     // Scenario 4: Customer adds items to cart and reviews
     //this one is not working so well.
-    printHeader("Scenario 4: Customer Shopping Cart");
+    printHeader("Scenario 3: Customer Shopping Cart");
     std::cout << "Customer: 'I'll take the cactus and the succulent...'" << std::endl;
     
     // Add items to cart using the main inventory's cart

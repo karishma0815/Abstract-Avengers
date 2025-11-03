@@ -192,7 +192,7 @@ int CompleteNurseryUI::getValidatedInput(int min, int max) {
 void CompleteNurseryUI::printHeader(const std::string& title) {
     std::cout << "\n";
     std::cout << "╔════════════════════════════════════════════════════════╗\n";
-    std::cout << "║  " << std::left << std::setw(52) << title << "  ║\n";
+    std::cout << "║  " << std::left << std::setw(52) << title << "         ║\n";
     std::cout << "╚════════════════════════════════════════════════════════╝\n";
 }
 
@@ -227,15 +227,14 @@ void CompleteNurseryUI::showMainMenu() {
         std::cout << "│  👤 1. Customer      (Browse & Shop)             │\n";
         std::cout << "│  👨‍🌾 2. Staff Area (Plant Care & Operations)      │\n";
         std::cout << "│  🏡 3. Greenhouse (Stock & Lifecycle)            │\n";
-        std::cout << "│  🎯 4. Pattern Demonstrations                    │\n";
-        std::cout << "│  📊 5. System Status                             │\n";
-        std::cout << "|  💲 6. Payment                                   |\n";
+        std::cout << "│  📊 4. System Status                             │\n";
+        std::cout << "|  💲 5. Payment                                   |\n";
         std::cout << "│  🚪 0. Exit System                               │\n";
         std::cout << "│                                                  │\n";
         std::cout << "└──────────────────────────────────────────────────┘\n";
         
         std::cout << "\n Enter choice: ";
-        int choice = getValidatedInput(0, 6);
+        int choice = getValidatedInput(0, 5);
         
         if (choice == 0) {
             std::cout << "\n Thank you for using Abstract Avengers' Nursery System😊!\n";
@@ -251,16 +250,12 @@ void CompleteNurseryUI::showMainMenu() {
                 }
             case 3: 
             {
-                //showGreenhouseMenu();
+                showGreenhouseMenu();
                 std::cout<<"GreenhouseMenu still in progress\n";
-                break;}
-
-            case 4: {
-                //showPatternDemoMenu(); 
-                std::cout<<"PatternDemo in progress (not really needed right now it'll come later, this would just make demonstrating our system easier)\n";
                 break;
             }
-            case 5: {
+
+            case 4: {
                 clearScreen();
                 printHeader("SYSTEM STATUS");
                 std::cout << "\n Sales Floor Plants: " << inventory->size() << "\n";
@@ -273,7 +268,7 @@ void CompleteNurseryUI::showMainMenu() {
                 pressEnter();
                 break;
             }
-            case 6:{
+            case 5:{
                 showPaymentMenu();
                 //std::cout <<"Still in progress!!\n";
                 break;
@@ -351,12 +346,11 @@ void CompleteNurseryUI::showBrowsingMenu() {
         
         std::cout << "\n 1. View All Plants\n";
         std::cout << " 2. Filter by Price Range\n";
-        std::cout << " 3. Filter by Care Level\n";
-        std::cout << " 4. View Decoration Options\n";
+        std::cout << " 3. View Decoration Options\n";
         std::cout << " 0. Back\n\n";
         
         std::cout << " Enter choice: ";
-        int choice = getValidatedInput(0, 4);
+        int choice = getValidatedInput(0, 3);
         
         if (choice == 0) break;
         
@@ -406,24 +400,6 @@ void CompleteNurseryUI::showBrowsingMenu() {
                 break;
             }
             case 3: {
-                std::string level;
-                std::cout << "\n Care level (low/medium/high): ";
-                std::getline(std::cin, level);
-                
-                clearScreen();
-                printSubHeader("PLANTS - " + level + " MAINTENANCE");
-                CareIterator it(inventory, level);
-                int num = 1;
-                std::cout << "\n";
-                for (it.first(); !it.isDone(); it.next()) {
-                    Plant* p = it.currentItem();
-                    std::cout << " " << num++ << ". " << p->getName()
-                             << " - R" << p->getPrice() << "\n";
-                }
-                pressEnter();
-                break;
-            }
-            case 4: {
                 clearScreen();
                 printSubHeader("DECORATION OPTIONS");
                 inventory->displayAllOptions();

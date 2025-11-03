@@ -28,11 +28,6 @@ public:
      */
     virtual Iterator* createPlantIterator(PlantInventory* inventory) = 0;
     /**
-     * @brief Creates a care iterator for this container
-     * @return Pointer to a new CareIterator object
-     */
-    virtual Iterator* createCareIterator(PlantInventory*, const std::string& care) = 0;
-    /**
      * @brief Creates a price range iterator for this container
      * @return Pointer to a new PriceRangeIterator object
      */
