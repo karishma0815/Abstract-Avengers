@@ -837,193 +837,192 @@ int main() {
     // Demonstration mode starts here
     std::cout << "\n=== Starting Demonstration Mode ===\n";
 
-// 1) “Stock” items (no Prototype pattern anymore)
-printHeader("1) Create sales-floor bases (no Prototype)");
-std::cout << "Registered prototypes: 0 (prototype removed)\n";
+    // 1) “Stock” items (no Prototype pattern anymore)
+    printHeader("1) Create sales-floor bases (no Prototype)");
+    std::cout << "Registered prototypes: 0 (prototype removed)\n";
 
-// 2) Personalisation: build a few personalised items and one arrangement
-printHeader("2) Build personalised items (Builder + Decorator)");
+    // 2) Personalisation: build a few personalised items and one arrangement
+    printHeader("2) Build personalised items (Builder + Decorator)");
 
-ConcreteArrangementBuilder builder;
-Director director;
-director.setBuilder(&builder);
+    ConcreteArrangementBuilder builder;
+    Director director;
+    director.setBuilder(&builder);
 
-// a) Single "Gift Rose" — Pot + Wrap (Director recipe; no clone)
-builder.reset();
-builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Rose", 100.0, true) ) );
-builder.buildPot (25.0, "Red");
-builder.buildWrap(15.0, "Happy Birthday!");
-std::unique_ptr<Item> giftRose = builder.getResult();
+    // a) Single "Gift Rose" — Pot + Wrap (Director recipe; no clone)
+    builder.reset();
+    builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Rose", 100.0, true) ) );
+    builder.buildPot (25.0, "Red");
+    builder.buildWrap(15.0, "Happy Birthday!");
+    std::unique_ptr<Item> giftRose = builder.getResult();
 
-std::cout << "Gift Rose: " << giftRose->describe()
-          << " | Price: R" << giftRose->priceFunc() << "\n";
+    std::cout << "Gift Rose: " << giftRose->describe()
+            << " | Price: R" << giftRose->priceFunc() << "\n";
 
-// b) Single "Lily with Note" — step-by-step with builder (no clone)
-builder.reset();
-builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Lily", 80.0, true) ) );
-builder.buildPot (20.0, "White");
-builder.buildNote( 5.0, "Get well soon!");
-std::unique_ptr<Item> lilyWithNote = builder.getResult();
+    // b) Single "Lily with Note" — step-by-step with builder (no clone)
+    builder.reset();
+    builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Lily", 80.0, true) ) );
+    builder.buildPot (20.0, "White");
+    builder.buildNote( 5.0, "Get well soon!");
+    std::unique_ptr<Item> lilyWithNote = builder.getResult();
 
-std::cout << "Lily w/ Note: " << lilyWithNote->describe()
-          << " | Price: R" << lilyWithNote->priceFunc() << "\n";
+    std::cout << "Lily w/ Note: " << lilyWithNote->describe()
+            << " | Price: R" << lilyWithNote->priceFunc() << "\n";
 
-// c) Arrangement: two personalised succulents (each built from a fresh base)
-printHeader("c) Build an Arrangement (bundle of decorated items)");
+    // c) Arrangement: two personalised succulents (each built from a fresh base)
+    printHeader("c) Build an Arrangement (bundle of decorated items)");
 
-// Component 1
-builder.reset();
-builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Succulent", 60.0, true) ) );
-builder.buildPot(10.0, "Teal");
-std::unique_ptr<Item> pottedSucc1 = builder.getResult();
+    // Component 1
+    builder.reset();
+    builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Succulent", 60.0, true) ) );
+    builder.buildPot(10.0, "Teal");
+    std::unique_ptr<Item> pottedSucc1 = builder.getResult();
 
-// Component 2
-builder.reset();
-builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Succulent", 60.0, true) ) );
-builder.buildPot (12.0, "Sand");
-builder.buildWrap( 8.0, "Minimal wrap");
-std::unique_ptr<Item> pottedSucc2 = builder.getResult();
+    // Component 2
+    builder.reset();
+    builder.buildBasePlant( std::unique_ptr<Item>( new PlantItem("Succulent", 60.0, true) ) );
+    builder.buildPot (12.0, "Sand");
+    builder.buildWrap( 8.0, "Minimal wrap");
+    std::unique_ptr<Item> pottedSucc2 = builder.getResult();
 
-Arrangement giftSet;
-giftSet.add(std::move(pottedSucc1));
-giftSet.add(std::move(pottedSucc2));
+    Arrangement giftSet;
+    giftSet.add(std::move(pottedSucc1));
+    giftSet.add(std::move(pottedSucc2));
 
-std::cout << "Arrangement description: " << giftSet.describe()
-          << "\nArrangement total: R" << giftSet.totalPrice()
-          << "  | Items: " << giftSet.count()
-          << "  | Ready: " << (giftSet.readyForSale() ? "Yes" : "No")
-          << "\n";
+    std::cout << "Arrangement description: " << giftSet.describe()
+            << "\nArrangement total: R" << giftSet.totalPrice()
+            << "  | Items: " << giftSet.count()
+            << "  | Ready: " << (giftSet.readyForSale() ? "Yes" : "No")
+            << "\n";
 
-  //3) Sales flow scenarios (State pattern)
-  //a) In-stock happy path: browse → cart → pay → complete
-  printHeader("3.a) In-stock purchase success");
+    //3) Sales flow scenarios (State pattern)
+    //a) In-stock happy path: browse → cart → pay → complete
+    printHeader("3.a) In-stock purchase success");
 
-  Customer a("Rose");
-  BrowsingState startBrowsing;
-  SalesContext orderA(startBrowsing, a);
+    Customer a("Rose");
+    BrowsingState startBrowsing;
+    SalesContext orderA(startBrowsing, a);
 
-  // put stock for Rose/Lily
-  orderA.putStock("Rose", 3);
-  orderA.putStock("Lily", 2);
+    // put stock for Rose/Lily
+    orderA.putStock("Rose", 3);
+    orderA.putStock("Lily", 2);
 
-  std::cout << "Customer: " << a.nameFunc() << "\n";
-  std::cout << "Action: selects an in-stock Rose (qty 1)\n";
-  orderA.eventSelect("Rose", 1);       //Browsing -> CartOpen
+    std::cout << "Customer: " << a.nameFunc() << "\n";
+    std::cout << "Action: selects an in-stock Rose (qty 1)\n";
+    orderA.eventSelect("Rose", 1);       //Browsing -> CartOpen
 
-  std::cout << "Action: proceeds to checkout\n";
-  orderA.eventCheckout();              //CartOpen -> PendingPayment
+    std::cout << "Action: proceeds to checkout\n";
+    orderA.eventCheckout();              //CartOpen -> PendingPayment
 
-  std::cout << "Action: payment authorize\n";
-  orderA.eventAuthorize();             //PendingPayment -> PaymentAuthorized
+    std::cout << "Action: payment authorize\n";
+    orderA.eventAuthorize();             //PendingPayment -> PaymentAuthorized
 
-  std::cout << "Action: commit/capture payment\n";
-  orderA.eventCommit();                //PaymentAuthorized -> Completed
+    std::cout << "Action: commit/capture payment\n";
+    orderA.eventCommit();                //PaymentAuthorized -> Completed
 
-  std::cout << "Result: Order A complete\n";
+    std::cout << "Result: Order A complete\n";
 
-  //b) Out-of-stock path:
-  //browse → SeekingAssistance → AwaitingStock → replenished → CartOpen → assistance → back → checkout → auth → commit
-  printHeader("3.b) Out-of-stock then replenished, with assistance (SeekingAssistance first)");
+    //b) Out-of-stock path:
+    //browse → SeekingAssistance → AwaitingStock → replenished → CartOpen → assistance → back → checkout → auth → commit
+    printHeader("3.b) Out-of-stock then replenished, with assistance (SeekingAssistance first)");
 
-  Customer b("Bongani");
-  SalesContext orderB(startBrowsing, b);
+    Customer b("Bongani");
+    SalesContext orderB(startBrowsing, b);
 
-  std::cout << "Customer: " << b.nameFunc() << "\n";
-  std::cout << "Action: selects Lily (out of stock -> SeekingAssistance)\n";
-  //No stock added for Lily yet; selection should go to SeekingAssistance
-  orderB.eventSelect("Lily", 1);        //Browsing -> SeekingAssistance (out-of-stock path)
+    std::cout << "Customer: " << b.nameFunc() << "\n";
+    std::cout << "Action: selects Lily (out of stock -> SeekingAssistance)\n";
+    //No stock added for Lily yet; selection should go to SeekingAssistance
+    orderB.eventSelect("Lily", 1);        //Browsing -> SeekingAssistance (out-of-stock path)
 
-  std::cout << "Action: assistance complete → AwaitingStock\n";
-  orderB.eventAssistComplete();         //SeekingAssistance -> AwaitingStock
+    std::cout << "Action: assistance complete → AwaitingStock\n";
+    orderB.eventAssistComplete();         //SeekingAssistance -> AwaitingStock
 
-  std::cout << "Action: greenhouse replenishes stock\n";
-  orderB.putStock("Lily", 5);
+    std::cout << "Action: greenhouse replenishes stock\n";
+    orderB.putStock("Lily", 5);
 
-  std::cout << "Action: stock replenished event\n";
-  orderB.eventReplenished();            //AwaitingStock -> CartOpen
+    std::cout << "Action: stock replenished event\n";
+    orderB.eventReplenished();            //AwaitingStock -> CartOpen
 
-  std::cout << "Action: customer requests assistance while in cart\n";
-  orderB.eventAssist();                 //CartOpen -> SeekingAssistance 
+    std::cout << "Action: customer requests assistance while in cart\n";
+    orderB.eventAssist();                 //CartOpen -> SeekingAssistance 
 
-  std::cout << "Action: assistance complete, back to cart\n";
-  orderB.eventAssistComplete();         //SeekingAssistance -> CartOpen
+    std::cout << "Action: assistance complete, back to cart\n";
+    orderB.eventAssistComplete();         //SeekingAssistance -> CartOpen
 
-  std::cout << "Action: checkout → authorize → commit\n";
-  orderB.eventCheckout();               //PendingPayment
-  orderB.eventAuthorize();              //PaymentAuthorized
-  orderB.eventCommit();                 //Completed
+    std::cout << "Action: checkout → authorize → commit\n";
+    orderB.eventCheckout();               //PendingPayment
+    orderB.eventAuthorize();              //PaymentAuthorized
+    orderB.eventCommit();                 //Completed
 
-  std::cout << "Result: Order B complete\n";
+    std::cout << "Result: Order B complete\n";
 
-  //c) Cancellation while paying: browse → cart → checkout → cancel
-  printHeader("3.c) Cancel during payment (user changes mind)");
+    //c) Cancellation while paying: browse → cart → checkout → cancel
+    printHeader("3.c) Cancel during payment (user changes mind)");
 
-  Customer c("Chandre");
-  SalesContext orderC(startBrowsing, c);
+    Customer c("Chandre");
+    SalesContext orderC(startBrowsing, c);
 
-  orderC.putStock("Rose", 1);
-  std::cout << "Customer: " << c.nameFunc() << "\n";
-  std::cout << "Action: selects an in-stock Rose (qty 1)\n";
-  orderC.eventSelect("Rose", 1);        //Browsing -> CartOpen
+    orderC.putStock("Rose", 1);
+    std::cout << "Customer: " << c.nameFunc() << "\n";
+    std::cout << "Action: selects an in-stock Rose (qty 1)\n";
+    orderC.eventSelect("Rose", 1);        //Browsing -> CartOpen
 
-  std::cout << "Action: proceeds to checkout\n";
-  orderC.eventCheckout();               //PendingPayment
+    std::cout << "Action: proceeds to checkout\n";
+    orderC.eventCheckout();               //PendingPayment
 
-  std::cout << "Action: cancels before authorization\n";
-  orderC.eventCancel();                 //Cancelled (terminal)
-  std::cout << "Result: Order C cancelled\n";
+    std::cout << "Action: cancels before authorization\n";
+    orderC.eventCancel();                 //Cancelled (terminal)
+    std::cout << "Result: Order C cancelled\n";
 
-  //d) Failure branches with toggles 
-  //d1) Authorization failure → PaymentFailed → Retry → success → Commit
-  printHeader("3.d.1) Authorization failure, then retry and succeed");
+    //d) Failure branches with toggles 
+    //d1) Authorization failure → PaymentFailed → Retry → success → Commit
+    printHeader("3.d.1) Authorization failure, then retry and succeed");
 
-  Customer d1("Dineo");
-  SalesContext orderD1(startBrowsing, d1);
-  orderD1.putStock("Rose", 1);
+    Customer d1("Dineo");
+    SalesContext orderD1(startBrowsing, d1);
+    orderD1.putStock("Rose", 1);
 
-  orderD1.eventSelect("Rose", 1);       //Browsing -> CartOpen
-  orderD1.eventCheckout();              //PendingPayment
+    orderD1.eventSelect("Rose", 1);       //Browsing -> CartOpen
+    orderD1.eventCheckout();              //PendingPayment
 
-#ifdef SUPPORT_TEST_TOGGLES
-  std::cout << "Action: force NEXT authorize to FAIL\n";
-  orderD1.forceNextAuth(false);         
-  orderD1.eventAuthorize();             //PendingPayment -> PaymentFailed
+    #ifdef SUPPORT_TEST_TOGGLES
+    std::cout << "Action: force NEXT authorize to FAIL\n";
+    orderD1.forceNextAuth(false);         
+    orderD1.eventAuthorize();             //PendingPayment -> PaymentFailed
 
-  std::cout << "Action: retry, force NEXT authorize to SUCCEED\n";
-  orderD1.forceNextAuth(true);
-  orderD1.eventRetry();                 //PaymentFailed -> PendingPayment
-  orderD1.eventAuthorize();             //PaymentAuthorized
+    std::cout << "Action: retry, force NEXT authorize to SUCCEED\n";
+    orderD1.forceNextAuth(true);
+    orderD1.eventRetry();                 //PaymentFailed -> PendingPayment
+    orderD1.eventAuthorize();             //PaymentAuthorized
 
-  std::cout << "Action: commit (default capture succeeds)\n";
-  orderD1.eventCommit();                //Completed
+    std::cout << "Action: commit (default capture succeeds)\n";
+    orderD1.eventCommit();                //Completed
 
-  //d2) Capture failure → PaymentFailed → Retry → authorize + commit success
-  printHeader("3.d.2) Capture failure, then retry and succeed");
+    //d2) Capture failure → PaymentFailed → Retry → authorize + commit success
+    printHeader("3.d.2) Capture failure, then retry and succeed");
 
-  Customer d2("Dua");
-  SalesContext orderD2(startBrowsing, d2);
-  orderD2.putStock("Lily", 1);
+    Customer d2("Dua");
+    SalesContext orderD2(startBrowsing, d2);
+    orderD2.putStock("Lily", 1);
 
-  orderD2.eventSelect("Lily", 1);       //Browsing -> CartOpen
-  orderD2.eventCheckout();              //PendingPayment
+    orderD2.eventSelect("Lily", 1);       //Browsing -> CartOpen
+    orderD2.eventCheckout();              //PendingPayment
 
-  std::cout << "Action: authorize succeeds\n";
-  orderD2.forceNextAuth(true);
-  orderD2.eventAuthorize();             //PaymentAuthorized
+    std::cout << "Action: authorize succeeds\n";
+    orderD2.forceNextAuth(true);
+    orderD2.eventAuthorize();             //PaymentAuthorized
 
-  std::cout << "Action: force NEXT capture to FAIL\n";
-  orderD2.forceNextCapture(false);
-  orderD2.eventCommit();                //PaymentAuthorized -> PaymentFailed
+    std::cout << "Action: force NEXT capture to FAIL\n";
+    orderD2.forceNextCapture(false);
+    orderD2.eventCommit();                //PaymentAuthorized -> PaymentFailed
 
-  std::cout << "Action: retry full payment (authorize + capture succeed)\n";
-  orderD2.forceNextAuth(true);
-  orderD2.forceNextCapture(true);
-  orderD2.eventRetry();                 //PendingPayment
-  orderD2.eventAuthorize();             //PaymentAuthorized
-  orderD2.eventCommit();                //Completed
+    std::cout << "Action: retry full payment (authorize + capture succeed)\n";
+    orderD2.forceNextAuth(true);
+    orderD2.forceNextCapture(true);
+    orderD2.eventRetry();                 //PendingPayment
+    orderD2.eventAuthorize();             //PaymentAuthorized
+    orderD2.eventCommit();                //Completed
 
-#endif
-
+    #endif
 
   //kiolin start
     std::cout<<"\n\n\n";
@@ -1216,12 +1215,10 @@ std::cout << "Arrangement description: " << giftSet.describe()
     std::cout << "Created test plants for issue handling" << std::endl;
     std::cout << std::endl;
 
-    //we create the chain of responsibility
     JuniorGardener junior;
     SeniorGardener senior;
     PlantSpecialist specialist;
     
-    //we are setting up the chain
     junior.setNext(&senior);
     senior.setNext(&specialist);
     
@@ -1356,7 +1353,7 @@ std::cout << "Arrangement description: " << giftSet.describe()
     deliveryPerson.notify("customer delivery", fern, 60);
 
     manager.notify("check stock", fern, 0);
-    salesPerson.notify("return to greenhouse", fern, 30); // Returns from customers
+    salesPerson.notify("return to greenhouse", fern, 30);
 
     manager.notify("check stock", fern, 0);
 
@@ -1434,111 +1431,103 @@ std::cout << "Arrangement description: " << giftSet.describe()
 
     std::cout << "CHAIN OF RESPONSIBILITY (customer interaction):" << std::endl;
 
-// Create chain dynamically to avoid double deletion issues
-JuniorStaff* juniorStaff = new JuniorStaff();
-SalesExpert* salesExpert = new SalesExpert();
-PlantExpert* plantExpert = new PlantExpert();
-Manager* queryManager = new Manager("Query Manager", 401, nullptr, "Customer Service");
+    JuniorStaff* juniorStaff = new JuniorStaff();
+    SalesExpert* salesExpert = new SalesExpert();
+    PlantExpert* plantExpert = new PlantExpert();
+    Manager* queryManager = new Manager("Query Manager", 401, nullptr, "Customer Service");
 
-// Build the chain - juniorStaff now OWNS the entire chain
-juniorStaff->setNext(salesExpert);
-salesExpert->setNext(plantExpert);
-plantExpert->setNext(queryManager);
+    juniorStaff->setNext(salesExpert);
+    salesExpert->setNext(plantExpert);
+    plantExpert->setNext(queryManager);
 
-std::cout << "\nGeneral Inquiry (Junior Staff should handle)" << std::endl;
-CustomerQuery generalQuery(CustomerQuery::GENERAL, "What are your opening hours?", nullptr);
-std::cout << "Customer: \"" << generalQuery.question << "\"" << std::endl;
-juniorStaff->handleQuery(generalQuery);
+    std::cout << "\nGeneral Inquiry (Junior Staff should handle)" << std::endl;
+    CustomerQuery generalQuery(CustomerQuery::GENERAL, "What are your opening hours?", nullptr);
+    std::cout << "Customer: \"" << generalQuery.question << "\"" << std::endl;
+    juniorStaff->handleQuery(generalQuery);
 
-std::cout << "\nBasic Pricing Question (Junior Staff should handle)" << std::endl;
-CustomerQuery pricingQuery(CustomerQuery::PRICING, "How much are your roses?", nullptr);
-std::cout << "Customer: \"" << pricingQuery.question << "\"" << std::endl;
-juniorStaff->handleQuery(pricingQuery);
+    std::cout << "\nBasic Pricing Question (Junior Staff should handle)" << std::endl;
+    CustomerQuery pricingQuery(CustomerQuery::PRICING, "How much are your roses?", nullptr);
+    std::cout << "Customer: \"" << pricingQuery.question << "\"" << std::endl;
+    juniorStaff->handleQuery(pricingQuery);
 
-std::cout << "\nAdvanced Pricing Question (Should escalate to Sales Expert)" << std::endl;
-CustomerQuery advancedPricingQuery(CustomerQuery::PRICING, "Can I get a bulk discount for 100 plants?", nullptr);
-std::cout << "Customer: \"" << advancedPricingQuery.question << "\"" << std::endl;
-juniorStaff->handleQuery(advancedPricingQuery);
+    std::cout << "\nAdvanced Pricing Question (Should escalate to Sales Expert)" << std::endl;
+    CustomerQuery advancedPricingQuery(CustomerQuery::PRICING, "Can I get a bulk discount for 100 plants?", nullptr);
+    std::cout << "Customer: \"" << advancedPricingQuery.question << "\"" << std::endl;
+    juniorStaff->handleQuery(advancedPricingQuery);
 
-std::cout << "\nSpecial Request (Should escalate to Sales Expert)" << std::endl;
-CustomerQuery specialRequestQuery(CustomerQuery::SPECIAL_REQUEST, "Can you deliver plants on Sunday?", nullptr);
-std::cout << "Customer: \"" << specialRequestQuery.question << "\"" << std::endl;
-juniorStaff->handleQuery(specialRequestQuery);
+    std::cout << "\nSpecial Request (Should escalate to Sales Expert)" << std::endl;
+    CustomerQuery specialRequestQuery(CustomerQuery::SPECIAL_REQUEST, "Can you deliver plants on Sunday?", nullptr);
+    std::cout << "Customer: \"" << specialRequestQuery.question << "\"" << std::endl;
+    juniorStaff->handleQuery(specialRequestQuery);
 
-std::cout << "\nPlant Care Advice (Should escalate to Plant Expert)" << std::endl;
-CustomerQuery careAdviceQuery(CustomerQuery::CARE_ADVICE, "How often should I water my cactus?", nullptr);
-std::cout << "Customer: \"" << careAdviceQuery.question << "\"" << std::endl;
-juniorStaff->handleQuery(careAdviceQuery);
+    std::cout << "\nPlant Care Advice (Should escalate to Plant Expert)" << std::endl;
+    CustomerQuery careAdviceQuery(CustomerQuery::CARE_ADVICE, "How often should I water my cactus?", nullptr);
+    std::cout << "Customer: \"" << careAdviceQuery.question << "\"" << std::endl;
+    juniorStaff->handleQuery(careAdviceQuery);
 
-std::cout << "\nCustomer Complaint - Plant Death (Should be handled by Plant Expert)" << std::endl;
-CustomerQuery complaintQuery(CustomerQuery::COMPLAINT, "My plant died after one week", nullptr);
-std::cout << "Customer: \"" << complaintQuery.question << "\"" << std::endl;
-juniorStaff->handleQuery(complaintQuery);
+    std::cout << "\nCustomer Complaint - Plant Death (Should be handled by Plant Expert)" << std::endl;
+    CustomerQuery complaintQuery(CustomerQuery::COMPLAINT, "My plant died after one week", nullptr);
+    std::cout << "Customer: \"" << complaintQuery.question << "\"" << std::endl;
+    juniorStaff->handleQuery(complaintQuery);
 
-std::cout << "\nDirect Sales Expert Handling" << std::endl;
-CustomerQuery directSalesQuery(CustomerQuery::SPECIAL_REQUEST, "I need plants for a corporate event", nullptr);
-std::cout << "Customer: \"" << directSalesQuery.question << "\"" << std::endl;
-salesExpert->handleQuery(directSalesQuery);
+    std::cout << "\nDirect Sales Expert Handling" << std::endl;
+    CustomerQuery directSalesQuery(CustomerQuery::SPECIAL_REQUEST, "I need plants for a corporate event", nullptr);
+    std::cout << "Customer: \"" << directSalesQuery.question << "\"" << std::endl;
+    salesExpert->handleQuery(directSalesQuery);
 
-std::cout << "\nDirect Plant Expert Handling" << std::endl;
-CustomerQuery directPlantQuery(CustomerQuery::CARE_ADVICE, "My fern leaves are turning yellow, what should I do?", nullptr);
-std::cout << "Customer: \"" << directPlantQuery.question << "\"" << std::endl;
-plantExpert->handleQuery(directPlantQuery);
+    std::cout << "\nDirect Plant Expert Handling" << std::endl;
+    CustomerQuery directPlantQuery(CustomerQuery::CARE_ADVICE, "My fern leaves are turning yellow, what should I do?", nullptr);
+    std::cout << "Customer: \"" << directPlantQuery.question << "\"" << std::endl;
+    plantExpert->handleQuery(directPlantQuery);
 
-std::cout << "\nDirect Manager Handling" << std::endl;
-CustomerQuery directManagerQuery(CustomerQuery::COMPLAINT, "I want to speak to the manager about a refund", nullptr);
-std::cout << "Customer: \"" << directManagerQuery.question << "\"" << std::endl;
-queryManager->handleQuery(directManagerQuery);
+    std::cout << "\nDirect Manager Handling" << std::endl;
+    CustomerQuery directManagerQuery(CustomerQuery::COMPLAINT, "I want to speak to the manager about a refund", nullptr);
+    std::cout << "Customer: \"" << directManagerQuery.question << "\"" << std::endl;
+    queryManager->handleQuery(directManagerQuery);
 
-std::cout << "\nComplex Query Chain" << std::endl;
-std::cout << "Testing multiple queries in sequence:" << std::endl;
+    std::cout << "\nComplex Query Chain" << std::endl;
+    std::cout << "Testing multiple queries in sequence:" << std::endl;
 
-CustomerQuery query1(CustomerQuery::GENERAL, "What's your location?", nullptr);
-std::cout << "\nCustomer: \"" << query1.question << "\"" << std::endl;
-juniorStaff->handleQuery(query1);
+    CustomerQuery query1(CustomerQuery::GENERAL, "What's your location?", nullptr);
+    std::cout << "\nCustomer: \"" << query1.question << "\"" << std::endl;
+    juniorStaff->handleQuery(query1);
 
-CustomerQuery query2(CustomerQuery::PRICING, "Do you offer student discount?", nullptr);
-std::cout << "\nCustomer: \"" << query2.question << "\"" << std::endl;
-juniorStaff->handleQuery(query2);
+    CustomerQuery query2(CustomerQuery::PRICING, "Do you offer student discount?", nullptr);
+    std::cout << "\nCustomer: \"" << query2.question << "\"" << std::endl;
+    juniorStaff->handleQuery(query2);
 
-CustomerQuery query3(CustomerQuery::CARE_ADVICE, "What soil should I use for my succulents?", nullptr);
-std::cout << "\nCustomer: \"" << query3.question << "\"" << std::endl;
-juniorStaff->handleQuery(query3);
+    CustomerQuery query3(CustomerQuery::CARE_ADVICE, "What soil should I use for my succulents?", nullptr);
+    std::cout << "\nCustomer: \"" << query3.question << "\"" << std::endl;
+    juniorStaff->handleQuery(query3);
 
-CustomerQuery query4(CustomerQuery::COMPLAINT, "The orchid I bought is dying", nullptr);
-std::cout << "\nCustomer: \"" << query4.question << "\"" << std::endl;
-juniorStaff->handleQuery(query4);
+    CustomerQuery query4(CustomerQuery::COMPLAINT, "The orchid I bought is dying", nullptr);
+    std::cout << "\nCustomer: \"" << query4.question << "\"" << std::endl;
+    juniorStaff->handleQuery(query4);
 
-std::cout << "\nBroken Chain (No Next Handler)" << std::endl;
-// Create isolatedJunior separately on stack since it's not part of the main chain
-JuniorStaff isolatedJunior;
-CustomerQuery unhandledQuery(CustomerQuery::CARE_ADVICE, "How do I propagate my snake plant?", nullptr);
-std::cout << "Customer: \"" << unhandledQuery.question << "\"" << std::endl;
-isolatedJunior.handleQuery(unhandledQuery);
+    std::cout << "\nBroken Chain (No Next Handler)" << std::endl;
+    
+    JuniorStaff isolatedJunior;
+    CustomerQuery unhandledQuery(CustomerQuery::CARE_ADVICE, "How do I propagate my snake plant?", nullptr);
+    std::cout << "Customer: \"" << unhandledQuery.question << "\"" << std::endl;
+    isolatedJunior.handleQuery(unhandledQuery);
 
-std::cout << "\nMixed Query Types" << std::endl;
-std::cout << "Customer with multiple questions:" << std::endl;
+    std::cout << "\nMixed Query Types" << std::endl;
+    std::cout << "Customer with multiple questions:" << std::endl;
 
-CustomerQuery mixed1(CustomerQuery::GENERAL, "Do you offer gift wrapping?", nullptr);
-std::cout << "\nCustomer: \"" << mixed1.question << "\"" << std::endl;
-juniorStaff->handleQuery(mixed1);
+    CustomerQuery mixed1(CustomerQuery::GENERAL, "Do you offer gift wrapping?", nullptr);
+    std::cout << "\nCustomer: \"" << mixed1.question << "\"" << std::endl;
+    juniorStaff->handleQuery(mixed1);
 
-CustomerQuery mixed2(CustomerQuery::PRICING, "How much are orchids?", nullptr);
-std::cout << "\nCustomer: \"" << mixed2.question << "\"" << std::endl;
-juniorStaff->handleQuery(mixed2);
+    CustomerQuery mixed2(CustomerQuery::PRICING, "How much are orchids?", nullptr);
+    std::cout << "\nCustomer: \"" << mixed2.question << "\"" << std::endl;
+    juniorStaff->handleQuery(mixed2);
 
-CustomerQuery mixed3(CustomerQuery::CARE_ADVICE, "Should I use fertilizer on my plants?", nullptr);
-std::cout << "\nCustomer: \"" << mixed3.question << "\"" << std::endl;
-juniorStaff->handleQuery(mixed3);
+    CustomerQuery mixed3(CustomerQuery::CARE_ADVICE, "Should I use fertilizer on my plants?", nullptr);
+    std::cout << "\nCustomer: \"" << mixed3.question << "\"" << std::endl;
+    juniorStaff->handleQuery(mixed3);
 
-// Cleanup - delete the entire chain through the head
-std::cout << "\nCleaning up chain of responsibility..." << std::endl;
-delete juniorStaff;  // This will delete the entire chain via destructors
-                    // salesExpert, plantExpert, and queryManager are automatically deleted
-                    // through the chain of destructors
-
-std::cout << "Chain cleanup completed successfully!" << std::endl;
-
+    delete juniorStaff;
+                       
     std::cout << "===========================================================================================================" <<std::endl;
     std::cout << "===========================================================================================================" <<std::endl;
 
@@ -1671,7 +1660,7 @@ std::cout << "Chain cleanup completed successfully!" << std::endl;
   //karishma end
 
     std::cout<<"\n\n\n";
-  std::cout<<"-----------------------Testing Customer Browsing---------------------------\n\n";
+    std::cout<<"-----------------------Testing Customer Browsing---------------------------\n\n";
     simulateCustomerBrowsing();
     simulateCommandPatternScenario();
     simulateStrategyPatternScenario();
@@ -1680,7 +1669,7 @@ std::cout << "Chain cleanup completed successfully!" << std::endl;
 
     std::cout<<"--------------------------------Integrated Customer queries-------------------------\n";
 
-    testIntegratedPatternsScenario();
+    //testIntegratedPatternsScenario();
     std::cout<<std::endl;
     return 0;
   }
