@@ -747,6 +747,7 @@ void CompleteNurseryUI::showPricingMenu() {
 
 // Help Menu (Chain of Responsibility)
 void CompleteNurseryUI::showHelpMenu() {
+    while(true){
     clearScreen();
     printHeader("❓ CUSTOMER HELP");
     
@@ -778,6 +779,7 @@ void CompleteNurseryUI::showHelpMenu() {
     CustomerQuery query(type, question, currentCustomer);
     customerQueryChain->handleQuery(query);
     pressEnter();
+    }
 }
 
 // Staff Menu (Karishma's work)
