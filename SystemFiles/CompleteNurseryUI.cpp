@@ -176,16 +176,34 @@ void CompleteNurseryUI::pressEnter() {
 
 //this function stops the user from entering the wrong input which would break our system
 int CompleteNurseryUI::getValidatedInput(int min, int max) {
-    int choice;
+    std::string input;
+    
     while (true) {
-        if (std::cin >> choice) {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            if (choice >= min && choice <= max) {
-                return choice;
+        std::getline(std::cin, input);
+    
+        if (input.empty()) {
+            std::cout << " Invalid! Enter " << min << "-" << max << ": ";
+            continue;
+        }
+    
+        bool allDigits = true;
+        for (char c : input) {
+            if (!std::isdigit(static_cast<unsigned char>(c))) {
+                allDigits = false;
+                break;
             }
-        } else {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        
+        if (allDigits) {
+            try {
+                int choice = std::stoi(input);
+                
+                if (choice >= min && choice <= max) {
+                    return choice;
+                }
+            } catch (const std::exception& e) {
+                
+            }
         }
         std::cout << " Invalid! Enter " << min << "-" << max << ": ";
     }
