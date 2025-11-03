@@ -34,7 +34,7 @@ The goal is to show how structured design brings order and flexibility to a comp
 ### Cloning
 
 ```
-<!--link here-->
+https://github.com/karishma0815/Final-project-214.git
 ```
 
 ### Building
@@ -69,7 +69,7 @@ Testing Main (Unit Tests): make run_tests-->
         Taskeen Abdoola<br>u22698681<br>
       </td>
       <td align="center">
-        The Customers & The Sales Floor: <br>Builder<br>Prototype<br>Decorator<br>State<br>
+        The Customers & The Sales Floor: <br>Builder<br>Adapter<br>Decorator<br>State<br>
       </td>
       <td>
         <img src="Images/Scarlet_Witch.jpg" width="200" height="200" style="border-radius: 8px;">
@@ -105,7 +105,7 @@ Testing Main (Unit Tests): make run_tests-->
       </td>
       <td align="center">
         Greenhouse/Garden Area:
-        <br>State<br>Iterator<br>
+        <br>State<br>
       </td>
       <td>
         <img src="Images/Black_Widow.jpg" width="200" height="200" style="border-radius: 8px;">
