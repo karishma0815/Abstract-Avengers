@@ -27,7 +27,6 @@
 // Iterator patterns (Sabira)
 #include "PlantIterator.h"
 #include "PriceRangeIterator.h"
-#include "CareIterator.h"
 #include "CartIterator.h"
 
 // Command patterns (Sabira + Karishma)
