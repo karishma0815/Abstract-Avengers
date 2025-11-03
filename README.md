@@ -45,15 +45,59 @@ Unit Tests: make test-<test_filename>
 
 ### Demo Running
 
-<!--When make run_demo is called:
+When `make run` is executed, you'll be presented with two main options:
 
-1. Go to Project/DataFiles/
-2. Launch the web interface(index.html)
-3. Console should say client connected(if not refresh html page)
-4. Click play button to run the Simulation.
-5. Click stop button to stop Simulation.
-6. Wait for simulation to stop sending data.
-7. Refresh html to terminate program.-->
+#### 1. Interactive Mode (Recommended)
+```bash
+Choose a mode:
+1. DemoMain (Interactive)
+2. testingMain
+
+Enter your choice: 1
+```
+
+**Interactive Mode Features:**
+- **Main Menu**: Navigate between Customer, Staff, Greenhouse, and Pattern Demo sections
+- **Customer Experience**: 
+  - Browse plants using different iterators (all plants, price range, cart contents)
+  - Add/remove items using command pattern
+  - Get recommendations using strategy pattern
+  - Personalize plants with builder and decorator patterns
+  - Complete purchase flow with state pattern
+- **Staff Operations**:
+  - Plant care commands (water, fertilize, prune, sunlight)
+  - Handle plant issues via chain of responsibility
+  - Manage inventory through mediator pattern
+  - Create staff using factory method pattern
+- **Greenhouse Management**:
+  - Observe plant lifecycle states
+  - Factory production of different plant types
+  - Composite plant arrangements
+
+#### 2. Testing Mode (Comprehensive Demo)
+```bash
+Enter your choice: 2
+```
+
+**Automated Testing Demonstrates:**
+- All design patterns working together
+- Complete customer shopping scenarios
+- Staff coordination and plant care workflows
+- Inventory management and stock operations
+- Plant lifecycle from seedling to sale
+- Error handling and edge cases
+
+#### Navigation Tips:
+- Use number keys to navigate menus
+- Follow on-screen prompts for input validation
+- Press Enter to continue after demonstrations
+- Each section showcases specific design patterns in action
+
+#### What You'll See:
+- **Real-time Pattern Execution**: Watch design patterns solve real nursery problems
+- **Interactive Scenarios**: Make choices that affect the simulation
+- **Comprehensive Testing**: Automated demos showing all features working together
+- **Educational Output**: Clear explanations of which patterns are being used
 
 # Team
 
