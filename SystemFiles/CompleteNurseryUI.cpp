@@ -245,21 +245,14 @@ void CompleteNurseryUI::showMainMenu() {
             case 1: showCustomerMenu(); break;
             case 2: {
                 showStaffMenu();
-                // std::cout<<"StaffMenu still in progress\n";
+                //std::cout<<"StaffMenu still in progress\n";
                 break;
                 
-                }
+            }
             case 3: 
             {
                 showGreenhouseMenu();
-               // std::cout<<"GreenhouseMenu still in progress\n";
-               // break;
-               }
-
-            case 4: {
-                //showPatternDemoMenu(); 
-                std::cout<<"PatternDemo in progress (not really needed right now it'll come later, this would just make demonstrating our system easier)\n";
-                break;
+               break;
             }
 
             case 4: {
@@ -277,7 +270,6 @@ void CompleteNurseryUI::showMainMenu() {
             }
             case 5:{
                 showPaymentMenu();
-                //std::cout <<"Still in progress!!\n";
                 break;
             }
         }
@@ -1103,13 +1095,13 @@ void CompleteNurseryUI::showHelpMenu() {
         
         customerQueryChain->handleQuery(query);
         pressEnter();
-    }
     } catch (const std::exception& e) {
         printError("An error occurred: " + std::string(e.what()));
         pressEnter();
     } catch (...) {
         printError("An unexpected error occurred");
         pressEnter();
+    }
     }
 }
 
